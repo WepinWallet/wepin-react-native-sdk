@@ -98,7 +98,7 @@ Add the URL scheme as below:
    - Idenetifier: bundle id of your project
    - URL Schems: bundle id of your project + '.wepin'
 
-![image](https://github.com/IotrustGitHub/wepin-react-native-sdk/assets/96401185/379d7128-e4b9-40a7-b0a3-af0d1a9bbc18)
+![image](./assets/ios-setup-image.png)
 
 
 ## ⏩ Import SDK
