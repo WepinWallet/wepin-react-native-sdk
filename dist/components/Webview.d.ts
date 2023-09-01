@@ -51,16 +51,16 @@ declare const __styles: () => {
     };
     webviewContainer: {
         flex: number;
-        width: "100%";
-        height: number | "100%";
+        width: string;
+        height: string | number;
         position: "absolute";
         bottom: number;
         backgroundColor: string;
     };
     webview: {
         flex: number;
-        width: "100%";
-        height: "100%";
+        width: string;
+        height: string;
         position: "absolute";
         bottom: number;
         backgroundColor: string;

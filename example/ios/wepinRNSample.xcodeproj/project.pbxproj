@@ -8,12 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* wepinRNSampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* wepinRNSampleTests.m */; };
-		0512BFB94419ADB4881F450E /* libPods-wepinRNSample-wepinRNSampleTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DC3D48D8A79E609E93C7B5C2 /* libPods-wepinRNSample-wepinRNSampleTests.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		339C6A90C1478E6636776F9A /* libPods-wepinRNSample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FCB03F2EECC2044976A28DD3 /* libPods-wepinRNSample.a */; };
+		561E779E0B9EF2A4BB5FEBA7 /* libPods-wepinRNSample-wepinRNSampleTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B58DAD9F6434030E7B997020 /* libPods-wepinRNSample-wepinRNSampleTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		8CE5A43F2B9B0D0D0E42829C /* libPods-wepinRNSample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4A4C5CF3FD83372D41769B6 /* libPods-wepinRNSample.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,20 +30,20 @@
 		00E356EE1AD99517003FC87E /* wepinRNSampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = wepinRNSampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* wepinRNSampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = wepinRNSampleTests.m; sourceTree = "<group>"; };
-		0A7406FE4EB214AB56B9D798 /* Pods-wepinRNSample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wepinRNSample.debug.xcconfig"; path = "Target Support Files/Pods-wepinRNSample/Pods-wepinRNSample.debug.xcconfig"; sourceTree = "<group>"; };
-		128865F7DE08BD42F45AF5F8 /* Pods-wepinRNSample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wepinRNSample.release.xcconfig"; path = "Target Support Files/Pods-wepinRNSample/Pods-wepinRNSample.release.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* wepinRNSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = wepinRNSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = wepinRNSample/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = wepinRNSample/AppDelegate.mm; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = wepinRNSample/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = wepinRNSample/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = wepinRNSample/main.m; sourceTree = "<group>"; };
-		1E8FFF0A4ADB93D3A45ED370 /* Pods-wepinRNSample-wepinRNSampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wepinRNSample-wepinRNSampleTests.release.xcconfig"; path = "Target Support Files/Pods-wepinRNSample-wepinRNSampleTests/Pods-wepinRNSample-wepinRNSampleTests.release.xcconfig"; sourceTree = "<group>"; };
-		666700FC69B19E147063A27D /* Pods-wepinRNSample-wepinRNSampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wepinRNSample-wepinRNSampleTests.debug.xcconfig"; path = "Target Support Files/Pods-wepinRNSample-wepinRNSampleTests/Pods-wepinRNSample-wepinRNSampleTests.debug.xcconfig"; sourceTree = "<group>"; };
+		173112A91D72311195CBB47D /* Pods-wepinRNSample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wepinRNSample.release.xcconfig"; path = "Target Support Files/Pods-wepinRNSample/Pods-wepinRNSample.release.xcconfig"; sourceTree = "<group>"; };
+		1CD13ABA6B31467FF242A124 /* Pods-wepinRNSample-wepinRNSampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wepinRNSample-wepinRNSampleTests.debug.xcconfig"; path = "Target Support Files/Pods-wepinRNSample-wepinRNSampleTests/Pods-wepinRNSample-wepinRNSampleTests.debug.xcconfig"; sourceTree = "<group>"; };
+		28C21474F42AE49062DA7A5F /* Pods-wepinRNSample-wepinRNSampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wepinRNSample-wepinRNSampleTests.release.xcconfig"; path = "Target Support Files/Pods-wepinRNSample-wepinRNSampleTests/Pods-wepinRNSample-wepinRNSampleTests.release.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = wepinRNSample/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		DC3D48D8A79E609E93C7B5C2 /* libPods-wepinRNSample-wepinRNSampleTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-wepinRNSample-wepinRNSampleTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B58DAD9F6434030E7B997020 /* libPods-wepinRNSample-wepinRNSampleTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-wepinRNSample-wepinRNSampleTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CADF5508E589FF4A2C609941 /* Pods-wepinRNSample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wepinRNSample.debug.xcconfig"; path = "Target Support Files/Pods-wepinRNSample/Pods-wepinRNSample.debug.xcconfig"; sourceTree = "<group>"; };
+		E4A4C5CF3FD83372D41769B6 /* libPods-wepinRNSample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-wepinRNSample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		FCB03F2EECC2044976A28DD3 /* libPods-wepinRNSample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-wepinRNSample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,7 +51,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0512BFB94419ADB4881F450E /* libPods-wepinRNSample-wepinRNSampleTests.a in Frameworks */,
+				561E779E0B9EF2A4BB5FEBA7 /* libPods-wepinRNSample-wepinRNSampleTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,7 +59,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				339C6A90C1478E6636776F9A /* libPods-wepinRNSample.a in Frameworks */,
+				8CE5A43F2B9B0D0D0E42829C /* libPods-wepinRNSample.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -100,8 +100,8 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				FCB03F2EECC2044976A28DD3 /* libPods-wepinRNSample.a */,
-				DC3D48D8A79E609E93C7B5C2 /* libPods-wepinRNSample-wepinRNSampleTests.a */,
+				E4A4C5CF3FD83372D41769B6 /* libPods-wepinRNSample.a */,
+				B58DAD9F6434030E7B997020 /* libPods-wepinRNSample-wepinRNSampleTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -140,10 +140,10 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				0A7406FE4EB214AB56B9D798 /* Pods-wepinRNSample.debug.xcconfig */,
-				128865F7DE08BD42F45AF5F8 /* Pods-wepinRNSample.release.xcconfig */,
-				666700FC69B19E147063A27D /* Pods-wepinRNSample-wepinRNSampleTests.debug.xcconfig */,
-				1E8FFF0A4ADB93D3A45ED370 /* Pods-wepinRNSample-wepinRNSampleTests.release.xcconfig */,
+				CADF5508E589FF4A2C609941 /* Pods-wepinRNSample.debug.xcconfig */,
+				173112A91D72311195CBB47D /* Pods-wepinRNSample.release.xcconfig */,
+				1CD13ABA6B31467FF242A124 /* Pods-wepinRNSample-wepinRNSampleTests.debug.xcconfig */,
+				28C21474F42AE49062DA7A5F /* Pods-wepinRNSample-wepinRNSampleTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -155,12 +155,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "wepinRNSampleTests" */;
 			buildPhases = (
-				AF0F095E14F2A886EAFAD454 /* [CP] Check Pods Manifest.lock */,
+				0A276B24B78F747A3307BBB0 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				92F54376284D6841E38BFBDC /* [CP] Embed Pods Frameworks */,
-				CA0B1DDDB26E0CE4C6ED2FA8 /* [CP] Copy Pods Resources */,
+				C1A357E480B699C14F576B6B /* [CP] Embed Pods Frameworks */,
+				622392FBF74CD4BF36FACD9F /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -176,14 +176,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "wepinRNSample" */;
 			buildPhases = (
-				3D2DC265DCECDBE783A18198 /* [CP] Check Pods Manifest.lock */,
+				95A27E5DE1852F7FC9F68B25 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				C4AC4150CF0E24E9F04E39F9 /* [CP] Embed Pods Frameworks */,
-				F3381FC1479FA47DBEE8EF3D /* [CP] Copy Pods Resources */,
+				D11C6A1CDD7D298352A95E4A /* [CP] Embed Pods Frameworks */,
+				4912E189B9106A7B0D6F6B9E /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -266,46 +266,7 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
 		};
-		3D2DC265DCECDBE783A18198 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-wepinRNSample-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		92F54376284D6841E38BFBDC /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-wepinRNSample-wepinRNSampleTests/Pods-wepinRNSample-wepinRNSampleTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-wepinRNSample-wepinRNSampleTests/Pods-wepinRNSample-wepinRNSampleTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-wepinRNSample-wepinRNSampleTests/Pods-wepinRNSample-wepinRNSampleTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		AF0F095E14F2A886EAFAD454 /* [CP] Check Pods Manifest.lock */ = {
+		0A276B24B78F747A3307BBB0 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -327,24 +288,24 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		C4AC4150CF0E24E9F04E39F9 /* [CP] Embed Pods Frameworks */ = {
+		4912E189B9106A7B0D6F6B9E /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-wepinRNSample/Pods-wepinRNSample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-wepinRNSample/Pods-wepinRNSample-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			name = "[CP] Embed Pods Frameworks";
+			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-wepinRNSample/Pods-wepinRNSample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-wepinRNSample/Pods-wepinRNSample-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-wepinRNSample/Pods-wepinRNSample-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-wepinRNSample/Pods-wepinRNSample-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		CA0B1DDDB26E0CE4C6ED2FA8 /* [CP] Copy Pods Resources */ = {
+		622392FBF74CD4BF36FACD9F /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -361,21 +322,60 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-wepinRNSample-wepinRNSampleTests/Pods-wepinRNSample-wepinRNSampleTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		F3381FC1479FA47DBEE8EF3D /* [CP] Copy Pods Resources */ = {
+		95A27E5DE1852F7FC9F68B25 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-wepinRNSample/Pods-wepinRNSample-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			name = "[CP] Copy Pods Resources";
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-wepinRNSample/Pods-wepinRNSample-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-wepinRNSample-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-wepinRNSample/Pods-wepinRNSample-resources.sh\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C1A357E480B699C14F576B6B /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-wepinRNSample-wepinRNSampleTests/Pods-wepinRNSample-wepinRNSampleTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-wepinRNSample-wepinRNSampleTests/Pods-wepinRNSample-wepinRNSampleTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-wepinRNSample-wepinRNSampleTests/Pods-wepinRNSample-wepinRNSampleTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D11C6A1CDD7D298352A95E4A /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-wepinRNSample/Pods-wepinRNSample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-wepinRNSample/Pods-wepinRNSample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-wepinRNSample/Pods-wepinRNSample-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -430,7 +430,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 666700FC69B19E147063A27D /* Pods-wepinRNSample-wepinRNSampleTests.debug.xcconfig */;
+			baseConfigurationReference = 1CD13ABA6B31467FF242A124 /* Pods-wepinRNSample-wepinRNSampleTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -457,7 +457,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1E8FFF0A4ADB93D3A45ED370 /* Pods-wepinRNSample-wepinRNSampleTests.release.xcconfig */;
+			baseConfigurationReference = 28C21474F42AE49062DA7A5F /* Pods-wepinRNSample-wepinRNSampleTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
@@ -481,7 +481,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0A7406FE4EB214AB56B9D798 /* Pods-wepinRNSample.debug.xcconfig */;
+			baseConfigurationReference = CADF5508E589FF4A2C609941 /* Pods-wepinRNSample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -489,7 +489,6 @@
 				DEVELOPMENT_TEAM = B6626Z492H;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = wepinRNSample/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -510,14 +509,13 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 128865F7DE08BD42F45AF5F8 /* Pods-wepinRNSample.release.xcconfig */;
+			baseConfigurationReference = 173112A91D72311195CBB47D /* Pods-wepinRNSample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = B6626Z492H;
 				INFOPLIST_FILE = wepinRNSample/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -596,7 +594,6 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "$(inherited)";
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-DFOLLY_NO_CONFIG",
@@ -661,7 +658,6 @@
 					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_CFLAGS = "$(inherited)";
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-DFOLLY_NO_CONFIG",
