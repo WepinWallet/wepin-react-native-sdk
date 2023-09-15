@@ -26,7 +26,7 @@ export class Wepin extends EventEmitter {
         super();
         this._isInitialized = false;
         this.version = PackageJson.version;
-        console.log(`WepinJavaScript SDK v${this.version} Initialized`);
+        console.log(`Wepin React-Native SDK v${this.version} Initialized`);
         this._wepinLifeCycle = 'not_initialized';
         this.queue = new Proxy([], {
             set: (target, prop, value) => {
@@ -100,7 +100,12 @@ export class Wepin extends EventEmitter {
             this.wepinDomain = getBundleId();
             this._isInitialized = false;
             this._wepinLifeCycle = 'initializing';
-            yield this._open({ isInit: true });
+            if (this.wepinAppAttributes.type !== 'show') {
+                yield this._open({ isInit: true, url: '/sdk/init' });
+            }
+            else {
+                yield this._open({ isInit: true });
+            }
             return new Promise(resolve => {
                 this.once('widgetOpened', () => {
                     var _a, _b;
@@ -148,6 +153,7 @@ export class Wepin extends EventEmitter {
             if (options === null || options === void 0 ? void 0 : options.url) {
                 baseUrl += options.url;
             }
+            console.log('baseUrl : ' + baseUrl);
             try {
                 if ((options === null || options === void 0 ? void 0 : options.type) === 'hide' ||
                     (((_a = this.wepinAppAttributes) === null || _a === void 0 ? void 0 : _a.type) !== 'show' && (options === null || options === void 0 ? void 0 : options.isInit))) {
@@ -268,6 +274,9 @@ export class Wepin extends EventEmitter {
         this._userInfo = userInfo;
         if (userInfo && userInfo.status === 'success') {
             this._wepinLifeCycle = 'login';
+        }
+        else {
+            this._wepinLifeCycle = 'initialized';
         }
         this.emit('onUserInfoSet', userInfo);
     }
