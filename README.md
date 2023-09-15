@@ -236,7 +236,7 @@ const accounts = await wepin.getAccounts(['Ethereum'])
   - If user is not logged in, it returns `Promise` \<void>.
 
 
-### getStatus (Support from version `0.0.4-alpha`)
+### getStatus (Support from version `0.0.6-alpha`)
 
 ```javascript
 wepin.getStatus()
@@ -260,7 +260,7 @@ var status = wepin.getStatus()
     - `before_login`: if wepin is initialized but the user is not logged in
     - `login`: if the user is logged in
 
-### login(Support from version `0.0.4-alpha`)
+### login(Support from version `0.0.6-alpha`)
 
 ```javascript
 await wepin.login()
@@ -298,7 +298,7 @@ var userInfo = await wepin.login()
     }
     ```
 
-### logout (Support from version `0.0.4-alpha`)
+### logout (Support from version `0.0.6-alpha`)
 
 ```javascript
 await wepin.logout()
