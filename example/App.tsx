@@ -5,12 +5,13 @@
  * @format
  */
 
-import React from 'react'
+import React, { useState } from 'react'
 import {
   Alert,
   Button,
   Dimensions,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   useColorScheme,
   View,
@@ -18,6 +19,8 @@ import {
 import { Colors } from 'react-native/Libraries/NewAppScreen'
 import Wepin from '@wepin/react-native-sdk'
 import { getBundleId } from 'react-native-device-info'
+import { AttributesType } from '@wepin/types'
+import { Text } from 'react-native'
 
 const deviceHeight = Dimensions.get('window').height
 
@@ -25,34 +28,43 @@ function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark'
   const appKey = 'test_app_key'
 
+  const [result, setResult] = useState('')
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   }
 
   const wepin = Wepin.getInstance()
-  const initWepinKor = async () => {
+  const initWepinKor = async (type: AttributesType) => {
     try {
       await wepin.init('', appKey, {
-        type: 'show',
+        type,
         defaultCurrency: 'krw',
         defaultLanguage: 'ko',
       })
+      const isInitialized = wepin.isInitialized()
+      if (type !== 'show') {
+        setResult('wepin isInitialized: ' + isInitialized)
+      }
     } catch (e) {
       console.error(e)
-      Alert.alert('already wepin initialized')
+      setResult('already wepin initialized')
     }
   }
 
-  const initWepinEng = async () => {
+  const initWepinEng = async (type: AttributesType) => {
     try {
       await wepin.init('', appKey, {
-        type: 'show',
+        type,
         defaultCurrency: 'USD',
         defaultLanguage: 'en',
       })
+      const isInitialized = wepin.isInitialized()
+      if (type !== 'show') {
+        setResult('wepin isInitialized: ' + isInitialized)
+      }
     } catch (e) {
       console.error(e)
-      Alert.alert('already wepin initialized')
+      setResult('already wepin initialized')
     }
   }
 
@@ -60,9 +72,43 @@ function App(): JSX.Element {
     console.log('isInit')
     try {
       const isInitialized = wepin.isInitialized()
-      Alert.alert('wepin isInitialized: ' + isInitialized)
+      setResult('wepin isInitialized: ' + isInitialized)
     } catch (e) {
       console.error(e)
+    }
+  }
+
+  const getStatus = async () => {
+    console.log('getStatus')
+    try {
+      const res = wepin.getStatus()
+      setResult('wepin getStatus: ' + res)
+
+    } catch (e) {
+      console.error(e)
+      setResult('getStatus exception')
+    }
+  }
+
+  const loginWepin = async () => {
+    console.log('loginWepin')
+    try {
+      const res = await wepin.login()
+      setResult('loginWepin: ' + JSON.stringify(res))
+    } catch (e) {
+      console.error(e)
+      setResult('loginWepin: fail')
+    }
+  }
+
+  const logoutWepin = async () => {
+    console.log('logoutWepin')
+    try {
+      await wepin.logout()
+      setResult('logoutWepin: success')
+    } catch (e) {
+      console.error(e)
+      setResult('logoutWepin: fail')
     }
   }
 
@@ -72,7 +118,7 @@ function App(): JSX.Element {
       await wepin.openWidget()
     } catch (e) {
       console.error(e)
-      Alert.alert('openWepinWidget exception')
+      setResult('openWepinWidget exception')
     }
   }
 
@@ -82,7 +128,7 @@ function App(): JSX.Element {
       wepin.closeWidget()
     } catch (e) {
       console.error(e)
-      Alert.alert('closeWepinWidget exception')
+      setResult('closeWepinWidget exception')
     }
   }
 
@@ -91,13 +137,13 @@ function App(): JSX.Element {
     try {
       const accounts = await wepin.getAccounts()
       if (accounts?.length) {
-        Alert.alert('accountList', JSON.stringify(accounts))
+        setResult('accountList: ' + JSON.stringify(accounts))
       } else {
-        Alert.alert('accountList', '[]')
+        setResult('accountList: ' + '[]')
       }
     } catch (e) {
       console.error(e)
-      Alert.alert('getAccounts exception')
+      setResult('getAccounts exception')
     }
   }
 
@@ -112,15 +158,35 @@ function App(): JSX.Element {
   }
 
   const testItemListView = (
-    <View style={styles.button}>
+    <ScrollView 
+      style={{
+        marginTop: 20,
+        flex:1,
+        width: "80%",
+      }}>
       <View style={styles.button}>
-        <Button title="Initialize(kor)" onPress={() => initWepinKor()} />
+        <Button title="Initialize(kor)-hide" onPress={() => initWepinKor('hide')} />
       </View>
       <View style={styles.button}>
-        <Button title="Initialize(eng)" onPress={() => initWepinEng()} />
+        <Button title="Initialize(kor)-show" onPress={() => initWepinKor('show')} />
+      </View>
+      <View style={styles.button}>
+        <Button title="Initialize(eng)-hide" onPress={() => initWepinEng('hide')} />
+      </View>
+      <View style={styles.button}>
+        <Button title="Initialize(eng)-show" onPress={() => initWepinEng('show')} />
       </View>
       <View style={styles.button}>
         <Button title="Is_initialized" onPress={() => isInit()} />
+      </View>
+      <View style={styles.button}>
+        <Button title="Get_Status" onPress={() => getStatus()} />
+      </View>
+      <View style={styles.button}>
+        <Button title="login" onPress={() => loginWepin()} />
+      </View>
+      <View style={styles.button}>
+        <Button title="logout" onPress={() => logoutWepin()} />
       </View>
       <View style={styles.button}>
         <Button title="Open_widget" onPress={() => openWepinWidget()} />
@@ -134,22 +200,33 @@ function App(): JSX.Element {
       <View style={styles.button}>
         <Button title="Finalize_widget" onPress={() => finalizeWepin()} />
       </View>
-    </View>
+    </ScrollView>
   )
-
   return (
-    <Wepin.WidgetView>
-      <SafeAreaView style={backgroundStyle}>
-        <View
-          style={{
-            height: deviceHeight,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          {testItemListView}
-        </View>
-      </SafeAreaView>
-    </Wepin.WidgetView>
+    <SafeAreaView style={backgroundStyle}>
+      <View
+        style={{
+          height:deviceHeight,
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection:'column'
+        }}>
+        <Text style={{ fontSize: 25, marginTop: 30, textAlign: 'center', color: 'black' }}>
+          Test Menu
+        </Text>
+        {testItemListView}
+        <Text style={{ fontSize: 25, marginTop: 20, textAlign: 'center', color: 'black' }}>
+          Test Result
+        </Text>
+        <ScrollView style={{flex:0.5, paddingStart: 10, paddingEnd: 10, width: '80%', backgroundColor: '#E0E0E0', borderRadius: 10 }}>
+          <Text style={{ marginTop: 10 ,fontSize: 20, textAlign: 'left', color:'black'}}>
+            {result}
+          </Text>
+        </ScrollView>
+      </View>
+      <Wepin.WidgetView>
+      </Wepin.WidgetView>
+    </SafeAreaView>
   )
 }
 
