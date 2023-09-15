@@ -100,7 +100,6 @@ Add the URL scheme as below:
 
 ![image](./assets/ios-setup-image.png)
 
-
 ## ⏩ Import SDK
 
 ```javascript
@@ -115,7 +114,7 @@ function App(): JSX.Element {
     ....
   return (
     <Wepin.WidgetView>
-  	  ...
+        ...
     </Wepin.WidgetView>
   )
 }
@@ -130,6 +129,29 @@ Methods about initializing Wepin SDK
 ```javascript
 await wepin.init(appId, appSdkKey[, attributes])
 ```
+
+#### Parameters
+
+- `appId` \<string>
+- `appKey` \<string>
+- `attributes` \<IAttributes> _optional_
+  - Type of `attributes` is assigned at [`@wepin/types`](https://github.com/WepinWallet/wepin-js-sdk-types) as `IAttributes`
+    - type: The type of display of widget as wepin is initiated (defalut: 'hide)
+      - 'hide' | 'show'
+    - defaultLanguage: The language to be displayed on the widget (default: 'ko')
+      - Currently, only 'ko' and 'en' are supported.
+    - defaultCurrency: The currency to be displayed on the widget (default: 'KRW')
+
+#### Example
+
+```javascript
+await wepin.init('APPID', 'APPKEY', {
+  type: 'hide',
+  defaultLanguage: 'en',
+  defaultCurrency: 'USD',
+})
+```
+
 
 ### isInitialized
 
@@ -163,14 +185,14 @@ The `openWidget()` method shows Wepin widget. If a user is not logged in, Wepin 
 ### closeWidget
 
 ```javascript
-wepin.closeWidget()
+await wepin.closeWidget()
 ```
 
 The `closeWidget()` method closes Wepin widget.
 
 #### Return value
 
-- `undefined`
+- `Promise` \<void>
 
 ### getAccounts
 
@@ -205,10 +227,91 @@ const accounts = await wepin.getAccounts(['Ethereum'])
     ```javascript
     [
         {
-    	    address: "0x0000001111112222223333334444445555556666",
-    	    network: "Ethereum"
+            address: "0x0000001111112222223333334444445555556666",
+            network: "Ethereum"
         },
     ]
     ```
 - `Promise` \<void>
   - If user is not logged in, it returns `Promise` \<void>.
+
+
+### getStatus (Support from version `0.0.4-alpha`)
+
+```javascript
+wepin.getStatus()
+```
+
+The `getStatus()` method returns lifecycle of wepin.
+
+#### Example
+
+```javascript
+var status = wepin.getStatus()
+```
+
+#### Return value
+
+- \<WepinLifeCycle>
+  - The `WepinLifeCycle` is defined at [`@wepin/types`](https://github.com/WepinWallet/wepin-js-sdk-types) as (Support from version `0.0.7`)
+    - `not_initialized`: if wepin is not initialized
+    - `initializing`: if wepin is initializing
+    - `initialized`: if wepin is initialized
+    - `before_login`: if wepin is initialized but the user is not logged in
+    - `login`: if the user is logged in
+
+### login(Support from version `0.0.4-alpha`)
+
+```javascript
+await wepin.login()
+```
+
+The `login()` method returns information of the logged-in user. If a user is not logged in, Wepin widget will show login page.
+
+#### Example
+
+```javascript
+var userInfo = await wepin.login()
+```
+
+#### Return value
+
+- `Promise` \<IWepinUser>
+
+  - Type of `IWepinUser` is defined in [`@wepin/types`](https://github.com/WepinWallet/wepin-js-sdk-types) (Support from version `0.0.7`)
+
+    - `status` \<'success'|'fail'>
+    - `userInfo` \<object> _optional_
+      - `userId` \<string>
+      - `email` \<string>
+      - `provider` \<'google'|'apple'>
+  - Example
+
+    ```js
+    {
+        status: 'success',
+        userInfo: {
+            userID: '123455',
+            email: 'abc@test.com',
+            provider: 'google'
+            }
+    }
+    ```
+
+### logout (Support from version `0.0.4-alpha`)
+
+```javascript
+await wepin.logout()
+```
+
+The `logout()` method performs a wepin logout .
+
+#### Return value
+
+- `Promise` \<void>
+
+Example
+
+```javascript
+await wepin.logout()
+```
