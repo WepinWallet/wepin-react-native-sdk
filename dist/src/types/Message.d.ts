@@ -1,4 +1,4 @@
-type WepinCommand = 'ready_to_widget' | 'initialized_widget' | 'set_accounts' | 'close_wepin_widget' | 'provider_request' | 'dequeue_request' | 'request_enable' | 'sign_transaction' | 'send_transaction' | 'set_token' | 'set_user_info' | 'wepin_logout';
+type WepinCommand = 'ready_to_widget' | 'initialized_widget' | 'set_accounts' | 'close_wepin_widget' | 'provider_request' | 'dequeue_request' | 'set_token' | 'set_user_info' | 'wepin_logout' | 'request_enable' | 'sign_transaction' | 'send_transaction' | 'sign_typed_data' | 'sign';
 export interface WebviewReqestMessage {
     header: {
         request_from: 'wepin_widget';

@@ -1,4 +1,5 @@
-import EventEmitter from 'eventemitter3';
+/// <reference types="node" />
+import { EventEmitter } from 'events';
 export default class SafeEventEmitter extends EventEmitter {
-    emit<T extends string | symbol>(event: T, ...args: any[]): boolean;
+    emit(type: string, ...args: any[]): boolean;
 }

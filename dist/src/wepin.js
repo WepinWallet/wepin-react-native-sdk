@@ -11,10 +11,12 @@ import { WEPIN_DEFAULT_LANG, WEPIN_DEFAULT_CURRENCY } from './const/config';
 import LOG from './utils/log';
 import Utils from './utils/utils';
 import { WebView } from './components/Webview';
-import EventEmitter from 'eventemitter3';
+import EventEmitter from './utils/safeEventEmitter';
 import { getBundleId } from 'react-native-device-info';
 import { WepinWidget } from './components/WepinWidget';
 import PackageJson from '../package.json';
+import KlayProvider from './provider/klaytn/inpageProvider';
+import EthProvider from './provider/ethereum/inpageProvider';
 export class Wepin extends EventEmitter {
     static getInstance() {
         if (!this._instance) {
@@ -26,8 +28,11 @@ export class Wepin extends EventEmitter {
         super();
         this._isInitialized = false;
         this.version = PackageJson.version;
-        console.log(`Wepin React-Native SDK v${this.version} Initialized`);
+        console.log(`WepinJavaScript SDK v${this.version} Initialized`);
         this._wepinLifeCycle = 'not_initialized';
+        this._initQueue();
+    }
+    _initQueue() {
         this.queue = new Proxy([], {
             set: (target, prop, value) => {
                 var _a;
@@ -100,12 +105,7 @@ export class Wepin extends EventEmitter {
             this.wepinDomain = getBundleId();
             this._isInitialized = false;
             this._wepinLifeCycle = 'initializing';
-            if (this.wepinAppAttributes.type !== 'show') {
-                yield this._open({ isInit: true, url: '/sdk/init' });
-            }
-            else {
-                yield this._open({ isInit: true });
-            }
+            yield this._open({ isInit: true });
             return new Promise(resolve => {
                 this.once('widgetOpened', () => {
                     var _a, _b;
@@ -132,6 +132,7 @@ export class Wepin extends EventEmitter {
             yield this._close();
             this._isInitialized = false;
             this._wepinLifeCycle = 'not_initialized';
+            this._initQueue();
         });
     }
     openWidget() {
@@ -153,7 +154,6 @@ export class Wepin extends EventEmitter {
             if (options === null || options === void 0 ? void 0 : options.url) {
                 baseUrl += options.url;
             }
-            console.log('baseUrl : ' + baseUrl);
             try {
                 if ((options === null || options === void 0 ? void 0 : options.type) === 'hide' ||
                     (((_a = this.wepinAppAttributes) === null || _a === void 0 ? void 0 : _a.type) !== 'show' && (options === null || options === void 0 ? void 0 : options.isInit))) {
@@ -323,13 +323,42 @@ export class Wepin extends EventEmitter {
                     }
                     else {
                         this.setAccountInfo([]);
-                        this._wepinLifeCycle = 'initialized';
+                        this._wepinLifeCycle = 'before_login';
                         resolve();
                     }
                 }));
                 yield this._open({ url: '/wepin-sdk-login/logout', type: 'hide' });
             }));
         });
+    }
+    getProvider({ network }) {
+        var _a;
+        if (!this._isInitialized)
+            throw new Error('Wepin must be initialized to get Provider.');
+        if (window) {
+            if ((_a = window.evmproviders) === null || _a === void 0 ? void 0 : _a.wepin) {
+                return window.evmproviders.wepin;
+            }
+        }
+        const lowerCasedNetworkStr = network.toLowerCase();
+        const wepin = this;
+        switch (lowerCasedNetworkStr) {
+            case 'ethereum':
+            case 'evmeth-goerli':
+            case 'evmsongbird':
+            case 'evmpolygon':
+            case 'evmpolygon-testnet':
+            case 'evmanttime-testnet':
+                return EthProvider.generate({ network: lowerCasedNetworkStr, wepin });
+            case 'klaytn':
+            case 'klaytn-testnet':
+                return KlayProvider.generate({
+                    network: lowerCasedNetworkStr,
+                    wepin,
+                });
+            default:
+                throw new Error(`Can not resolve network name: ${network}`);
+        }
     }
 }
 Wepin.WidgetView = WepinWidget;

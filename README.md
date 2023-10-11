@@ -46,6 +46,36 @@ cd ios
 pod install
 ```
 
+### Additional Installation (Version `0.0.7-alpha` and above)
+
+To enable the web3 provider functionality in the React Native environment, you need to install and configure the rn-nodeify module.
+
+* Install the `rn-nodeify` module in your devDependencies.
+
+  ```bash
+  npm install --save-dev rn-nodeify
+  ```
+
+  or
+
+  ```bash
+  yarn add --dev rn-nodeify
+  ```
+* Add the following `rn-nodeify` command to your project's `package.json` file as a `postinstall` script:
+
+  ```json
+  "scripts": {
+    	...,
+  	"postinstall": "rn-nodeify --install fs,crypto,https,http,stream,path,zlib,assert --hack",
+  	...
+  }
+  ```
+* After running the `postinstall` script, import the generated `shim.js` file in the root file of your application as follows:
+
+  ```javascript
+  import './shim'
+  ```
+
 ## ⏩ Config Deep Link
 
 Deep link scheme format: Your app package name or bundle id + '.wepin'
@@ -315,3 +345,168 @@ Example
 ```javascript
 await wepin.logout()
 ```
+
+## ⏩ Provider(Support from version `0.0.7-alpha`)
+
+Wipin supports providers that return JSON-RPC request responses to connect with blockchain networks in webs. With Wipin Provider, you can easily connect to various networks supported by Wipin.
+
+The providers supported by Wipin are as follows.
+
+- EVM compatible Networks
+- Klaytn Network
+
+### EVM compatible Networks
+
+`ethers.js` or `web3.js` can be used with Wepin Provider to interoperate with EVM compatible blockchains.
+
+#### Support Networks
+
+| Chain ID | Network Name              | Network Variable   |
+| -------- | ------------------------- | ------------------ |
+| 1        | Ethereum Mainnet          | ethereum           |
+| 5        | Ethereum Goerli Testnet   | evmeth-goerli      |
+| 19       | Songbird Canary Network   | evmsongbird        |
+| 137      | Polygon Mainnet           | evmpolygon         |
+| 80001    | Polygon Mumbai            | evmpolygon-testnet |
+|          | ~~Anttime~~(Coming soon) | ~~evmanttime~~    |
+| 2731     | Anttime Testnet           | evmanttime-testnet |
+| 8217     | Klaytn                    | klaytn             |
+| 1001     | Klaytn Testnet            | klaytn-testnet     |
+
+### getProvider
+
+It returns a Provider by given network.
+
+```javascript
+wepin.getProvider({ network })
+```
+
+#### Parameters
+
+- `networt` \<string> - Available chains Wepin helps provide.(Network Variable)
+
+#### Return value
+
+- EIP-1193 provider.
+
+#### Example
+
+```javascript
+const provider = wepin.getProvider({ network: 'ethereum' })
+```
+
+### initializeWeb3
+
+* `web3.js`
+
+  ```javascript
+  import Web3 from 'web3'
+  const provider = wepin.getProvider({ network: 'ethereum' })
+  const web3 = new Web3(provider)
+  ```
+* `ethers.js` (Document: [ethers.js for React native](https://docs.ethers.org/v5/cookbook/react-native/))
+
+  ```javascript
+  import "react-native-get-random-values"
+  // Import the the ethers shims (**BEFORE** ethers)
+  import "@ethersproject/shims"
+  // Import the ethers library
+  import { ethers } from "ethers"
+
+  const provider = wepin.getProvider({ network: 'ethereum' })
+  const web3 = new ethers.providers.Web3Provider(provider)
+  ```
+
+### Method
+
+- **Get Accounts**
+  You can receive account information through the initialized web3.
+
+  - `web3.js`
+
+  ```javascript
+  const accounts = await web3.eth.getAccounts()
+  ```
+
+  - `ethers.js`
+
+  ```javascript
+  const signer = web3.getSigner()
+  const address = await signer.getAddress()
+  ```
+- **Get Balance**
+  You can check the account balance using the account information.
+
+  - `web3.js`
+
+    ```javascript
+    const balance = await web3.eth.getBalance(accounts[0])
+    ```
+  - `ethers.js`
+
+    ```javascript
+    const balance = await web3.getBalance(address)
+    ```
+
+> Please refer to the document below for instructions on how to check the balance, fee details, block numbers, etc.
+>
+> - web3.js : [web3.js 1.0.0 documentation](https://web3js-kr.readthedocs.io/ko/latest/getting-started.html)
+> - ethers.js: [ethers.js 5.7 documentaion](https://docs.ethers.org/v5/getting-started/)
+
+
+- **Send Transaction**
+  Transaction can be sent.
+  - `web3.js`
+
+    ```javascript
+    const accounts = await web3.eth.getAccounts()
+    const tx = {
+        from: accounts[0],
+        gasPrice: "2000000000",
+        gas: "21000",
+        to: '0x11f4d0A3c1......13F7E19D048276DAe',
+        value: "10000000000000000",
+    }
+    const response = await web3.eth.sendTransaction(tx)
+    ```
+  - `etehrs.js`
+
+    ```javascript
+    const signer = web3.getSigner()
+    const address = await signer.getAddress()
+    const tx = {
+        from: address,
+        gasPrice: "2000000000",
+       gasLimit: "21000",
+        to: '0x11f4d0A3c1......13F7E19D048276DAe',
+        value: "10000000000000000",
+    }
+    const response = await signer.sendTransaction(tx)
+    ```
+
+
+
+- **Contract Call**
+  A contract call can be performed.
+  - web3.js
+
+    ```javascript
+    const callObject = {
+    	to: '0x11f4d0A3c12e86B4b5F39B213F7E19D048276DAe', //contract address
+    	data: '0xc6888fa10000000000000000000000000000000000000000000000000000000000000003'
+    }
+    const response = await web3.eth.call(callObject)
+    ```
+  - ethers.js
+
+    ```javascript
+    const callObject = {
+    	to: '0x11f4d0A3c12e86B4b5F39B213F7E19D048276DAe', //contract address
+    	data: '0xc6888fa10000000000000000000000000000000000000000000000000000000000000003'
+    }
+    const response = await web3.call(callObject)
+    ```
+
+For details of Ethereum compatible network providers, please refer to the link below.
+
+[EIP-1193: Ethereum Provider Javascript API](https://eips.ethereum.org/EIPS/eip-1193)

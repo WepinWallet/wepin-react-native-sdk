@@ -4,7 +4,8 @@ import { modeByAppKey } from './types/modeByAppKey';
 import { Account } from './types/Account';
 import { type WepinRequestMessage } from './types/Message';
 import { WebView } from './components/Webview';
-import EventEmitter from 'eventemitter3';
+import EventEmitter from './utils/safeEventEmitter';
+import { SupportedChains } from './types/Provider';
 export declare class Wepin extends EventEmitter {
     version: string;
     static WidgetView: import("react").FunctionComponent<{
@@ -25,6 +26,7 @@ export declare class Wepin extends EventEmitter {
     queue: WepinRequestMessage[];
     static getInstance(): Wepin;
     constructor();
+    private _initQueue;
     setAccountInfo(accounts: Account[]): void;
     get Widget(): WebView | null | undefined;
     private setModeByAppKey;
@@ -46,4 +48,7 @@ export declare class Wepin extends EventEmitter {
     getStatus(): WepinLifeCycle;
     login(): Promise<IWepinUser>;
     logout(): Promise<void>;
+    getProvider({ network }: {
+        network: SupportedChains;
+    }): any;
 }

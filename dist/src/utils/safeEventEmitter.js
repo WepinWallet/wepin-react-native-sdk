@@ -1,12 +1,12 @@
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'events';
+import LOG from './log';
 function safeApply(handler, context, args) {
     try {
+        LOG.debug('safeApply');
         Reflect.apply(handler, context, args);
     }
     catch (err) {
-        setTimeout(() => {
-            throw err;
-        });
+        LOG.error(err);
     }
 }
 function arrayClone(arr) {
@@ -18,8 +18,8 @@ function arrayClone(arr) {
     return copy;
 }
 export default class SafeEventEmitter extends EventEmitter {
-    emit(event, ...args) {
-        let doError = event === 'error';
+    emit(type, ...args) {
+        let doError = type === 'error';
         const events = this._events;
         if (events !== undefined) {
             doError = doError && events.error === undefined;
@@ -40,7 +40,7 @@ export default class SafeEventEmitter extends EventEmitter {
             err.context = er;
             throw err;
         }
-        const handler = events[event];
+        const handler = events[type];
         if (handler === undefined) {
             return false;
         }
