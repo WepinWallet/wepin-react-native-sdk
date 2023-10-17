@@ -49,18 +49,19 @@ function App(): JSX.Element {
   const AvailableNetworks = useMemo<any>(() => {
 
     let id = 0
-    // console.log('accounts', accounts)
-
+    console.log('accounts', accounts)
     if (accounts) {
-      const array = accounts?.map((account) => {
-        return {
-          id: (id++).toString(),
-          label: (<Text style={{ color: '#111111' }}>{account.network.toLowerCase()}</Text>),
-          value: account.network.toLowerCase(),
-          selected: true,
-          size: 15
-        }
-      })
+      let array = [];
+      // const array = accounts?.map((account) => {
+      //   return {
+      //     id: (id++).toString(),
+      //     label: (<Text style={{ color: '#111111' }}>{account.network.toLowerCase()}</Text>),
+      //     value: account.network.toLowerCase(),
+      //     selected: true,
+      //     size: 15
+      //   }
+      // })
+      
       const filterArray = array?.filter((val) => {
         if (
           val.value.toLowerCase().includes('evm') ||
@@ -70,8 +71,16 @@ function App(): JSX.Element {
           return val
         }
       })
-      // console.log('filterArray', filterArray)
-      return filterArray
+      //console.log('filterArray', filterArray)
+      //return filterArray
+      return [{
+        id: (id++).toString(),
+        label: (<Text style={{ color: '#111111' }}>{accounts[0].network.toLowerCase()}</Text>),
+        value: accounts[0].network.toLowerCase(),
+        selected: true,
+        size: 15
+      }]
+
     } else {
       return []
     }
@@ -276,10 +285,10 @@ function App(): JSX.Element {
       {
         AvailableNetworks && AvailableNetworks?.length !== 0 ?
           <>
-            <Text style={{ fontSize: 15, marginTop: 10, textAlign: 'center', color: 'blue' }}>
-              Network List
+            <Text onPress={(val: any) => { setSuspectedNetwork(AvailableNetworks[0]?.value); provider.setConfig(AvailableNetworks[0]?.value, setResult, setSelectedAccount) }} style={{ fontSize: 15, marginTop: 10, textAlign: 'center', color: 'blue' }}>
+              Click Here
             </Text>
-            <ScrollView
+            {/* <ScrollView
               style={{
                 marginTop: 5,
                 flex: 1,
@@ -294,7 +303,7 @@ function App(): JSX.Element {
                 // selectedId={suspectedNetwork}
                 layout="column" // "row" 또는 "column"을 선택하여 라디오 버튼의 배열 방향을 조절할 수 있습니다.
               />
-            </ScrollView>
+            </ScrollView> */}
           </> : ''
       }
       <ScrollView
@@ -408,10 +417,10 @@ function App(): JSX.Element {
       {
         AvailableNetworks && AvailableNetworks?.length !== 0 ?
           <>
-            <Text style={{ fontSize: 15, marginTop: 10, textAlign: 'center', color: 'blue' }}>
-              Network List
+            <Text onPress={(val: any) => { setSuspectedNetwork(AvailableNetworks[0]?.value); web3TestInstance.setConfig(AvailableNetworks[0]?.value, setResult, setSelectedAccount) }} style={{ fontSize: 15, marginTop: 10, textAlign: 'center', color: 'blue' }}>
+              Click Here
             </Text>
-            <ScrollView
+            {/* <ScrollView
               style={{
                 marginTop: 5,
                 flex: 1,
@@ -426,7 +435,7 @@ function App(): JSX.Element {
                 // selectedId={suspectedNetwork}
                 layout="column" // "row" 또는 "column"을 선택하여 라디오 버튼의 배열 방향을 조절할 수 있습니다.
               />
-            </ScrollView>
+            </ScrollView> */}
           </> : ''
       }
       <ScrollView
