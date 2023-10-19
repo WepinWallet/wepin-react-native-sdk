@@ -94,35 +94,53 @@ export class providerTest {
     //////////////////////////////////////
 
     public getBlockNumber = async () => {
-        // await getAccounts()
-        console.log('getBlockNumber suspectedNetwork: ', this.suspectedNetwork)
+        try {
+            // await getAccounts()
+            console.log('getBlockNumber suspectedNetwork: ', this.suspectedNetwork)
 
-        const provider = this.wepin.getProvider({
-            network: this.suspectedNetwork,
-        })
-        console.log('getBlockNumber provider : ', provider)
-        const providerResult = await provider.request({
-            method: this.prefix + '_blockNumber',
-            params: [],
-        })
-        console.log('setConfig providerResult: ', providerResult)
-        this.setResult(providerResult)
+            const provider = this.wepin.getProvider({
+                network: this.suspectedNetwork,
+            })
+            console.log('getBlockNumber provider : ', provider)
+            const providerResult = await provider.request({
+                method: this.prefix + '_blockNumber',
+                params: [],
+            })
+            console.log('setConfig providerResult: ', providerResult)
+            this.setResult(providerResult)
+        } catch (e: any) {
+            console.log('error', e)
+            if (e?.message) {
+                this.setResult(`error-${e.message}`)
+            } else {
+                this.setResult('unknown error')
+            }
+        }
     }
 
     public getAccountsForProvider = async () => {
-        // await getAccounts()
-        const provider = this.wepin.getProvider({
-            network: this.suspectedNetwork,
-        })
-        const res = await provider.request({
-            method: this.prefix + '_accounts',
-            params: [],
-        })
-        console.log('res', res)
-        console.log('provider.selectedAddress', provider.selectedAddress)
-        this.setResult(res)
-        this.selectedAccount = provider.selectedAddress!
-        this.setSelectedAccount(this.selectedAccount)
+        try {
+            // await getAccounts()
+            const provider = this.wepin.getProvider({
+                network: this.suspectedNetwork,
+            })
+            const res = await provider.request({
+                method: this.prefix + '_accounts',
+                params: [],
+            })
+            console.log('res', res)
+            console.log('provider.selectedAddress', provider.selectedAddress)
+            this.setResult(res)
+            this.selectedAccount = provider.selectedAddress!
+            this.setSelectedAccount(this.selectedAccount)
+        } catch (e: any) {
+            console.log('error', e)
+            if (e?.message) {
+                this.setResult(`error-${e.message}`)
+            } else {
+                this.setResult('unknown error')
+            }
+        }
     }
 
     public requestAccounts = async () => {
@@ -137,171 +155,264 @@ export class providerTest {
             this.setResult(res)
             this.selectedAccount = provider.selectedAddress!
             this.setSelectedAccount(this.selectedAccount)
-        } catch (e) {
+        } catch (e: any) {
             console.log('error', e)
-            this.setResult('error')
+            if (e?.message) {
+                this.setResult(`error-${e.message}`)
+            } else {
+                this.setResult('unknown error')
+            }
         }
-
     }
 
     public getBalance = async () => {
-        const provider = this.wepin.getProvider({ network: this.suspectedNetwork })
-        if (!this.selectedAccount) {
-            this.setResult('Request account first.')
-            return
+        try {
+            const provider = this.wepin.getProvider({ network: this.suspectedNetwork })
+            if (!this.selectedAccount) {
+                this.setResult('Request account first.')
+                return
+            }
+            const res = await provider.request({
+                method: this.prefix + '_getBalance',
+                params: [this.selectedAccount, 'latest'],
+            })
+            this.setResult(res)
+        } catch (e: any) {
+            console.log('error', e)
+            if (e?.message) {
+                this.setResult(`error-${e.message}`)
+            } else {
+                this.setResult('unknown error')
+            }
         }
-        const res = await provider.request({
-            method: this.prefix + '_getBalance',
-            params: [this.selectedAccount, 'latest'],
-        })
-        this.setResult(res)
     }
 
     public getGasPrice = async () => {
-        const provider = this.wepin.getProvider({ network: this.suspectedNetwork })
-        const res = await provider.request({
-            method: this.prefix + '_gasPrice',
-            params: [],
-        })
-        this.gasPrice = res as string
-        this.setResult(this.gasPrice)
+        try {
+            const provider = this.wepin.getProvider({ network: this.suspectedNetwork })
+            const res = await provider.request({
+                method: this.prefix + '_gasPrice',
+                params: [],
+            })
+            this.gasPrice = res as string
+            this.setResult(this.gasPrice)
+        } catch (e: any) {
+            console.log('error', e)
+            if (e?.message) {
+                this.setResult(`error-${e.message}`)
+            } else {
+                this.setResult('unknown error')
+            }
+        }
     }
 
     public getEstimatedGas = async () => {
-        const provider = this.wepin.getProvider({ network: this.suspectedNetwork })
-        const res = await provider.request({
-            method: this.prefix + '_estimateGas',
-            params: [
-                {
-                    from: this.selectedAccount,
-                    to: this.selectedAccount,
-                    data: '0x',
-                },
-            ],
-        })
-        this.estimateGas = (res as string)
-        this.setResult(this.estimateGas)
+        try {
+            const provider = this.wepin.getProvider({ network: this.suspectedNetwork })
+            const res = await provider.request({
+                method: this.prefix + '_estimateGas',
+                params: [
+                    {
+                        from: this.selectedAccount,
+                        to: this.selectedAccount,
+                        data: '0x',
+                    },
+                ],
+            })
+            this.estimateGas = (res as string)
+            this.setResult(this.estimateGas)
+        } catch (e: any) {
+            console.log('error', e)
+            if (e?.message) {
+                this.setResult(`error-${e.message}`)
+            } else {
+                this.setResult('unknown error')
+            }
+        }
     }
 
     public signTransaction = async () => {
-        const provider = this.wepin.getProvider({ network: this.suspectedNetwork })
-        const res = await provider.request({
-            method: this.prefix + '_signTransaction',
-            params: [
-                {
-                    from: this.selectedAccount,
-                    to: this.toAddress,
-                    gas: this.estimateGas,
-                    gasPrice: this.gasPrice,
-                    value: this.toAmount,
-                    data: this.data,
-                },
-            ],
-        })
-        this.setResult(res)
+        try {
+            const provider = this.wepin.getProvider({ network: this.suspectedNetwork })
+            const res = await provider.request({
+                method: this.prefix + '_signTransaction',
+                params: [
+                    {
+                        from: this.selectedAccount,
+                        to: this.toAddress,
+                        gas: this.estimateGas,
+                        gasPrice: this.gasPrice,
+                        value: this.toAmount,
+                        data: this.data,
+                    },
+                ],
+            })
+            this.setResult(res)
+        } catch (e: any) {
+            console.log('error', e)
+            if (e?.message) {
+                this.setResult(`error-${e.message}`)
+            } else {
+                this.setResult('unknown error')
+            }
+        }
     }
 
     public sendLegacyTransaction = async () => {
-        const provider = this.wepin.getProvider({ network: this.suspectedNetwork })
-        const res = await provider.request({
-            method: this.prefix + '_sendTransaction',
-            params: [
-                {
-                    from: this.selectedAccount,
-                    to: this.toAddress,
-                    gas: this.estimateGas,
-                    gasPrice: this.gasPrice,
-                    value: this.toAmount,
-                    data: this.data,
-                },
-            ],
-        })
-        this.setResult(res)
+        try {
+            const provider = this.wepin.getProvider({ network: this.suspectedNetwork })
+            const res = await provider.request({
+                method: this.prefix + '_sendTransaction',
+                params: [
+                    {
+                        from: this.selectedAccount,
+                        to: this.toAddress,
+                        gas: this.estimateGas,
+                        gasPrice: this.gasPrice,
+                        value: this.toAmount,
+                        data: this.data,
+                    },
+                ],
+            })
+            this.setResult(res)
+        } catch (e: any) {
+            console.log('error', e)
+            if (e?.message) {
+                this.setResult(`error-${e.message}`)
+            } else {
+                this.setResult('unknown error')
+            }
+        }
     }
 
     public sendEIP2930Transaction = async () => {
-        const provider = this.wepin.getProvider({ network: this.suspectedNetwork })
-        const res = await provider.request({
-            method: this.prefix + '_sendTransaction',
-            params: [
-                {
-                    from: this.selectedAccount,
-                    to: this.toAddress,
-                    gas: this.estimateGas,
-                    gasPrice: this.gasPrice,
-                    value: this.toAmount,
-                    data: this.data,
-                },
-            ],
-        })
-        this.setResult(res)
+        try {
+            const provider = this.wepin.getProvider({ network: this.suspectedNetwork })
+            const res = await provider.request({
+                method: this.prefix + '_sendTransaction',
+                params: [
+                    {
+                        from: this.selectedAccount,
+                        to: this.toAddress,
+                        gas: this.estimateGas,
+                        gasPrice: this.gasPrice,
+                        value: this.toAmount,
+                        data: this.data,
+                    },
+                ],
+            })
+            this.setResult(res)
+        } catch (e: any) {
+            console.log('error', e)
+            if (e?.message) {
+                this.setResult(`error-${e.message}`)
+            } else {
+                this.setResult('unknown error')
+            }
+        }
     }
 
     public sendEIP1559Transaction = async () => {
-        const provider = this.wepin.getProvider({ network: this.suspectedNetwork })
-        const res = await provider.request({
-            method: this.prefix + '_sendTransaction',
-            params: [
-                {
-                    type: '0x2',
-                    from: this.selectedAccount,
-                    to: this.toAddress,
-                    gasLimit: this.estimateGas,
-                    value: this.toAmount,
-                    data: this.data,
-                    maxFeePerGas: '0x' + (2_000_000_000).toString(16),
-                    maxPriorityFeePerGas: '0x' + (500_000_000).toString(16),
-                    accessList: [
-                        [
-                            '0xde0b295669a9fd93d5f28d9ec85e40f4cb697bae',
+        try {
+            const provider = this.wepin.getProvider({ network: this.suspectedNetwork })
+            const res = await provider.request({
+                method: this.prefix + '_sendTransaction',
+                params: [
+                    {
+                        type: '0x2',
+                        from: this.selectedAccount,
+                        to: this.toAddress,
+                        gasLimit: this.estimateGas,
+                        value: this.toAmount,
+                        data: this.data,
+                        maxFeePerGas: '0x' + (2_000_000_000).toString(16),
+                        maxPriorityFeePerGas: '0x' + (500_000_000).toString(16),
+                        accessList: [
                             [
-                                '0x0000000000000000000000000000000000000000000000000000000000000003',
-                                '0x0000000000000000000000000000000000000000000000000000000000000007',
+                                '0xde0b295669a9fd93d5f28d9ec85e40f4cb697bae',
+                                [
+                                    '0x0000000000000000000000000000000000000000000000000000000000000003',
+                                    '0x0000000000000000000000000000000000000000000000000000000000000007',
+                                ],
                             ],
+                            ['0xbb9bc244d798123fde783fcc1c72d3bb8c189413', []],
                         ],
-                        ['0xbb9bc244d798123fde783fcc1c72d3bb8c189413', []],
-                    ],
-                },
-            ],
-        })
-        this.setResult(res)
+                    },
+                ],
+            })
+            this.setResult(res)
+        } catch (e: any) {
+            console.log('error', e)
+            if (e?.message) {
+                this.setResult(`error-${e.message}`)
+            } else {
+                this.setResult('unknown error')
+            }
+        }
     }
 
     public ethCall = async () => {
-        const provider = this.wepin.getProvider({ network: this.suspectedNetwork })
-        const res = await provider.request({
-            method: this.prefix + '_call',
-            params: [
-                {
-                    from: this.selectedAccount,
-                    to: this.toAddress,
-                    gas: this.estimateGas,
-                    gasPrice: this.gasPrice,
-                    value: this.toAmount,
-                    data: this.data,
-                },
-                'latest',
-            ],
-        })
-        this.setResult(res)
+        try {
+            const provider = this.wepin.getProvider({ network: this.suspectedNetwork })
+            const res = await provider.request({
+                method: this.prefix + '_call',
+                params: [
+                    {
+                        from: this.selectedAccount,
+                        to: this.toAddress,
+                        gas: this.estimateGas,
+                        gasPrice: this.gasPrice,
+                        value: this.toAmount,
+                        data: this.data,
+                    },
+                    'latest',
+                ],
+            })
+            this.setResult(res)
+        } catch (e: any) {
+            console.log('error', e)
+            if (e?.message) {
+                this.setResult(`error-${e.message}`)
+            } else {
+                this.setResult('unknown error')
+            }
+        }
     }
 
     public ethSign = async () => {
-        const provider = this.wepin.getProvider({ network: this.suspectedNetwork })
-        const res = await provider.request({
-            method: this.prefix + '_sign',
-            params: [this.selectedAccount, this.data],
-        })
-        this.setResult(res)
+        try {
+            const provider = this.wepin.getProvider({ network: this.suspectedNetwork })
+            const res = await provider.request({
+                method: this.prefix + '_sign',
+                params: [this.selectedAccount, this.data],
+            })
+            this.setResult(res)
+        } catch (e: any) {
+            console.log('error', e)
+            if (e?.message) {
+                this.setResult(`error-${e.message}`)
+            } else {
+                this.setResult('unknown error')
+            }
+        }
     }
 
     public personalSign = async () => {
-        const provider = this.wepin.getProvider({ network: this.suspectedNetwork })
-        const res = await provider.request({
-            method: 'personal_sign',
-            params: [this.data, this.selectedAccount],
-        })
-        this.setResult(res)
+        try {
+            const provider = this.wepin.getProvider({ network: this.suspectedNetwork })
+            const res = await provider.request({
+                method: 'personal_sign',
+                params: [this.data, this.selectedAccount],
+            })
+            this.setResult(res)
+        } catch (e: any) {
+            console.log('error', e)
+            if (e?.message) {
+                this.setResult(`error-${e.message}`)
+            } else {
+                this.setResult('unknown error')
+            }
+        }
     }
     /////////////////////////////////////////////
     private msgParamsV4 = JSON.stringify({
@@ -458,27 +569,54 @@ export class providerTest {
         },
     ])
     public signTypedDataV1 = async () => {
-        const provider = this.wepin.getProvider({ network: this.suspectedNetwork })
-        const res = await provider.request({
-            method: this.prefix + '_signTypedData_v1',
-            params: [this.selectedAccount, this.msgParamsV1],
-        })
-        this.setResult(res)
+        try {
+            const provider = this.wepin.getProvider({ network: this.suspectedNetwork })
+            const res = await provider.request({
+                method: this.prefix + '_signTypedData_v1',
+                params: [this.selectedAccount, this.msgParamsV1],
+            })
+            this.setResult(res)
+        } catch (e: any) {
+            console.log('error', e)
+            if (e?.message) {
+                this.setResult(`error-${e.message}`)
+            } else {
+                this.setResult('unknown error')
+            }
+        }
     }
     public signTypedDataV3 = async () => {
-        const provider = this.wepin.getProvider({ network: this.suspectedNetwork })
-        const res = await provider.request({
-            method: this.prefix + '_signTypedData_v3',
-            params: [this.selectedAccount, this.msgParamsV3],
-        })
-        this.setResult(res)
+        try {
+            const provider = this.wepin.getProvider({ network: this.suspectedNetwork })
+            const res = await provider.request({
+                method: this.prefix + '_signTypedData_v3',
+                params: [this.selectedAccount, this.msgParamsV3],
+            })
+            this.setResult(res)
+        } catch (e: any) {
+            console.log('error', e)
+            if (e?.message) {
+                this.setResult(`error-${e.message}`)
+            } else {
+                this.setResult('unknown error')
+            }
+        }
     }
     public signTypedDataV4 = async () => {
-        const provider = this.wepin.getProvider({ network: this.suspectedNetwork })
-        const res = await provider.request({
-            method: this.prefix + '_signTypedData_v4',
-            params: [this.selectedAccount, this.msgParamsV4],
-        })
-        this.setResult(res)
+        try {
+            const provider = this.wepin.getProvider({ network: this.suspectedNetwork })
+            const res = await provider.request({
+                method: this.prefix + '_signTypedData_v4',
+                params: [this.selectedAccount, this.msgParamsV4],
+            })
+            this.setResult(res)
+        } catch (e: any) {
+            console.log('error', e)
+            if (e?.message) {
+                this.setResult(`error-${e.message}`)
+            } else {
+                this.setResult('unknown error')
+            }
+        }
     }
 }

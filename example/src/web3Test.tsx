@@ -102,33 +102,51 @@ export class web3Test {
     }
 
     public web3_getAccounts = async () => {
-        let result
-        if (this.web3 instanceof Web3) {
-            const address = await this.web3.eth.getAccounts()
-            result = address[0]
-        } else {
-            const signer = this.web3?.getSigner()
-            result = await signer?.getAddress()
-        }
+        try {
+            let result
+            if (this.web3 instanceof Web3) {
+                const address = await this.web3.eth.getAccounts()
+                result = address[0]
+            } else {
+                const signer = this.web3?.getSigner()
+                result = await signer?.getAddress()
+            }
 
-        this.setResult(result)
-        this.setSelectedAddress(result!)
-        // setWeb3From(selectedAddress)
-        this.fromAddress = result!
-        this.toAddress = result!
+            this.setResult(result)
+            this.setSelectedAddress(result!)
+            // setWeb3From(selectedAddress)
+            this.fromAddress = result!
+            this.toAddress = result!
+        } catch (e: any) {
+            console.log('error', e)
+            if (e?.message) {
+                this.setResult(`error-${e.message}`)
+            } else {
+                this.setResult('unknown error')
+            }
+        }
     }
     public web3_getBalance = async () => {
-        let result
-        console.log('Web3 get balance from ', this.fromAddress)
-        if (this.web3 instanceof Web3) {
-            result = await this.web3.eth.getBalance(this.fromAddress)
-        } else {
-            result = await this.web3?.getBalance(
-                this.fromAddress!.toLowerCase()
-            )
-        }
+        try {
+            let result
+            console.log('Web3 get balance from ', this.fromAddress)
+            if (this.web3 instanceof Web3) {
+                result = await this.web3.eth.getBalance(this.fromAddress)
+            } else {
+                result = await this.web3?.getBalance(
+                    this.fromAddress!.toLowerCase()
+                )
+            }
 
-        this.setResult(result?.toString())
+            this.setResult(result?.toString())
+        } catch (e: any) {
+            console.log('error', e)
+            if (e?.message) {
+                this.setResult(`error-${e.message}`)
+            } else {
+                this.setResult('unknown error')
+            }
+        }
     }
     public web3_estimateGas = async () => {
         try {
@@ -145,38 +163,69 @@ export class web3Test {
                 })
             }
             this.setResult(result?.toString())
-        } catch (error: any) {
-            console.error('error', error)
-            // this.setResult(error)
+        } catch (e: any) {
+            console.log('error', e)
+            if (e?.message) {
+                this.setResult(`error-${e.message}`)
+            } else {
+                this.setResult('unknown error')
+            }
         }
     }
     public web3_sendTransaction = async () => {
-        if (this.web3 instanceof Web3) {
-            const res = await this.web3.eth.sendTransaction({ from: this.fromAddress, to: this.toAddress, gasPrice: this.gasPrice, gas: this.estimateGas, value: this.toAmount, data: this.data })
-            this.setResult(JSON.stringify(res))
-        } else {
-            const signer = this.web3?.getSigner()
-            const res = await signer?.sendTransaction({ from: this.fromAddress, to: this.toAddress, gasPrice: this.gasPrice, gasLimit: this.estimateGas, value: this.toAmount, data: this.data })
-            this.setResult(JSON.stringify(res))
+        try {
+            if (this.web3 instanceof Web3) {
+                const res = await this.web3.eth.sendTransaction({ from: this.fromAddress, to: this.toAddress, gasPrice: this.gasPrice, gas: this.estimateGas, value: this.toAmount, data: this.data })
+                this.setResult(JSON.stringify(res))
+            } else {
+                const signer = this.web3?.getSigner()
+                const res = await signer?.sendTransaction({ from: this.fromAddress, to: this.toAddress, gasPrice: this.gasPrice, gasLimit: this.estimateGas, value: this.toAmount, data: this.data })
+                this.setResult(JSON.stringify(res))
+            }
+        } catch (e: any) {
+            console.log('error', e)
+            if (e?.message) {
+                this.setResult(`error-${e.message}`)
+            } else {
+                this.setResult('unknown error')
+            }
         }
 
     }
     public web3_getGasPrice = async () => {
-        if (this.web3 instanceof Web3) {
-            const res = await this.web3.eth.getGasPrice()
-            this.setResult(res)
-        } else {
-            const res = await this.web3?.getGasPrice()
-            this.setResult(res?.toString())
+        try {
+            if (this.web3 instanceof Web3) {
+                const res = await this.web3.eth.getGasPrice()
+                this.setResult(res)
+            } else {
+                const res = await this.web3?.getGasPrice()
+                this.setResult(res?.toString())
+            }
+        } catch (e: any) {
+            console.log('error', e)
+            if (e?.message) {
+                this.setResult(`error-${e.message}`)
+            } else {
+                this.setResult('unknown error')
+            }
         }
     }
     public web3_call = async () => {
-        if (this.web3 instanceof Web3) {
-            const res = await this.web3.eth.call({ from: this.fromAddress, to: this.toAddress, gasPrice: this.gasPrice, gas: this.estimateGas, value: this.toAmount, data: this.data })
-            this.setResult(res)
-        } else {
-            const res = await this.web3?.call({ from: this.fromAddress, to: this.toAddress, gasPrice: this.gasPrice, gasLimit: this.estimateGas, value: this.toAmount, data: this.data })
-            this.setResult(res)
+        try {
+            if (this.web3 instanceof Web3) {
+                const res = await this.web3.eth.call({ from: this.fromAddress, to: this.toAddress, gasPrice: this.gasPrice, gas: this.estimateGas, value: this.toAmount, data: this.data })
+                this.setResult(res)
+            } else {
+                const res = await this.web3?.call({ from: this.fromAddress, to: this.toAddress, gasPrice: this.gasPrice, gasLimit: this.estimateGas, value: this.toAmount, data: this.data })
+                this.setResult(res)
+            }
+        } catch (e: any) {
+            console.log('error', e)
+            if (e?.message) {
+                this.setResult(`error-${e.message}`)
+            } else {
+                this.setResult('unknown error')
+            }
         }
     }
 }

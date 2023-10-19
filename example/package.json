@@ -15,7 +15,7 @@
   "dependencies": {
     "@ethersproject/shims": "^5.7.0",
     "@tradle/react-native-http": "^2.0.1",
-    "@wepin/react-native-sdk": "0.0.7-alpha",
+    "@wepin/react-native-sdk": "0.0.8-alpha",
     "@wepin/types": "^0.0.7",
     "assert": "^1.5.1",
     "asyncstorage-down": "^4.2.0",
