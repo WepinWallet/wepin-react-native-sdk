@@ -5,7 +5,7 @@ export const requestFactory = ({ wepin, network, req, res, next, end, command, p
     const id = makeRequestID();
     wepin.once(id.toString(), (message) => {
         if (message.body.data === 'User Cancel') {
-            throw ethErrors.provider.userRejectedRequest();
+            end(ethErrors.provider.userRejectedRequest());
         }
         res.result = message.body.data === 'User Cancel' ? '' : message.body.data;
         end();

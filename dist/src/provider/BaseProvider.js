@@ -7,11 +7,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { JsonRpcEngine, } from 'json-rpc-engine';
 import dequal from 'fast-deep-equal';
 import { ethErrors, EthereumRpcError } from 'eth-rpc-errors';
 import { getRpcPromiseCallback, isValidChainId } from './utils/utils';
 import EventEmitter from '../utils/safeEventEmitter';
+import { WepinJsonRpcEngine } from './json-rpc/JsonRpcEngine';
 export class BaseProvider extends EventEmitter {
     constructor({ logger = console, rpcMiddleware = [], } = {}) {
         super();
@@ -27,7 +27,7 @@ export class BaseProvider extends EventEmitter {
         this._handleDisconnect = this._handleDisconnect.bind(this);
         this._rpcRequest = this._rpcRequest.bind(this);
         this.request = this.request.bind(this);
-        const rpcEngine = new JsonRpcEngine();
+        const rpcEngine = new WepinJsonRpcEngine();
         rpcMiddleware.forEach((middleware) => rpcEngine.push(middleware));
         this._rpcEngine = rpcEngine;
     }

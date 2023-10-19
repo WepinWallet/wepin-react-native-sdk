@@ -91,6 +91,35 @@ export const WebviewRequestHandler = (message, widget) => {
         widget.response(response);
     }
     function windowCloseObserver() {
+        const id = WebView.Wepin.queue[0].header.id;
+        const timer = setInterval(() => {
+            try {
+                if (!widget.state.visible) {
+                    clearInterval(timer);
+                    WebView.Wepin.closeWidget();
+                    const request = WebView.Wepin.queue[0];
+                    if (request.header.id === id) {
+                        WebView.Wepin.emit(request.header.id.toString(), {
+                            header: {
+                                response_from: 'wepin_widget',
+                                response_to: 'web',
+                                id: request.header.id,
+                            },
+                            body: {
+                                command: request.body.command,
+                                state: 'ERROR',
+                                data: 'User Cancel',
+                            },
+                        });
+                        WebView.Wepin.queue.shift();
+                    }
+                }
+            }
+            catch (error) {
+                clearInterval(timer);
+                WebView.Wepin.closeWidget();
+            }
+        }, 200);
     }
 };
 //# sourceMappingURL=requestHandler.js.map
