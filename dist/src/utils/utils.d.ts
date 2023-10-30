@@ -4,4 +4,5 @@ export default class Utils {
         wepinWebview: string;
     };
     static getDeeplink(): string;
+    static checkSameNumber: (pin: string, times: number, isRegisterReqiored: boolean) => boolean;
 }

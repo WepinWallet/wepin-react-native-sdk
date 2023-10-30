@@ -25,4 +25,19 @@ export default class Utils {
         return prefix;
     }
 }
+Utils.checkSameNumber = (pin, times, isRegisterReqiored) => {
+    if (isRegisterReqiored)
+        return false;
+    let numArr = Array.apply(null, new Array(10)).map(Number.prototype.valueOf, 0);
+    let hasSameNumber = false;
+    let splitStr = [...pin];
+    splitStr.forEach((pin) => {
+        numArr[Number(pin)]++;
+        if (numArr[Number(pin)] >= times) {
+            hasSameNumber = true;
+            return;
+        }
+    });
+    return hasSameNumber;
+};
 //# sourceMappingURL=utils.js.map

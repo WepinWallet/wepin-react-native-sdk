@@ -7,6 +7,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
+    if (kind === "m") throw new TypeError("Private method is not writable");
+    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+    return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+};
+var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
+    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+};
+var _Wepin_adminLoginResult, _Wepin_detailAccount;
 import { WEPIN_DEFAULT_LANG, WEPIN_DEFAULT_CURRENCY } from './const/config';
 import LOG from './utils/log';
 import Utils from './utils/utils';
@@ -26,6 +38,8 @@ export class Wepin extends EventEmitter {
     }
     constructor() {
         super();
+        _Wepin_adminLoginResult.set(this, void 0);
+        _Wepin_detailAccount.set(this, void 0);
         this._isInitialized = false;
         this.version = PackageJson.version;
         console.log(`WepinJavaScript SDK v${this.version} Initialized`);
@@ -55,8 +69,9 @@ export class Wepin extends EventEmitter {
             },
         });
     }
-    setAccountInfo(accounts) {
+    setAccountInfo(accounts, detailAccount) {
         this.accountInfo = accounts;
+        __classPrivateFieldSet(this, _Wepin_detailAccount, detailAccount !== null && detailAccount !== void 0 ? detailAccount : [], "f");
         this.emit('onAccountSet', accounts);
     }
     get Widget() {
@@ -132,6 +147,8 @@ export class Wepin extends EventEmitter {
             yield this._close();
             this._isInitialized = false;
             this._wepinLifeCycle = 'not_initialized';
+            __classPrivateFieldSet(this, _Wepin_adminLoginResult, undefined, "f");
+            __classPrivateFieldSet(this, _Wepin_detailAccount, [], "f");
             this._initQueue();
         });
     }
@@ -246,6 +263,9 @@ export class Wepin extends EventEmitter {
                 LOG.debug('wepin sdk widget has to be initialized');
                 return [];
             }
+            if (this._wepinLifeCycle !== 'login') {
+                throw new Error(`Wepin.getAccounts: lifecycle of wepin sdk is not 'login'`);
+            }
             if (!this.accountInfo) {
                 yield this.openWidget();
                 return new Promise(resolve => {
@@ -276,7 +296,9 @@ export class Wepin extends EventEmitter {
             this._wepinLifeCycle = 'login';
         }
         else {
-            this._wepinLifeCycle = 'initialized';
+            if (!__classPrivateFieldGet(this, _Wepin_adminLoginResult, "f")) {
+                this._wepinLifeCycle = 'initialized';
+            }
         }
         this.emit('onUserInfoSet', userInfo);
     }
@@ -296,12 +318,14 @@ export class Wepin extends EventEmitter {
                         this.once('onUserInfoSet', (userInfo) => __awaiter(this, void 0, void 0, function* () {
                             LOG.debug('onUserInfoSet2', userInfo);
                             yield this._close();
+                            __classPrivateFieldSet(this, _Wepin_adminLoginResult, undefined, "f");
                             resolve(userInfo);
                         }));
                         yield this._resize();
                     }
                     else {
                         yield this._close();
+                        __classPrivateFieldSet(this, _Wepin_adminLoginResult, undefined, "f");
                         resolve(userInfo);
                     }
                 }));
@@ -324,6 +348,7 @@ export class Wepin extends EventEmitter {
                     else {
                         this.setAccountInfo([]);
                         this._wepinLifeCycle = 'before_login';
+                        __classPrivateFieldSet(this, _Wepin_adminLoginResult, undefined, "f");
                         resolve();
                     }
                 }));
@@ -360,6 +385,230 @@ export class Wepin extends EventEmitter {
                 throw new Error(`Can not resolve network name: ${network}`);
         }
     }
+    signUpWithEmailAndPassword(email, password) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this._isInitialized) {
+                throw new Error('Wepin.signUpWithEmailAndPassword: wepin sdk widget has to be initialized');
+            }
+            const id = new Date().getTime();
+            const adminSignupRequest = () => {
+                var _a;
+                LOG.debug('wait adminSignupRequest');
+                (_a = this.Widget) === null || _a === void 0 ? void 0 : _a.request({
+                    header: {
+                        request_from: 'react-native',
+                        request_to: 'wepin_widget',
+                        id,
+                    },
+                    body: {
+                        command: 'signup_email',
+                        parameter: {
+                            email,
+                            password,
+                        },
+                    },
+                });
+            };
+            this.addListener('startAdminRequest', adminSignupRequest);
+            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+                this.once(id.toString(), (data) => __awaiter(this, void 0, void 0, function* () {
+                    LOG.debug('response data: ', data.body.data);
+                    yield this._close();
+                    this.removeListener('startAdminRequest', adminSignupRequest);
+                    if (data.body.state === 'SUCCESS') {
+                        resolve(true);
+                    }
+                    else {
+                        if (data.body.data) {
+                            reject(new Error(data.body.data));
+                        }
+                        else {
+                            reject(new Error('unkonw/error'));
+                        }
+                    }
+                }));
+                yield this._open({ type: 'hide', url: '/sdk/signup' });
+            }));
+        });
+    }
+    loginWithEmailAndPassword(email, password) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this._isInitialized) {
+                throw new Error('Wepin.loginWithEmailAndPassword: wepin sdk widget has to be initialized');
+            }
+            const id = new Date().getTime();
+            const adminLoginRequest = () => {
+                var _a;
+                LOG.debug('wait adminLoginRequest');
+                (_a = this.Widget) === null || _a === void 0 ? void 0 : _a.request({
+                    header: {
+                        request_from: 'react-native',
+                        request_to: 'wepin_widget',
+                        id,
+                    },
+                    body: {
+                        command: 'login_email',
+                        parameter: {
+                            email,
+                            password,
+                        },
+                    },
+                });
+            };
+            this.addListener('startAdminRequest', adminLoginRequest);
+            this._wepinLifeCycle = 'before_login';
+            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+                this.once(id.toString(), (data) => __awaiter(this, void 0, void 0, function* () {
+                    LOG.debug('response data: ', data.body.data);
+                    this.removeListener('startAdminRequest', adminLoginRequest);
+                    yield this._close();
+                    if (data.body.state === 'SUCCESS') {
+                        const loginStatus = data.body.data.loginStatus;
+                        const token = data.body.data.token;
+                        if (loginStatus === 'complete') {
+                            const user = data.body.data.userInfo;
+                            __classPrivateFieldSet(this, _Wepin_adminLoginResult, undefined, "f");
+                            this._wepinLifeCycle = 'login';
+                            resolve(user);
+                        }
+                        else {
+                            __classPrivateFieldSet(this, _Wepin_adminLoginResult, { loginStatus, token }, "f");
+                            if (loginStatus === 'registerRequired') {
+                                __classPrivateFieldGet(this, _Wepin_adminLoginResult, "f").pinRequired = data.body.data.pinRequired;
+                            }
+                            this._wepinLifeCycle = 'login_before_register';
+                            LOG.debug('this._wepinLifeCycle', data.body.data);
+                            reject(new Error('required/wepin-register'));
+                        }
+                    }
+                    else {
+                        if (data.body.data) {
+                            reject(new Error(data.body.data));
+                        }
+                        else {
+                            reject(new Error('unkonw/error'));
+                        }
+                    }
+                }));
+                yield this._open({ type: 'hide', url: '/sdk/login' });
+            }));
+        });
+    }
+    register(pin) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this._isInitialized) {
+                throw new Error('Wepin.register: wepin sdk widget has to be initialized');
+            }
+            if (this._wepinLifeCycle !== 'login_before_register') {
+                throw new Error(`Wepin.register: lifecycle of wepin sdk is not 'login_before_register'`);
+            }
+            if (Utils.checkSameNumber(pin, 4, ((_a = __classPrivateFieldGet(this, _Wepin_adminLoginResult, "f")) === null || _a === void 0 ? void 0 : _a.loginStatus) === 'registerRequired')) {
+                throw new Error('invalid/pin-format');
+            }
+            const id = new Date().getTime();
+            const adminRegisterRequest = () => {
+                var _a, _b, _c, _d;
+                LOG.debug('wait adminLoginRequest');
+                (_a = this.Widget) === null || _a === void 0 ? void 0 : _a.request({
+                    header: {
+                        request_from: 'react-native',
+                        request_to: 'wepin_widget',
+                        id,
+                    },
+                    body: {
+                        command: 'register_wepin',
+                        parameter: {
+                            pin,
+                            loginStatus: (_b = __classPrivateFieldGet(this, _Wepin_adminLoginResult, "f")) === null || _b === void 0 ? void 0 : _b.loginStatus,
+                            pinRequired: (_c = __classPrivateFieldGet(this, _Wepin_adminLoginResult, "f")) === null || _c === void 0 ? void 0 : _c.pinRequired,
+                            token: (_d = __classPrivateFieldGet(this, _Wepin_adminLoginResult, "f")) === null || _d === void 0 ? void 0 : _d.token
+                        },
+                    },
+                });
+            };
+            this.addListener('startAdminRequest', adminRegisterRequest);
+            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+                this.once(id.toString(), (data) => __awaiter(this, void 0, void 0, function* () {
+                    LOG.debug('response data: ', data.body.data);
+                    this.removeListener('startAdminRequest', adminRegisterRequest);
+                    yield this._close();
+                    if (data.body.state === 'SUCCESS') {
+                        __classPrivateFieldSet(this, _Wepin_adminLoginResult, undefined, "f");
+                        this._wepinLifeCycle = 'before_login';
+                        resolve(true);
+                    }
+                    else {
+                        if (data.body.data) {
+                            reject(new Error(data.body.data));
+                        }
+                        else {
+                            reject(new Error('unkonw/error'));
+                        }
+                    }
+                }));
+                yield this._open({ type: 'hide', url: '/sdk/register' });
+            }));
+        });
+    }
+    getBalance(account) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this._isInitialized) {
+                throw new Error('Wepin.getBalance: wepin sdk widget has to be initialized');
+            }
+            if (this._wepinLifeCycle !== 'login') {
+                throw new Error(`Wepin.getBalance: lifecycle of wepin sdk is not 'login'`);
+            }
+            if (!Array.isArray(__classPrivateFieldGet(this, _Wepin_detailAccount, "f")) || __classPrivateFieldGet(this, _Wepin_detailAccount, "f").length === 0) {
+                throw new Error(`invalid/account`);
+            }
+            const selectedAccount = (_a = __classPrivateFieldGet(this, _Wepin_detailAccount, "f")) === null || _a === void 0 ? void 0 : _a.find((acc) => acc.address === account.address && acc.network === account.network);
+            if (!selectedAccount) {
+                throw new Error(`invalid/account`);
+            }
+            const id = new Date().getTime();
+            const adminBalanceRequest = () => {
+                var _a;
+                LOG.debug('wait adminLoginRequest');
+                (_a = this.Widget) === null || _a === void 0 ? void 0 : _a.request({
+                    header: {
+                        request_from: 'react-native',
+                        request_to: 'wepin_widget',
+                        id,
+                    },
+                    body: {
+                        command: 'get_balance',
+                        parameter: {
+                            account: selectedAccount,
+                        },
+                    },
+                });
+            };
+            this.addListener('startAdminRequest', adminBalanceRequest);
+            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+                this.once(id.toString(), (data) => __awaiter(this, void 0, void 0, function* () {
+                    LOG.debug('response data: ', data.body.data);
+                    this.removeListener('startAdminRequest', adminBalanceRequest);
+                    yield this._close();
+                    if (data.body.state === 'SUCCESS') {
+                        const balance = data.body.data.balance;
+                        resolve(balance);
+                    }
+                    else {
+                        if (data.body.data) {
+                            reject(new Error(data.body.data));
+                        }
+                        else {
+                            reject(new Error('unkonw/error'));
+                        }
+                    }
+                }));
+                yield this._open({ type: 'hide', url: '/sdk/balance' });
+            }));
+        });
+    }
 }
+_Wepin_adminLoginResult = new WeakMap(), _Wepin_detailAccount = new WeakMap();
 Wepin.WidgetView = WepinWidget;
 //# sourceMappingURL=wepin.js.map

@@ -1,12 +1,14 @@
 /// <reference types="react" />
 import { type IAttributes, WepinLifeCycle, IWepinUser } from '@wepin/types';
 import { modeByAppKey } from './types/modeByAppKey';
-import { Account } from './types/Account';
+import { Account, DetailAccount } from './types/Account';
 import { type WepinRequestMessage } from './types/Message';
 import { WebView } from './components/Webview';
 import EventEmitter from './utils/safeEventEmitter';
 import { SupportedChains } from './types/Provider';
+import { IAccountBalance } from './types/AccountBalance';
 export declare class Wepin extends EventEmitter {
+    #private;
     version: string;
     static WidgetView: import("react").FunctionComponent<{
         webviewConfig?: Pick<import("./components/Webview").IConfigWebview, "wepin"> | undefined;
@@ -27,7 +29,7 @@ export declare class Wepin extends EventEmitter {
     static getInstance(): Wepin;
     constructor();
     private _initQueue;
-    setAccountInfo(accounts: Account[]): void;
+    setAccountInfo(accounts: Account[], detailAccount?: DetailAccount[]): void;
     get Widget(): WebView | null | undefined;
     private setModeByAppKey;
     get modeByAppKey(): modeByAppKey;
@@ -51,4 +53,8 @@ export declare class Wepin extends EventEmitter {
     getProvider({ network }: {
         network: SupportedChains;
     }): any;
+    signUpWithEmailAndPassword(email: string, password: string): Promise<boolean>;
+    loginWithEmailAndPassword(email: string, password: string): Promise<IWepinUser>;
+    register(pin: string): Promise<boolean>;
+    getBalance(account: Account): Promise<IAccountBalance>;
 }

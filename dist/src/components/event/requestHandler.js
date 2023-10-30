@@ -2,7 +2,7 @@ import { Platform } from 'react-native';
 import LOG from '../../utils/log';
 import { WebView } from '../Webview';
 export const WebviewRequestHandler = (message, widget) => {
-    var _a, _b, _c;
+    var _a, _b, _c, _d;
     const response = {
         header: {
             response_from: 'react-native',
@@ -26,6 +26,7 @@ export const WebviewRequestHandler = (message, widget) => {
                         : WebView.Wepin.version,
                 },
             };
+            WebView.Wepin.emit('startAdminRequest');
             break;
         case 'initialized_widget':
             LOG.debug('initialized_widget result =>', (_a = message.body.parameter) === null || _a === void 0 ? void 0 : _a.result);
@@ -39,7 +40,7 @@ export const WebviewRequestHandler = (message, widget) => {
             break;
         case 'set_accounts':
             LOG.debug('set_accounts result =>', message.body.parameter);
-            WebView.Wepin.setAccountInfo((_c = message.body.parameter) === null || _c === void 0 ? void 0 : _c.accounts);
+            WebView.Wepin.setAccountInfo((_c = message.body.parameter) === null || _c === void 0 ? void 0 : _c.accounts, (_d = message.body.parameter) === null || _d === void 0 ? void 0 : _d.detailAccount);
             response.body = {
                 command: 'set_accounts',
                 state: 'SUCCESS',
@@ -47,6 +48,7 @@ export const WebviewRequestHandler = (message, widget) => {
             };
             break;
         case 'close_wepin_widget':
+            LOG.debug('close??');
             WebView.hide();
             break;
         case 'dequeue_request':
@@ -91,35 +93,6 @@ export const WebviewRequestHandler = (message, widget) => {
         widget.response(response);
     }
     function windowCloseObserver() {
-        const id = WebView.Wepin.queue[0].header.id;
-        const timer = setInterval(() => {
-            try {
-                if (!widget.state.visible) {
-                    clearInterval(timer);
-                    WebView.Wepin.closeWidget();
-                    const request = WebView.Wepin.queue[0];
-                    if (request.header.id === id) {
-                        WebView.Wepin.emit(request.header.id.toString(), {
-                            header: {
-                                response_from: 'wepin_widget',
-                                response_to: 'web',
-                                id: request.header.id,
-                            },
-                            body: {
-                                command: request.body.command,
-                                state: 'ERROR',
-                                data: 'User Cancel',
-                            },
-                        });
-                        WebView.Wepin.queue.shift();
-                    }
-                }
-            }
-            catch (error) {
-                clearInterval(timer);
-                WebView.Wepin.closeWidget();
-            }
-        }, 200);
     }
 };
 //# sourceMappingURL=requestHandler.js.map

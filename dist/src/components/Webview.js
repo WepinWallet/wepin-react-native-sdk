@@ -193,6 +193,7 @@ WebView.show = (args) => __awaiter(void 0, void 0, void 0, function* () {
 });
 WebView.hide = () => __awaiter(void 0, void 0, void 0, function* () {
     var _c;
+    LOG.debug('hide widget');
     yield ((_c = WebView.instance.current) === null || _c === void 0 ? void 0 : _c._close());
 });
 const __styles = () => StyleSheet.create({
