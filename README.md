@@ -144,7 +144,7 @@ function App(): JSX.Element {
     ....
   return (
     <Wepin.WidgetView>
-        ...
+  	  ...
     </Wepin.WidgetView>
   )
 }
@@ -181,7 +181,6 @@ await wepin.init('APPID', 'APPKEY', {
   defaultCurrency: 'USD',
 })
 ```
-
 
 ### isInitialized
 
@@ -257,14 +256,13 @@ const accounts = await wepin.getAccounts(['Ethereum'])
     ```javascript
     [
         {
-            address: "0x0000001111112222223333334444445555556666",
-            network: "Ethereum"
+    	    address: "0x0000001111112222223333334444445555556666",
+    	    network: "Ethereum"
         },
     ]
     ```
 - `Promise` \<void>
   - If user is not logged in, it returns `Promise` \<void>.
-
 
 ### getStatus (Support from version `0.0.6-alpha`)
 
@@ -314,16 +312,16 @@ var userInfo = await wepin.login()
     - `userInfo` \<object> _optional_
       - `userId` \<string>
       - `email` \<string>
-      - `provider` \<'google'|'apple'>
+      - `provider` \<'google'|'apple'|'email'>
   - Example
 
     ```js
     {
-        status: 'success',
-        userInfo: {
-            userID: '123455',
-            email: 'abc@test.com',
-            provider: 'google'
+    	status: 'success',
+    	userInfo: {
+    		userID: '123455',
+    		email: 'abc@test.com',
+    		provider: 'google'
             }
     }
     ```
@@ -346,11 +344,201 @@ Example
 await wepin.logout()
 ```
 
+### signUpWithEmailAndPassword (Support from version `0.0.9-alpha`)
+
+It signs up on the wepin with your email and password.
+
+```javascript
+wepin.signUpWithEmailAndPassword(email, password)
+```
+
+#### Parameters
+
+- `email` \<string> - User email
+- `password` \<string> - User password
+
+#### Return value
+
+- `Promise` \<boolean>
+
+  - Returns true if the signup is successful.
+
+#### Exception message
+
+- [Admin Error Message](#admin-error-message)
+
+#### Example
+
+```javascript
+const result = await wepin.signUpWithEmailAndPassword('test@test.com', 'abcd12345')
+```
+
+### loginWithEmailAndPassword(Support from version `0.0.9-alpha`)
+
+It logs in to the Wepin with your email and password.
+
+```javascript
+wepin.loginWithEmailAndPassword(email, password)
+```
+
+#### Parameters
+
+- `email` \<string> - User email
+- `password` \<string> - User password
+
+#### Return value
+
+- `Promise` \<IWepinUser>
+
+  - Type of `IWepinUser` is defined in [`@wepin/types`](https://github.com/WepinWallet/wepin-js-sdk-types) (Support from version `0.0.8`)
+
+    - `status` \<'success'|'fail'>
+    - `userInfo` \<object> _optional_
+      - `userId` \<string>
+      - `email` \<string>
+      - `provider` \<'email'>
+  - Example
+
+    ```js
+    {
+    	status: 'success',
+    	userInfo: {
+    		userID: '123455',
+    		email: 'test@test.com',
+    		provider: 'email'
+            }
+    }
+    ```
+
+#### Exception message
+
+- [Admin Error Message](#admin-error-message)
+
+#### Example
+
+```javascript
+const result = await wepin.loginWithEmailAndPassword('test@test.com', 'abcd12345')
+```
+
+### register(Support from version `0.0.9-alpha`)
+
+It registers in the Wepin with a wallet pin.
+
+After the signup and login are completed, the Wepin service registration (wallet and account creation) will proceed.
+
+```javascript
+wepin.register(pin)
+```
+
+#### Parameters
+
+- `pin` \<string> - Wallet PIN
+
+#### Return value
+
+- `Promise` \<boolean>
+
+  - Returns true if the registeration is successful.
+
+#### Exception message
+
+- [Admin Error Message](#admin-error-message)
+
+#### Example
+
+```javascript
+const result = await wepin.register('test@test.com', 'abcd1234@')
+```
+
+### getBalance(Support from version `0.0.9-alpha`)
+
+It returns the account's balance information. It can be only usable after widget login.
+
+```javascript
+wepin.getBalance(account)
+```
+
+#### Parameters
+
+- `account` \<`IAccount`> - User email
+  - Type of `IAccount` is defined in [`@wepin/types`](https://github.com/WepinWallet/wepin-js-sdk-types)
+
+#### Return value
+
+- `Promise` \<`IAccountBalance`>
+
+  - Type of `IAccountBalance` and `ITokenBalance` is defined in [`@wepin/types`](https://github.com/WepinWallet/wepin-js-sdk-types) (Support from version `0.0.8`)
+
+    - `symbol` \<string> - symbol of account
+    - `balance` \<string> - balance of account
+    - `tokens`  \<Array<`ITokenBalance`>> - token balance information for account
+      - `name` \<string> -  token name
+      - `contract` \<string> - token contract address
+      - `symbol` \<string> -  token symbol
+      - `balance` \<string> - token balance
+  - Example
+
+    ```js
+    {
+    	symbol: 'ETH',
+            balance: '1.1',
+    	tokens:[
+    		{
+    			name: 'test',
+    			contract: '0x123...213',
+    			symbol: 'TEST',
+    			balance: '10'
+    		},
+    	]
+    }
+    ```
+
+#### Exception message
+
+- [Admin Error Message](#admin-error-message)
+
+#### Example
+
+```javascript
+const result = wepin.signUpWithEmailAndPassword('test@test.com', 'abcd1234@')
+```
+
+### Admin Error Message
+
+The error message types of the admin method are as follows.
+
+| Error Message           | Description                                                                                                |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------- |
+| invalid/email-format    | invalid email format                                                                                       |
+| invalid/password-format | invalid password format (A minimum of 8 characters consisting of letters and numbers. )                   |
+| invalid/pin-format      | invalid PIN format (6-8 digit number) (*Do not use the same number more than four times when registering) |
+| invalid/firebase-token  | invalid firebase token                                                                                     |
+| invalid/wepin-api-key   | invalid wepin api key                                                                                      |
+| invalid/account         | invalid account                                                                                            |
+| invalid/email-domain    | invalid email domain                                                                                       |
+| auth/existed-email      | existed email                                                                                              |
+| auth/too-many-requests  | too mandy firebase requests                                                                                |
+| auth/wrong-password     | wrong password                                                                                             |
+| auth/expired-token      | expired login session                                                                                      |
+| auth/unknown/${string}  | unknown auth error                                                                                         |
+| fail/send-email         | failed to sent validation email                                                                           |
+| fail/reset-password     | failed to set password                                                                                     |
+| fail/email-verified     | failed to verify email                                                                                     |
+| fail/wepin-login        | login wepin failed                                                                                         |
+| fail/wepin-register     | failed to register with wepin                                                                              |
+| fail/get-balance        | failed to get balance                                                                                      |
+| fail/check-email        | failed to check email                                                                                      |
+| require/email-verified  | email verification required                                                                                |
+| require/signup          | wepin sign-up required                                                                                     |
+| require/wepin-register  | wepin registration required                                                                                |
+| require/login           | wepin login required                                                                                       |
+| unknown/${string}       | unknown error                                                                                              |
+
 ## ⏩ Provider(Support from version `0.0.7-alpha`)
 
-Wipin supports providers that return JSON-RPC request responses to connect with blockchain networks in webs. With Wipin Provider, you can easily connect to various networks supported by Wipin.
+Wepin supports providers that return JSON-RPC request responses to connect with blockchain networks in webs. With Wepin Provider, you can easily connect to various networks supported by Wepin.
 
-The providers supported by Wipin are as follows.
+The providers supported by Wepin are as follows.
 
 - EVM compatible Networks
 - Klaytn Network
@@ -369,7 +557,7 @@ The providers supported by Wipin are as follows.
 | 137      | Polygon Mainnet           | evmpolygon         |
 | 80001    | Polygon Mumbai            | evmpolygon-testnet |
 |          | ~~Anttime~~(Coming soon) | ~~evmanttime~~    |
-| 2731     | Anttime Testnet           | evmanttime-testnet |
+| 2731     | Elizabeth Testnet(Anttime Testnet)           | evmanttime-testnet |
 | 8217     | Klaytn                    | klaytn             |
 | 1001     | Klaytn Testnet            | klaytn-testnet     |
 
@@ -453,9 +641,9 @@ const provider = wepin.getProvider({ network: 'ethereum' })
 > - web3.js : [web3.js 1.0.0 documentation](https://web3js-kr.readthedocs.io/ko/latest/getting-started.html)
 > - ethers.js: [ethers.js 5.7 documentaion](https://docs.ethers.org/v5/getting-started/)
 
-
 - **Send Transaction**
   Transaction can be sent.
+
   - `web3.js`
 
     ```javascript
@@ -469,7 +657,7 @@ const provider = wepin.getProvider({ network: 'ethereum' })
     }
     const response = await web3.eth.sendTransaction(tx)
     ```
-  - `etehrs.js`
+  - `ethers.js`
 
     ```javascript
     const signer = web3.getSigner()
@@ -483,12 +671,10 @@ const provider = wepin.getProvider({ network: 'ethereum' })
     }
     const response = await signer.sendTransaction(tx)
     ```
-
-
-
 - **Contract Call**
   A contract call can be performed.
-  - web3.js
+
+  - `web3.js`
 
     ```javascript
     const callObject = {
@@ -497,7 +683,7 @@ const provider = wepin.getProvider({ network: 'ethereum' })
     }
     const response = await web3.eth.call(callObject)
     ```
-  - ethers.js
+  - `ethers.js`
 
     ```javascript
     const callObject = {
