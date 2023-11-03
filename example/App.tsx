@@ -520,8 +520,12 @@ function App(): JSX.Element {
             </Text> */}
             <SelectList
               setSelected={(key: any) => {
-                setSuspectedNetwork(AvailableNetworks[key]?.value);
-                provider.setConfig(AvailableNetworks[key]?.value, setResult, setSelectedAccount)
+                console.log('key', key)
+                const findeNetwork = AvailableNetworks.find((data: any) => {
+                  return data.key === key
+                })
+                setSuspectedNetwork(findeNetwork?.value);
+                provider.setConfig(findeNetwork?.value, setResult, setSelectedAccount)
               }}
               placeholder='Select Network'
               searchPlaceholder='Search Network'
@@ -646,8 +650,11 @@ function App(): JSX.Element {
             </Text> */}
             <SelectList
               setSelected={(key: any) => {
-                setSuspectedNetwork(AvailableNetworks[key]?.value);
-                web3TestInstance.setConfig(AvailableNetworks[key]?.value, setResult, setSelectedAddress)
+                const findeNetwork = AvailableNetworks.find((data: any) => {
+                  return data.key === key
+                })
+                setSuspectedNetwork(findeNetwork?.value);
+                web3TestInstance.setConfig(findeNetwork?.value, setResult, setSelectedAddress)
               }}
               placeholder='Select Network'
               searchPlaceholder='Search Network'
