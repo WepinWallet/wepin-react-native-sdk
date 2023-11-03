@@ -17,7 +17,7 @@ import {
   LogBox,
 } from 'react-native'
 import Wepin from '@wepin/react-native-sdk'
-// import Wepin from './wepinReactNativeSDK';
+// import Wepin from './src/wepinReactNativeSDK';
 import { getApiKey, ItestMode } from './src/config/apiKey'
 import { getBundleId } from 'react-native-device-info'
 import { AttributesType, IAccount } from '@wepin/types'
@@ -28,6 +28,7 @@ import { web3Test } from './src/web3Test'
 import CustomModal from './src/components/CustomModal'
 import DialogManager, { DialogContent } from 'react-native-dialog-component'
 import { SelectList } from 'react-native-dropdown-select-list'
+
 
 const deviceHeight = Dimensions.get('window').height
 
@@ -51,6 +52,7 @@ function App(): JSX.Element {
       // 'Animated: `useNativeDriver` was not specified. This is a required option and must be explicitly set to `true` or `false`'
     ]);
   })
+  console.log('App', accounts)
   const AvailableNetworks = useMemo<any>(() => {
 
     let id = 0
@@ -125,9 +127,9 @@ function App(): JSX.Element {
       })
 
       const isInitialized = wepin.isInitialized()
-      if (type !== 'show') {
-        setResult('wepin isInitialized: ' + isInitialized)
-      }
+      // if (type !== 'show') {
+      setResult('wepin isInitialized: ' + isInitialized)
+      // }
 
     } catch (e) {
       console.error(e)
@@ -147,9 +149,9 @@ function App(): JSX.Element {
       })
 
       const isInitialized = wepin.isInitialized()
-      if (type !== 'show') {
-        setResult('wepin isInitialized: ' + isInitialized)
-      }
+      // if (type !== 'show') {
+      setResult('wepin isInitialized: ' + isInitialized)
+      // }
 
     } catch (e) {
       console.error(e)
@@ -168,6 +170,8 @@ function App(): JSX.Element {
     }
   }
 
+  // var id = 0;
+  // var elements = [];
   const getStatus = async () => {
     console.log('getStatus')
     try {
@@ -219,44 +223,39 @@ function App(): JSX.Element {
         return { key: idx.toString(), value: `${val.network}(${val.address})` }
       })
     }
-    // console.log('abc', DialogManager.currentDialog)
+    console.log('abc', DialogManager.currentDialog)
 
     let res: any = {}
     DialogManager.show({
       title: options.title,
       titleAlign: 'center',
       animationDuration: 200,
-      dismissOnTouchOutside: false,
+      onTouchOutside: false,
       // ScaleAnimation: new ScaleAnimation(),
       children: (
         <DialogContent contentStyle={undefined}>
           <View>
-            {options.inputs?.map((obj, i) =>
-              <View key={i} style={styles.inputContainter}>
-                <Text style={styles.label}>
-                  {obj.text}:
-                </Text>
-                <TextInput
-                  style={styles.textlInput}
-                  // placeholder={obj.defaultValue}
-                  autoCapitalize='none'
-                  secureTextEntry={obj.secure}
-                  // value={obj.defaultValue}
-                  onChangeText={(val) => { res[obj.text] = val; }}
-                />
-              </View>)}
-            {
-              options.selectList ?
-                <SelectList
-                  setSelected={(key: any) => {
-                    res['account'] = options.selectList?.list[Number(key)]
-                  }}
-                  placeholder='Select Account'
-                  searchPlaceholder='Search Account'
-                  data={accountForSelectAccount!}
-                  save='key'
-                /> : <></>
-            }
+            {options.inputs?.map((obj, i) => <View key={i} style={styles.inputContainter}>
+              <Text style={styles.label}>
+                {obj.text}:
+              </Text>
+              <TextInput
+                style={styles.textlInput}
+                // placeholder={obj.defaultValue}
+                autoCapitalize='none'
+                secureTextEntry={obj.secure}
+                // value={obj.defaultValue}
+                onChangeText={(val) => { res[obj.text] = val }} />
+            </View>)}
+            {options.selectList ?
+              <SelectList
+                setSelected={(key: any) => {
+                  res['account'] = options.selectList?.list[Number(key)]
+                }}
+                placeholder='Select Account'
+                searchPlaceholder='Search Account'
+                data={accountForSelectAccount!}
+                save='key' /> : <></>}
 
             <View style={styles.buttonContainer}>
               <Button title="CANCEL" onPress={() => {
@@ -431,6 +430,7 @@ function App(): JSX.Element {
       // ToDo
       await wepin.finalize()
       setAccounts([])
+      setSuspectedNetwork(undefined);
       setResult('finalizeWepin success')
     } catch (e) {
       console.error(e)
@@ -504,9 +504,9 @@ function App(): JSX.Element {
   const handleSave = (data: any) => {
     console.log('data: ', data)
     setModalVisible(false)
-    setTimeout(() => {
-      provider.saveDataAndCall(data, providerMethod!)
-    }, 100)
+    // setTimeout(() => {
+    provider.saveDataAndCall(data, providerMethod!)
+    // }, 100)
 
     // setModalVisible(false)
   }
@@ -631,9 +631,9 @@ function App(): JSX.Element {
   const handleWeb3Save = (data: any) => {
     console.log('data: ', data)
     setWeb3ModalVisible(false)
-    setTimeout(() => {
-      web3TestInstance.saveDataAndCall(data, web3rMethod!)
-    }, 100)
+    // setTimeout(() => {
+    web3TestInstance.saveDataAndCall(data, web3rMethod!)
+    // }, 100)
     // setWeb3ModalVisible(false)
   }
   const web3TestItemListView = (
@@ -740,7 +740,7 @@ function App(): JSX.Element {
   ]);
 
   return (
-    <>
+    <Wepin.WidgetView>
       <SafeAreaView>
         <View
           style={{
@@ -761,8 +761,6 @@ function App(): JSX.Element {
             Address: {selectedAccount}
           </Text> : ''}
         </View>
-        <Wepin.WidgetView>
-        </Wepin.WidgetView>
       </SafeAreaView>
       <TabView
         navigationState={{ index, routes }}
@@ -788,7 +786,7 @@ function App(): JSX.Element {
           </Text>
         </ScrollView>
       </View>
-    </>
+    </Wepin.WidgetView>
   )
 }
 

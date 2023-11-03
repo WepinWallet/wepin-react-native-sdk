@@ -22,13 +22,14 @@ var _Wepin_adminLoginResult, _Wepin_detailAccount;
 import { WEPIN_DEFAULT_LANG, WEPIN_DEFAULT_CURRENCY } from './const/config';
 import LOG from './utils/log';
 import Utils from './utils/utils';
-import { WebView } from './components/Webview';
 import EventEmitter from './utils/safeEventEmitter';
 import { getBundleId } from 'react-native-device-info';
-import { WepinWidget } from './components/WepinWidget';
 import PackageJson from '../package.json';
 import KlayProvider from './provider/klaytn/inpageProvider';
 import EthProvider from './provider/ethereum/inpageProvider';
+import CustomDialogManager from './components/dialog';
+import DialogManager from './components/dialog';
+import { RootSiblingParent } from 'react-native-root-siblings';
 export class Wepin extends EventEmitter {
     static getInstance() {
         if (!this._instance) {
@@ -44,6 +45,10 @@ export class Wepin extends EventEmitter {
         this.version = PackageJson.version;
         console.log(`WepinJavaScript SDK v${this.version} Initialized`);
         this._wepinLifeCycle = 'not_initialized';
+        if (DialogManager.currentDialog) {
+            DialogManager.dismiss();
+            DialogManager.destroy();
+        }
         this._initQueue();
     }
     _initQueue() {
@@ -108,6 +113,7 @@ export class Wepin extends EventEmitter {
         defaultLanguage: WEPIN_DEFAULT_LANG,
         defaultCurrency: WEPIN_DEFAULT_CURRENCY,
     }) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             LOG.debug('Wepin init starts with Key', appKey);
             if (this._isInitialized) {
@@ -120,21 +126,26 @@ export class Wepin extends EventEmitter {
             this.wepinDomain = getBundleId();
             this._isInitialized = false;
             this._wepinLifeCycle = 'initializing';
-            yield this._open({ isInit: true });
+            if (((_a = this.wepinAppAttributes) === null || _a === void 0 ? void 0 : _a.type) !== 'show') {
+                yield this._open({ isInit: true, url: '/sdk/init' });
+            }
+            else {
+                yield this._open({ isInit: true });
+            }
             return new Promise(resolve => {
-                this.once('widgetOpened', () => {
-                    var _a, _b;
+                this.once('widgetOpened', () => __awaiter(this, void 0, void 0, function* () {
+                    var _a;
                     if (this._isInitialized) {
                         this._wepinLifeCycle = 'initialized';
                     }
                     else {
                         this._wepinLifeCycle = 'not_initialized';
                     }
-                    if (((_b = (_a = WebView.Wepin) === null || _a === void 0 ? void 0 : _a.wepinAppAttributes) === null || _b === void 0 ? void 0 : _b.type) !== 'show') {
-                        this._close();
+                    if (((_a = this.wepinAppAttributes) === null || _a === void 0 ? void 0 : _a.type) !== 'show') {
+                        yield this._close();
                     }
                     resolve(this);
-                });
+                }));
             });
         });
     }
@@ -160,12 +171,15 @@ export class Wepin extends EventEmitter {
             yield this._open();
         });
     }
+    setWidgetWebview(webview) {
+        this._widget = webview;
+        this.emit('onRenderCompleteWebview');
+    }
     _open(options) {
         var _a, _b, _c, _d, _e;
         return __awaiter(this, void 0, void 0, function* () {
             let baseUrl = Utils.getUrls(this.modeByAppKey).wepinWebview;
-            if (this._widget && this._widget.state.visible) {
-                LOG.debug('already opened widget', this._widget);
+            if (this._widget && this._widget.props.visible) {
                 return;
             }
             if (options === null || options === void 0 ? void 0 : options.url) {
@@ -174,30 +188,40 @@ export class Wepin extends EventEmitter {
             try {
                 if ((options === null || options === void 0 ? void 0 : options.type) === 'hide' ||
                     (((_a = this.wepinAppAttributes) === null || _a === void 0 ? void 0 : _a.type) !== 'show' && (options === null || options === void 0 ? void 0 : options.isInit))) {
-                    this._widget = yield WebView.show({
-                        url: baseUrl,
-                        appInfo: {
-                            appKey: this.wepinAppKey,
-                            domain: this.wepinDomain,
-                            attributes: { type: 'hide', defaultCurrency: (_b = this.wepinAppAttributes) === null || _b === void 0 ? void 0 : _b.defaultCurrency, defaultLanguage: (_c = this.wepinAppAttributes) === null || _c === void 0 ? void 0 : _c.defaultLanguage },
-                            platform: '',
-                        },
-                        wepin: this,
+                    CustomDialogManager.show({
+                        webviewConfig: {
+                            url: baseUrl,
+                            appInfo: {
+                                appKey: this.wepinAppKey,
+                                domain: this.wepinDomain,
+                                attributes: { type: 'hide', defaultCurrency: (_b = this.wepinAppAttributes) === null || _b === void 0 ? void 0 : _b.defaultCurrency, defaultLanguage: (_c = this.wepinAppAttributes) === null || _c === void 0 ? void 0 : _c.defaultLanguage },
+                                platform: '',
+                            },
+                            wepin: this,
+                        }
                     });
                 }
                 else {
-                    this._widget = yield WebView.show({
-                        url: baseUrl,
-                        appInfo: {
-                            appKey: this.wepinAppKey,
-                            domain: this.wepinDomain,
-                            attributes: { type: 'show', defaultCurrency: (_d = this.wepinAppAttributes) === null || _d === void 0 ? void 0 : _d.defaultCurrency, defaultLanguage: (_e = this.wepinAppAttributes) === null || _e === void 0 ? void 0 : _e.defaultLanguage },
-                            platform: '',
-                        },
-                        wepin: this,
+                    CustomDialogManager.show({
+                        webviewConfig: {
+                            url: baseUrl,
+                            appInfo: {
+                                appKey: this.wepinAppKey,
+                                domain: this.wepinDomain,
+                                attributes: { type: 'show', defaultCurrency: (_d = this.wepinAppAttributes) === null || _d === void 0 ? void 0 : _d.defaultCurrency, defaultLanguage: (_e = this.wepinAppAttributes) === null || _e === void 0 ? void 0 : _e.defaultLanguage },
+                                platform: '',
+                            },
+                            wepin: this,
+                        }
                     });
                 }
-                LOG.debug('openWidget this._widget', this._widget);
+                return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+                    this.once('onRenderCompleteWebview', () => __awaiter(this, void 0, void 0, function* () {
+                        LOG.debug('onRenderCompleteWebview');
+                        LOG.debug('openWidget this._widget', this._widget);
+                        resolve();
+                    }));
+                }));
             }
             catch (e) {
                 LOG.debug(e);
@@ -214,20 +238,28 @@ export class Wepin extends EventEmitter {
                 baseUrl += options.url;
             }
             try {
-                if (this._widget && this._widget.state.visible) {
-                    this._widget = yield WebView.show({
-                        url: baseUrl,
-                        appInfo: {
-                            appKey: this.wepinAppKey,
-                            domain: this.wepinDomain,
-                            attributes: { type, defaultCurrency: (_b = this.wepinAppAttributes) === null || _b === void 0 ? void 0 : _b.defaultCurrency, defaultLanguage: (_c = this.wepinAppAttributes) === null || _c === void 0 ? void 0 : _c.defaultLanguage },
-                            platform: '',
+                if (this._widget && this._widget.props.visible) {
+                    CustomDialogManager.update({
+                        webviewConfig: {
+                            url: baseUrl,
+                            appInfo: {
+                                appKey: this.wepinAppKey,
+                                domain: this.wepinDomain,
+                                attributes: { type, defaultCurrency: (_b = this.wepinAppAttributes) === null || _b === void 0 ? void 0 : _b.defaultCurrency, defaultLanguage: (_c = this.wepinAppAttributes) === null || _c === void 0 ? void 0 : _c.defaultLanguage },
+                                platform: '',
+                            },
+                            wepin: this,
                         },
-                        wepin: this,
+                        visible: true,
                     });
-                    return;
+                    return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+                        this.once('onRenderCompleteWebview', () => __awaiter(this, void 0, void 0, function* () {
+                            LOG.debug('onRenderCompleteWebview');
+                            LOG.debug('openWidget this._widget', this._widget);
+                            resolve();
+                        }));
+                    }));
                 }
-                LOG.debug('openWidget this._widget', this._widget);
             }
             catch (e) {
                 LOG.debug(e);
@@ -240,6 +272,7 @@ export class Wepin extends EventEmitter {
             if (!this._isInitialized) {
                 throw new Error('Wepin.closeWidget: wepin sdk widget has to be initialized');
             }
+            LOG.debug('closeWidget', this._widget);
             if (this._widget) {
                 yield this._close();
             }
@@ -252,7 +285,12 @@ export class Wepin extends EventEmitter {
         return __awaiter(this, void 0, void 0, function* () {
             if (this._widget) {
                 LOG.debug('close this._widget', this._widget);
-                yield WebView.hide();
+                LOG.debug('CustomDialogManager', CustomDialogManager.currentDialog);
+                if (CustomDialogManager.currentDialog) {
+                    CustomDialogManager.dismiss();
+                    CustomDialogManager.destroy();
+                }
+                this._widget.EL = () => { };
                 this._widget = undefined;
             }
         });
@@ -291,6 +329,7 @@ export class Wepin extends EventEmitter {
         });
     }
     setUserInfo(userInfo) {
+        LOG.debug('setUserInfo: ', userInfo);
         this._userInfo = userInfo;
         if (userInfo && userInfo.status === 'success') {
             this._wepinLifeCycle = 'login';
@@ -321,7 +360,8 @@ export class Wepin extends EventEmitter {
                             __classPrivateFieldSet(this, _Wepin_adminLoginResult, undefined, "f");
                             resolve(userInfo);
                         }));
-                        yield this._resize();
+                        yield this._close();
+                        yield this._open({ type: 'show' });
                     }
                     else {
                         yield this._close();
@@ -347,7 +387,7 @@ export class Wepin extends EventEmitter {
                     }
                     else {
                         this.setAccountInfo([]);
-                        this._wepinLifeCycle = 'before_login';
+                        this._wepinLifeCycle = 'initialized';
                         __classPrivateFieldSet(this, _Wepin_adminLoginResult, undefined, "f");
                         resolve();
                     }
@@ -610,5 +650,5 @@ export class Wepin extends EventEmitter {
     }
 }
 _Wepin_adminLoginResult = new WeakMap(), _Wepin_detailAccount = new WeakMap();
-Wepin.WidgetView = WepinWidget;
+Wepin.WidgetView = RootSiblingParent;
 //# sourceMappingURL=wepin.js.map

@@ -12,6 +12,7 @@ import { ethErrors, EthereumRpcError } from 'eth-rpc-errors';
 import { getRpcPromiseCallback, isValidChainId } from './utils/utils';
 import EventEmitter from '../utils/safeEventEmitter';
 import { WepinJsonRpcEngine } from './json-rpc/JsonRpcEngine';
+import LOG from '../utils/log';
 export class BaseProvider extends EventEmitter {
     constructor({ logger = console, rpcMiddleware = [], } = {}) {
         super();
@@ -39,7 +40,7 @@ export class BaseProvider extends EventEmitter {
                     data: args,
                 });
             }
-            this._log.debug('[RPC Request]: requesting args', args);
+            LOG.debug('[RPC Request]: requesting args', args);
             const { method, params, id = new Date().getTime() } = args;
             if (typeof method !== 'string' || method.length === 0) {
                 throw ethErrors.rpc.invalidRequest({
@@ -84,7 +85,7 @@ export class BaseProvider extends EventEmitter {
                 payload.method === 'eth_requestAccounts' ||
                 payload.method === 'klay_requestAccounts') {
                 cb = (err, res) => {
-                    this._log.debug('_rpcRequest to handler account changes', err, res);
+                    LOG.debug('_rpcRequest to handler account changes', err, res);
                     this._handleAccountsChanged(res.result || [], payload.method === 'eth_accounts');
                     callback(err, res);
                 };
@@ -135,19 +136,19 @@ export class BaseProvider extends EventEmitter {
     _handleAccountsChanged(accounts, isEthAccounts = false) {
         let _accounts = accounts;
         if (!Array.isArray(accounts)) {
-            this._log.debug('Received invalid accounts parameter. Please report this bug.', accounts);
+            LOG.debug('Received invalid accounts parameter. Please report this bug.', accounts);
             _accounts = [];
         }
         for (const account of accounts) {
             if (typeof account !== 'string') {
-                this._log.debug('Received non-string account. Please report this bug.', accounts);
+                LOG.debug('Received non-string account. Please report this bug.', accounts);
                 _accounts = [];
                 break;
             }
         }
         if (!dequal(this._state.accounts, _accounts)) {
             if (isEthAccounts && this._state.accounts !== null) {
-                this._log.debug(`'eth_accounts' unexpectedly updated accounts. Please report this bug.`, _accounts);
+                LOG.debug(`'eth_accounts' unexpectedly updated accounts. Please report this bug.`, _accounts);
             }
             this._state.accounts = _accounts;
             if (this.selectedAddress !== _accounts[0]) {

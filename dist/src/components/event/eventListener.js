@@ -1,7 +1,6 @@
 import LOG from '../../utils/log';
 import { WebviewRequestHandler } from './requestHandler';
 import { WebviewResponseHandler } from './responseHandler';
-import { WebView } from '../Webview';
 export const getEventListener = (widget) => {
     const isValidEvent = (event) => {
         const data = JSON.parse(event.nativeEvent.data);
@@ -26,7 +25,7 @@ const handleMessage = (message, widget) => {
         WebviewRequestHandler(message, widget);
     }
     else if (message.header.response_to === 'react-native') {
-        WebviewResponseHandler(message, WebView.Wepin);
+        WebviewResponseHandler(message, widget.props.config.wepin);
     }
     else {
         LOG.error('Failed to handle message:', message);

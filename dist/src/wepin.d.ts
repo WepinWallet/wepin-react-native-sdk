@@ -1,19 +1,16 @@
-/// <reference types="react" />
 import { type IAttributes, WepinLifeCycle, IWepinUser } from '@wepin/types';
 import { modeByAppKey } from './types/modeByAppKey';
 import { Account, DetailAccount } from './types/Account';
 import { type WepinRequestMessage } from './types/Message';
-import { WebView } from './components/Webview';
 import EventEmitter from './utils/safeEventEmitter';
 import { SupportedChains } from './types/Provider';
 import { IAccountBalance } from './types/AccountBalance';
+import WebView from './components/Webview';
+import { RootSiblingParent } from 'react-native-root-siblings';
 export declare class Wepin extends EventEmitter {
     #private;
     version: string;
-    static WidgetView: import("react").FunctionComponent<{
-        webviewConfig?: Pick<import("./components/Webview").IConfigWebview, "wepin"> | undefined;
-        children: import("react").ReactElement<any, string | import("react").JSXElementConstructor<any>> | import("react").ReactElement<any, string | import("react").JSXElementConstructor<any>>[];
-    }>;
+    static WidgetView: typeof RootSiblingParent;
     private static _instance;
     wepinAppId: string | undefined;
     wepinAppKey: string | undefined;
@@ -25,12 +22,12 @@ export declare class Wepin extends EventEmitter {
     _isInitialized: boolean;
     private _userInfo;
     private _wepinLifeCycle;
-    queue: WepinRequestMessage[];
+    queue: WepinRequestMessage[] | undefined;
     static getInstance(): Wepin;
     constructor();
     private _initQueue;
     setAccountInfo(accounts: Account[], detailAccount?: DetailAccount[]): void;
-    get Widget(): WebView | null | undefined;
+    get Widget(): WebView | undefined;
     private setModeByAppKey;
     get modeByAppKey(): modeByAppKey;
     toJSON(): string;
@@ -38,6 +35,7 @@ export declare class Wepin extends EventEmitter {
     isInitialized(): boolean;
     finalize(): Promise<void>;
     openWidget(): Promise<void>;
+    setWidgetWebview(webview: WebView): void;
     private _open;
     private _resize;
     closeWidget(): Promise<void>;

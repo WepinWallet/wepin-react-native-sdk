@@ -28,6 +28,7 @@ export function createFetchMiddlewareEther({ rpcUrl, originHttpHeaderKey, }) {
         });
         const maxAttempts = 5;
         const retryInterval = 1000;
+        let isRetriable = true;
         for (let attempt = 0; attempt < maxAttempts; attempt++) {
             try {
                 const fetchRes = yield axios(fetchParams);
@@ -40,12 +41,18 @@ export function createFetchMiddlewareEther({ rpcUrl, originHttpHeaderKey, }) {
             catch (err) {
                 console.log('fetch error:, ', err);
                 const errMsg = err.toString();
-                const isRetriable = RETRIABLE_ERRORS.some((phrase) => errMsg.includes(phrase));
+                isRetriable = RETRIABLE_ERRORS.some((phrase) => {
+                    const errRes = errMsg.includes(phrase);
+                    return errRes;
+                });
                 if (!isRetriable) {
-                    throw err;
+                    _next(err);
+                    return;
                 }
             }
-            yield timeout(retryInterval);
+            if (isRetriable) {
+                yield timeout(retryInterval);
+            }
         }
     }));
 }
@@ -86,7 +93,6 @@ function createFetchConfigFromReq({ req, rpcUrl, originHttpHeaderKey, }) {
         params: req.params,
     };
     const originDomain = req.origin;
-    const serializedPayload = JSON.stringify(payload);
     const fetchParams = {
         method: 'POST',
         headers: {

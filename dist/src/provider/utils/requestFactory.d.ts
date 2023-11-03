@@ -1,5 +1,5 @@
-import { WepinRequestMessage } from '@/types/Message';
-import { CreateWepinMiddlewareOptions } from '@/types/Provider';
+import { WepinRequestMessage } from '../../types/Message';
+import { CreateWepinMiddlewareOptions } from '../../types/Provider';
 export declare const makeRequestID: () => number;
 export declare const requestFactory: ({ wepin, network, req, res, next, end, command, parameter, }: {
     wepin: CreateWepinMiddlewareOptions['wepin'];

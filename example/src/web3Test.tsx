@@ -1,4 +1,5 @@
-import Wepin from "@wepin/react-native-sdk"
+import Wepin from '@wepin/react-native-sdk'
+// import Wepin from './wepinReactNativeSDK';
 import { Dispatch } from "react"
 
 // https://docs.ethers.org/v5/cookbook/react-native/#cookbook-reactnative-shims

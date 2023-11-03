@@ -1,6 +1,6 @@
 {
     "name": "@wepin/react-native-sdk",
-    "version": "0.0.9-alpha",
+    "version": "0.0.10-alpha",
     "description": "Wepin Widget React Native SDK for Android/iOS",
     "main": "./dist/src/index.js",
     "types": "./dist/src/index.d.ts",
@@ -36,6 +36,7 @@
         "json-rpc-engine": "^6.1.0",
         "process": "^0.11.10",
         "react-native-base64": "^0.2.1",
+        "react-native-root-siblings": "^5.0.1",
         "react-native-status-bar-height": "^2.6.0",
         "react-native-url-polyfill": "^2.0.0",
         "superstruct": "^1.0.3",
@@ -57,7 +58,6 @@
         "react-native-device-info": "^10.6.0",
         "react-native-dotenv": "^3.4.9",
         "react-native-inappbrowser-reborn": "^3.7.0",
-        "react-native-safe-area-context": "^4.5.2",
         "react-native-webview": "^13.3.0",
         "rn-nodeify": "^10.3.0",
         "typescript": "^4.8.4",
@@ -68,7 +68,6 @@
         "react-native": ">=0.71.8",
         "react-native-device-info": ">=10.6.0",
         "react-native-inappbrowser-reborn": ">=3.7.0",
-        "react-native-safe-area-context": ">=4.5.2",
         "react-native-webview": ">=13.3.0"
     }
 }

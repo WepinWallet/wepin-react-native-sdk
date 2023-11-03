@@ -7,111 +7,89 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var _a;
-import * as React from 'react';
-import { Modal, Platform, StyleSheet, View, Linking, Dimensions } from 'react-native';
-import NativeWebView from 'react-native-webview';
-import LOG from '../utils/log';
+import React, { Component } from 'react';
+import { StyleSheet, Platform, View, Linking, Dimensions } from 'react-native';
 import { getEventListener } from './event/eventListener';
-import { InAppBrowser } from 'react-native-inappbrowser-reborn';
+import NativeWebView from 'react-native-webview';
+import InAppBrowser from 'react-native-inappbrowser-reborn';
 import Utils from '../utils/utils';
-import { getStatusBarHeight } from 'react-native-status-bar-height';
+import LOG from '../utils/log';
 import URLParser from 'url';
-export class WebView extends React.Component {
-    static get Wepin() {
-        return this._wepin;
-    }
+import { getStatusBarHeight } from 'react-native-status-bar-height';
+const styles = StyleSheet.create({
+    webviewContainer: {
+        flex: 1,
+        width: '100%',
+        height: Platform.OS === 'ios' ? Dimensions.get('screen').height - getStatusBarHeight() : '100%',
+        position: 'absolute',
+        bottom: 0,
+        backgroundColor: '#ff000000',
+    },
+    webview: {
+        flex: 1,
+        width: '100%',
+        height: '100%',
+        position: 'absolute',
+        bottom: 0,
+        backgroundColor: '#ff000000',
+    },
+});
+class WepinWebview extends Component {
     constructor(props) {
+        LOG.debug('-----------props', props);
         super(props);
         this._open = (config) => __awaiter(this, void 0, void 0, function* () {
-            LOG.debug('====================wepin open: config url', config.url);
-            LOG.debug('====================wepin open: this.state.visible', this.state.visible);
             if (this.state.visible) {
                 yield new Promise(resolve => this.setState(prevState => (Object.assign(Object.assign({}, prevState), { config })), resolve));
                 return;
             }
             yield new Promise(resolve => this.setState(prevState => (Object.assign(Object.assign({}, prevState), { visible: true, config })), () => {
-                LOG.debug('reload???', this.state.config);
                 resolve();
             }));
         });
         this._close = () => __awaiter(this, void 0, void 0, function* () {
-            var _b, _c;
+            var _a, _b;
             if (!this.state.visible) {
                 return;
             }
-            LOG.debug('clesrHistory');
-            if (Platform.OS === 'android' && ((_b = this.webRef) === null || _b === void 0 ? void 0 : _b.clearHistory)) {
-                LOG.debug('clesrHistory');
-                (_c = this.webRef) === null || _c === void 0 ? void 0 : _c.clearHistory();
+            if (Platform.OS === 'android' && ((_a = this.webRef) === null || _a === void 0 ? void 0 : _a.clearHistory)) {
+                (_b = this.webRef) === null || _b === void 0 ? void 0 : _b.clearHistory();
             }
-            const config = Object.assign(Object.assign({}, this.state.config), { url: '' });
+            const config = Object.assign(Object.assign({}, this.props.config), { url: '' });
             yield new Promise(resolve => this.setState(prevState => (Object.assign(Object.assign({}, prevState), { config, visible: false })), resolve));
         });
         this._handleSetRef = (_ref) => {
+            LOG.debug('_handleSetRef', this.props);
+            const wepin = this.props.config.wepin;
             this.webRef = _ref;
+            wepin.setWidgetWebview(this);
         };
         this.response = (message) => {
-            var _b;
-            LOG.debug('response', message);
-            (_b = this.webRef) === null || _b === void 0 ? void 0 : _b.postMessage(JSON.stringify(message));
+            var _a;
+            LOG.debug('this.webRef', this.webRef);
+            LOG.debug('message: ', message);
+            (_a = this.webRef) === null || _a === void 0 ? void 0 : _a.postMessage(JSON.stringify(message));
         };
         this.request = (message) => {
-            var _b;
-            LOG.debug('request', message);
-            (_b = this.webRef) === null || _b === void 0 ? void 0 : _b.postMessage(JSON.stringify(message));
+            var _a;
+            (_a = this.webRef) === null || _a === void 0 ? void 0 : _a.postMessage(JSON.stringify(message));
         };
         this.handleWebViewLoaded = (e) => {
-            var _b;
-            if ((_b = this.state.config) === null || _b === void 0 ? void 0 : _b.url) {
+            var _a;
+            if ((_a = this.props.config) === null || _a === void 0 ? void 0 : _a.url) {
             }
-        };
-        this._WebivewRender = () => {
-            if (!this.state.config) {
-                return <></>;
-            }
-            const { styles, config: { url, appInfo }, } = this.state;
-            return (<View style={appInfo.attributes.type === 'show' ? styles.webviewContainer : { height: 0 }}>
-        <NativeWebView ref={this._handleSetRef} source={{ uri: url }} style={appInfo.attributes.type === 'show' ? styles.webview : { height: 0 }} javaScriptEnabled={true} domStorageEnabled={true} thirdPartyCookiesEnabled={true} cacheEnabled={true} androidLayerType={'hardware'} onError={({ nativeEvent }) => LOG.error('Webview error: ', nativeEvent)} onLoad={this.handleWebViewLoaded} onMessage={this.EL} onOpenWindow={(eventData) => {
-                    var _b;
-                    const inAppUrl = (_b = eventData === null || eventData === void 0 ? void 0 : eventData.nativeEvent) === null || _b === void 0 ? void 0 : _b.targetUrl;
-                    LOG.debug('onOpenWindow Url : ', inAppUrl);
-                    this.openUrl(inAppUrl);
-                }} onNavigationStateChange={webviewState => {
-                    var _b, _c;
-                    if ((_b = this.state.config) === null || _b === void 0 ? void 0 : _b.url) {
-                        if (this.state.config.url.includes('wepin-sdk-login') && this.state.config.appInfo.attributes.type !== 'show') {
-                            LOG.debug('webviewState.url', webviewState.url);
-                            if (webviewState.url !== this.state.config.url) {
-                                LOG.debug('reload!!!');
-                                (_c = this.webRef) === null || _c === void 0 ? void 0 : _c.reload();
-                            }
-                        }
-                    }
-                }}/>
-      </View>);
-        };
-        this.render = () => {
-            const { visible, styles, config } = this.state;
-            const { _WebivewRender } = this;
-            return (<Modal transparent={true} visible={visible}>
-        <View style={(config === null || config === void 0 ? void 0 : config.appInfo.attributes.type) === 'show' ? styles.backgroundContainer : { height: 0 }}/>
-        <_WebivewRender />
-      </Modal>);
         };
         this.EL = getEventListener(this);
         this.state = {
-            styles: __styles(),
-            visible: false,
+            visible: true,
         };
     }
     openUrl(url) {
-        var _b;
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const isAvailable = yield InAppBrowser.isAvailable();
                 if (isAvailable) {
-                    LOG.debug('Open Url InAppBrowser');
                     const deeplink = Utils.getDeeplink();
                     const result = yield InAppBrowser.openAuth(url, deeplink, {
                         dismissButtonStyle: 'cancel',
@@ -133,7 +111,7 @@ export class WebView extends React.Component {
                                 const urlObj = URLParser.parse(url);
                                 LOG.debug('url', url);
                                 LOG.debug('urlObj', urlObj);
-                                const pathName = (_b = urlObj.pathname) === null || _b === void 0 ? void 0 : _b.split('/');
+                                const pathName = (_a = urlObj.pathname) === null || _a === void 0 ? void 0 : _a.split('/');
                                 const provider = pathName ? pathName[2] : '';
                                 this.request({
                                     header: {
@@ -182,37 +160,46 @@ export class WebView extends React.Component {
             }
         });
     }
+    componentDidUpdate(prevProps) {
+        const { visible, config } = prevProps;
+        if (visible !== this.props.visible) {
+            if (visible) {
+                this._open(config);
+            }
+            else {
+                this._close();
+            }
+        }
+    }
+    render() {
+        if (!this.props.config) {
+            return <></>;
+        }
+        const { appInfo, url } = this.props.config;
+        return (<View style={appInfo.attributes.type === 'show' ? styles.webviewContainer : { height: 0 }}>
+                <NativeWebView ref={this._handleSetRef} source={{ uri: url }} style={appInfo.attributes.type === 'show' ? styles.webview : { height: 0 }} javaScriptEnabled={true} domStorageEnabled={true} thirdPartyCookiesEnabled={true} cacheEnabled={true} androidLayerType={'hardware'} onError={({ nativeEvent }) => LOG.error('Webview error: ', nativeEvent)} onLoad={this.handleWebViewLoaded} onMessage={this.EL} onOpenWindow={(eventData) => {
+                var _a;
+                const inAppUrl = (_a = eventData === null || eventData === void 0 ? void 0 : eventData.nativeEvent) === null || _a === void 0 ? void 0 : _a.targetUrl;
+                LOG.debug('onOpenWindow Url : ', inAppUrl);
+                this.openUrl(inAppUrl);
+            }} onNavigationStateChange={webviewState => {
+                var _a, _b;
+                if ((_a = this.props.config) === null || _a === void 0 ? void 0 : _a.url) {
+                    if (this.props.config.url.includes('wepin-sdk-login') && this.props.config.appInfo.attributes.type !== 'show') {
+                        LOG.debug('webviewState.url', webviewState.url);
+                        if (webviewState.url !== this.props.config.url) {
+                            LOG.debug('reload!!!');
+                            (_b = this.webRef) === null || _b === void 0 ? void 0 : _b.reload();
+                        }
+                    }
+                }
+            }}/>
+            </View>);
+    }
 }
-_a = WebView;
-WebView.instance = React.createRef();
-WebView.show = (args) => __awaiter(void 0, void 0, void 0, function* () {
-    var _b;
-    _a._wepin = args.wepin;
-    yield ((_b = WebView.instance.current) === null || _b === void 0 ? void 0 : _b._open(args));
-    return WebView.instance.current;
-});
-WebView.hide = () => __awaiter(void 0, void 0, void 0, function* () {
-    var _c;
-    LOG.debug('hide widget');
-    yield ((_c = WebView.instance.current) === null || _c === void 0 ? void 0 : _c._close());
-});
-const __styles = () => StyleSheet.create({
-    backgroundContainer: Object.assign(Object.assign({}, StyleSheet.absoluteFillObject), { backgroundColor: 'rgba(0,0,0,0.7)' }),
-    webviewContainer: {
-        flex: 1,
-        width: '100%',
-        height: Platform.OS === 'ios' ? Dimensions.get('screen').height - getStatusBarHeight() : '100%',
-        position: 'absolute',
-        bottom: 0,
-        backgroundColor: '#ff000000',
-    },
-    webview: {
-        flex: 1,
-        width: '100%',
-        height: '100%',
-        position: 'absolute',
-        bottom: 0,
-        backgroundColor: '#ff000000',
-    },
-});
+WepinWebview.defaultProps = {
+    config: null,
+    visible: false,
+};
+export default WepinWebview;
 //# sourceMappingURL=Webview.js.map

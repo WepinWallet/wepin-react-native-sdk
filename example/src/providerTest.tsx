@@ -1,4 +1,5 @@
-import Wepin from "@wepin/react-native-sdk"
+import Wepin from '@wepin/react-native-sdk'
+// import Wepin from './wepinReactNativeSDK';
 import { Dispatch } from "react"
 
 export class providerTest {
@@ -156,12 +157,19 @@ export class providerTest {
             this.selectedAccount = provider.selectedAddress!
             this.setSelectedAccount(this.selectedAccount)
         } catch (e: any) {
-            console.log('error', e)
-            if (e?.message) {
-                this.setResult(`error-${e.message}`)
-            } else {
-                this.setResult('unknown error')
+            //console.log('error1222', e)
+            try {
+                await this.wepin.logout()
+            } catch (err) {
+                console.log('error1222', err)
             }
+            if (e?.message) {
+                this.setResult(`error-${e.message} and logout`)
+            } else {
+                this.setResult('unknown error and logout')
+            }
+
+
         }
     }
 
@@ -407,10 +415,11 @@ export class providerTest {
             this.setResult(res)
         } catch (e: any) {
             console.log('error', e)
+            await this.wepin.logout()
             if (e?.message) {
-                this.setResult(`error-${e.message}`)
+                this.setResult(`error-${e.message} and logout`)
             } else {
-                this.setResult('unknown error')
+                this.setResult('unknown error and logout')
             }
         }
     }

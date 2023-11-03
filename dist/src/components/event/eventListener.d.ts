@@ -1,3 +1,3 @@
 import { WebViewMessageEvent } from 'react-native-webview';
-import { WebView } from '../Webview';
-export declare const getEventListener: (widget: WebView) => (event: WebViewMessageEvent) => void;
+import WepinWebview from '../Webview';
+export declare const getEventListener: (widget: WepinWebview) => (event: WebViewMessageEvent) => void;

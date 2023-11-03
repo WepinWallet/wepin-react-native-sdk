@@ -25,7 +25,6 @@ yarn add @wepin/react-native-sdk
 ```bash
 npm install react-native-device-info
 npm install react-native-inappbrowser-reborn
-npm install react-native-safe-area-context
 npm install react-native-webview
 
 # for ios
@@ -38,7 +37,6 @@ or
 ```bash
 yarn add react-native-device-info
 yarn add react-native-inappbrowser-reborn
-yarn add react-native-safe-area-context
 yarn add react-native-webview
 
 # for ios

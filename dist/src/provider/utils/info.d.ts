@@ -1,4 +1,4 @@
-import { SupportedChains } from '@/types/Provider';
+import { SupportedChains } from '../../types/Provider';
 export interface NetworkInformation {
     rpcUrl: string;
     chainId: string;

@@ -1,3 +1,3 @@
 import { WebviewReqestMessage } from '../../types/Message';
-import { WebView } from '../Webview';
-export declare const WebviewRequestHandler: (message: WebviewReqestMessage, widget: WebView) => void;
+import WepinWebview from '../Webview';
+export declare const WebviewRequestHandler: (message: WebviewReqestMessage, widget: WepinWebview) => void;
