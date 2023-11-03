@@ -1,6 +1,6 @@
 {
   "name": "wepinRNSample",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "private": true,
   "scripts": {
     "preinstall": "rm -rf ../sdk/node_modules",
