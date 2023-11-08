@@ -30,6 +30,8 @@ import EthProvider from './provider/ethereum/inpageProvider';
 import CustomDialogManager from './components/dialog';
 import DialogManager from './components/dialog';
 import { RootSiblingParent } from 'react-native-root-siblings';
+import { getNetworkByChainId } from './provider/utils/info';
+import { closeWidgetAndClearWebview } from './utils/commmonWidget';
 export class Wepin extends EventEmitter {
     static getInstance() {
         if (!this._instance) {
@@ -283,16 +285,9 @@ export class Wepin extends EventEmitter {
     }
     _close() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (this._widget) {
-                LOG.debug('close this._widget', this._widget);
-                LOG.debug('CustomDialogManager', CustomDialogManager.currentDialog);
-                if (CustomDialogManager.currentDialog) {
-                    CustomDialogManager.dismiss();
-                    CustomDialogManager.destroy();
-                }
-                this._widget.EL = () => { };
-                this._widget = undefined;
-            }
+            LOG.debug('close this._widget', this._widget);
+            LOG.debug('CustomDialogManager', CustomDialogManager.currentDialog);
+            closeWidgetAndClearWebview(this, this._widget);
         });
     }
     getAccounts(networks) {
@@ -397,12 +392,20 @@ export class Wepin extends EventEmitter {
         });
     }
     getProvider({ network }) {
-        var _a;
+        var _a, _b, _c, _d, _e;
         if (!this._isInitialized)
             throw new Error('Wepin must be initialized to get Provider.');
         if (window) {
-            if ((_a = window.evmproviders) === null || _a === void 0 ? void 0 : _a.wepin) {
-                return window.evmproviders.wepin;
+            if ((_a = window.evmproviders) === null || _a === void 0 ? void 0 : _a.Wepin) {
+                const chianId = (_b = window.evmproviders) === null || _b === void 0 ? void 0 : _b.Wepin.chainId;
+                LOG.debug(' getProvider - window.evmproviders?.Wepin.chainId', (_c = window.evmproviders) === null || _c === void 0 ? void 0 : _c.Wepin.chainId);
+                const lastNetwork = getNetworkByChainId(chianId);
+                const selectedAddress = (_d = window.evmproviders) === null || _d === void 0 ? void 0 : _d.Wepin.selectedAddress;
+                const accountInfo = (_e = this.accountInfo) !== null && _e !== void 0 ? _e : [];
+                const findAccount = accountInfo.filter((v) => v.address === selectedAddress && v.network.toLowerCase() === lastNetwork);
+                if (findAccount.length && lastNetwork === network) {
+                    return window.evmproviders.Wepin;
+                }
             }
         }
         const lowerCasedNetworkStr = network.toLowerCase();

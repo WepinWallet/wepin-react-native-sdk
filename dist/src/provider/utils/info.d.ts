@@ -4,3 +4,4 @@ export interface NetworkInformation {
     chainId: string;
 }
 export declare const getNetworkInfoByName: (network: SupportedChains) => NetworkInformation;
+export declare const getNetworkByChainId: (chainId: unknown) => string;

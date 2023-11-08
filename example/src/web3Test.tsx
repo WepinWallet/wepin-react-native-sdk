@@ -1,4 +1,4 @@
-import Wepin from '@wepin/react-native-sdk'
+import Wepin, { BaseProvider, getNetworkInfoByName } from '@wepin/react-native-sdk'
 // import Wepin from './wepinReactNativeSDK';
 import { Dispatch } from "react"
 
@@ -26,6 +26,7 @@ export class web3Test {
     public suspectedNetwork: any
     public setResult: Dispatch<any>
     public setSelectedAddress: Dispatch<any>
+    public provider: any
 
     public static getInstance(wepin: Wepin) {
         if (this._instance) return this._instance
@@ -41,12 +42,14 @@ export class web3Test {
         this.estimateGas = '0x0'
         this.selectedAccount = ''
         this.fromAddress = ''
+        this.provider = null
         this.setResult = (param: any) => { }
         this.setSelectedAddress = (param: any) => { }
     }
 
-    public setConfig = (suspectedNetwork: any, setResult: Dispatch<any>, setSelectedAddress: Dispatch<any>) => {
+    public setConfig = async (suspectedNetwork: any, provider: BaseProvider, setResult: Dispatch<any>, setSelectedAddress: Dispatch<any>) => {
         console.log('setConfig suspectedNetwork: ', suspectedNetwork)
+        this.provider = provider
         this.suspectedNetwork = suspectedNetwork
         this.setResult = setResult
         this.setSelectedAddress = setSelectedAddress
@@ -86,14 +89,14 @@ export class web3Test {
         // accountList.value = await Wepin.getAccounts()
         console.log('suspectedNetwork', this.suspectedNetwork)
         if (this.suspectedNetwork) {
-            const provider = this.wepin.getProvider({ network: this.suspectedNetwork })
-            console.log('provider', provider)
+            //const provider = this.wepin.getProvider({ network: this.suspectedNetwork })
+            console.log('provider', this.provider)
             // console.log('web3', web3)
             let web3Provider
             if (this.suspectedNetwork.includes('klaytn')) {
-                web3Provider = new Web3(provider)
+                web3Provider = new Web3(this.provider)
             } else {
-                web3Provider = new ethers.providers.Web3Provider(provider)
+                web3Provider = new ethers.providers.Web3Provider(this.provider)
             }
             console.log('web3Provider', web3Provider)
 

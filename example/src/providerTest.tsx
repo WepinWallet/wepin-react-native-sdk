@@ -1,4 +1,4 @@
-import Wepin from '@wepin/react-native-sdk'
+import Wepin, { BaseProvider, getNetworkByChainId, getNetworkInfoByName } from '@wepin/react-native-sdk'
 // import Wepin from './wepinReactNativeSDK';
 import { Dispatch } from "react"
 
@@ -15,6 +15,7 @@ export class providerTest {
     public suspectedNetwork: any
     public setResult: Dispatch<any>
     public setSelectedAccount: Dispatch<any>
+    public provider: any
 
     public static getInstance(wepin: Wepin) {
         if (this._instance) return this._instance
@@ -30,12 +31,16 @@ export class providerTest {
         this.estimateGas = ''
         this.selectedAccount = ''
         this.prefix = 'eth'
+        this.provider = null
         this.setResult = (param: any) => { }
         this.setSelectedAccount = (param: any) => { }
     }
 
-    public setConfig = (suspectedNetwork: any, setResult: Dispatch<any>, setSelectedAccount: Dispatch<any>) => {
+    public setConfig = async (suspectedNetwork: any, provider: BaseProvider, setResult: Dispatch<any>, setSelectedAccount: Dispatch<any>) => {
         console.log('setConfig suspectedNetwork: ', suspectedNetwork)
+        console.log('setConfig this.suspectedNetwork: ', this.suspectedNetwork)
+
+        this.provider = provider
         this.suspectedNetwork = suspectedNetwork
         // this.prefix = prefix
         if (
@@ -98,12 +103,8 @@ export class providerTest {
         try {
             // await getAccounts()
             console.log('getBlockNumber suspectedNetwork: ', this.suspectedNetwork)
-
-            const provider = this.wepin.getProvider({
-                network: this.suspectedNetwork,
-            })
-            console.log('getBlockNumber provider : ', provider)
-            const providerResult = await provider.request({
+            console.log('getBlockNumber provider : ', this.provider)
+            const providerResult = await this.provider.request({
                 method: this.prefix + '_blockNumber',
                 params: [],
             })
@@ -118,6 +119,7 @@ export class providerTest {
             }
         }
     }
+
 
     public getAccountsForProvider = async () => {
         try {

@@ -1,5 +1,6 @@
 import { Platform } from 'react-native';
 import LOG from '../../utils/log';
+import { closeWidgetAndClearWebview } from '../../utils/commmonWidget';
 export const WebviewRequestHandler = (message, widget) => {
     var _a, _b, _c, _d;
     const response = {
@@ -51,7 +52,7 @@ export const WebviewRequestHandler = (message, widget) => {
         case 'close_wepin_widget':
             LOG.debug('close??');
             LOG.debug('close_widget...., wepin', widget.props.config);
-            wepin.closeWidget();
+            closeWidgetAndClearWebview(wepin, widget);
             break;
         case 'dequeue_request':
             if (wepin.queue && wepin.queue[0]) {

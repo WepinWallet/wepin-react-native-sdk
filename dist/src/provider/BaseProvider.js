@@ -7,12 +7,27 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 import dequal from 'fast-deep-equal';
 import { ethErrors, EthereumRpcError } from 'eth-rpc-errors';
 import { getRpcPromiseCallback, isValidChainId } from './utils/utils';
 import EventEmitter from '../utils/safeEventEmitter';
 import { WepinJsonRpcEngine } from './json-rpc/JsonRpcEngine';
 import LOG from '../utils/log';
+import { getNetworkInfoByName } from './utils/info';
+import { createFetchMiddlewareEther } from './json-rpc/eth-json-rpc';
+import { createWepinEtherMiddleware } from './middlewares/eth-json-rpc-wepin';
+import { createWepinKlayMiddleware } from './middlewares/klay-json-rpc-wepin';
 export class BaseProvider extends EventEmitter {
     constructor({ logger = console, rpcMiddleware = [], } = {}) {
         super();
@@ -31,6 +46,7 @@ export class BaseProvider extends EventEmitter {
         const rpcEngine = new WepinJsonRpcEngine();
         rpcMiddleware.forEach((middleware) => rpcEngine.push(middleware));
         this._rpcEngine = rpcEngine;
+        this.setRpcEngine(rpcMiddleware);
     }
     request(args) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -90,9 +106,78 @@ export class BaseProvider extends EventEmitter {
                     callback(err, res);
                 };
             }
+            if (payload.method === 'wallet_switchEthereumChain') {
+                cb = (err, res) => {
+                    var _a, _b, _c, _d, _e, _f, _g;
+                    this._log.debug('_rpcRequest to handler chain changes', err, res);
+                    if (((_a = res.result) === null || _a === void 0 ? void 0 : _a.wepin) && ((_b = res.result) === null || _b === void 0 ? void 0 : _b.network) && ((_c = res.result) === null || _c === void 0 ? void 0 : _c.address)) {
+                        const _h = res.result, { wepin } = _h, parsedRes = __rest(_h, ["wepin"]);
+                        LOG.debug('parsedRes', parsedRes);
+                        try {
+                            this.changeChain({ wepin, network: (_d = res.result) === null || _d === void 0 ? void 0 : _d.network, address: (_e = res.result) === null || _e === void 0 ? void 0 : _e.address });
+                        }
+                        catch (e) {
+                            err = e;
+                        }
+                        res.result = parsedRes;
+                    }
+                    if ((_f = res.result) === null || _f === void 0 ? void 0 : _f.chainId) {
+                        this._handleChainChanged({ chainId: res.result.chainId });
+                    }
+                    if (this !== ((_g = window === null || window === void 0 ? void 0 : window.evmproviders) === null || _g === void 0 ? void 0 : _g.Wepin)) {
+                        LOG.debug('this is not window evmproviders Wepin');
+                        window.evmproviders.Wepin = this;
+                    }
+                    LOG.debug('this.chainId', this.chainId);
+                    LOG.debug('window.evmproviders.Wepin.chainId', window.evmproviders.Wepin.chainId);
+                    callback(err, res);
+                };
+            }
             return this._rpcEngine.handle(payload, cb);
         }
         return this._rpcEngine.handle(payload, cb);
+    }
+    setRpcEngine(rpcMiddleware) {
+        const rpcEngine = new WepinJsonRpcEngine();
+        rpcMiddleware.forEach((middleware) => rpcEngine.push(middleware));
+        LOG.debug('before this._rpcEngine', this._rpcEngine);
+        this._rpcEngine = rpcEngine;
+        LOG.debug('after this._rpcEngine', this._rpcEngine);
+    }
+    changeChain({ wepin, network, address }) {
+        const lowerCasedNetworkStr = network.toLowerCase();
+        LOG.debug('changeChain network', network);
+        LOG.debug('changeChain lowerCasedNetworkStr', lowerCasedNetworkStr);
+        const { rpcUrl, chainId } = getNetworkInfoByName(network);
+        const evmRPCMiddleware = createFetchMiddlewareEther({
+            rpcUrl,
+        });
+        LOG.debug('changeChain rpcUrl', rpcUrl);
+        LOG.debug('changeChain chainId', chainId);
+        switch (lowerCasedNetworkStr) {
+            case 'ethereum':
+            case 'evmeth-goerli':
+            case 'evmsongbird':
+            case 'evmpolygon':
+            case 'evmpolygon-testnet':
+            case 'evmanttime-testnet':
+                {
+                    const wepinMiddleware = createWepinEtherMiddleware({ wepin, network });
+                    this.setRpcEngine([wepinMiddleware, evmRPCMiddleware]);
+                    this.selectedAddress = address;
+                }
+                break;
+            case 'klaytn':
+            case 'klaytn-testnet':
+                {
+                    const wepinMiddleware = createWepinKlayMiddleware({ wepin, network });
+                    this.setRpcEngine([wepinMiddleware, evmRPCMiddleware]);
+                    this.selectedAddress = address;
+                }
+                break;
+            default:
+                throw new Error(`Can not resolve network name: ${network}`);
+        }
     }
     _handleConnect(chainId) {
         if (!this._state.isConnected) {

@@ -1,11 +1,11 @@
 import { BaseProvider } from '../BaseProvider';
-import { createWepinMiddleware } from '../middlewares/eth-json-rpc-wepin';
+import { createWepinEtherMiddleware } from '../middlewares/eth-json-rpc-wepin';
 import { createFetchMiddlewareEther } from '../json-rpc/eth-json-rpc';
 import { getNetworkInfoByName } from '../utils/info';
 import LOG from '../../utils/log';
 export default class InpageProvider extends BaseProvider {
     constructor({ network, wepin, }) {
-        const wepinMiddleware = createWepinMiddleware({ wepin, network });
+        const wepinMiddleware = createWepinEtherMiddleware({ wepin, network });
         const { rpcUrl, chainId } = getNetworkInfoByName(network);
         const evmRPCMiddleware = createFetchMiddlewareEther({
             rpcUrl,

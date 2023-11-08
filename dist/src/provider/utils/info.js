@@ -1,47 +1,65 @@
+import GatewayUrl from '../const/gatewayUrl';
+import { isValidChainId } from './utils';
 export const getNetworkInfoByName = (network) => {
     switch (network) {
         case 'ethereum':
             return {
-                rpcUrl: 'https://mainnet.infura.io/v3/69e7888727b84a5ab6a06cac0294ff6b',
+                rpcUrl: GatewayUrl.Gateway + '/alchemy/eth',
                 chainId: '0x' + (1).toString(16),
             };
         case 'evmeth-goerli':
             return {
-                rpcUrl: 'https://goerli.infura.io/v3/69e7888727b84a5ab6a06cac0294ff6b',
+                rpcUrl: GatewayUrl.Gateway + '/infura/goerli',
                 chainId: '0x' + (5).toString(16),
             };
         case 'klaytn':
             return {
-                rpcUrl: 'https://gateway-v2.dcentwallet.com/klaytn/mainnet',
+                rpcUrl: GatewayUrl.Gateway + '/klaytn/mainnet',
                 chainId: '0x' + (8217).toString(16),
             };
         case 'klaytn-testnet':
             return {
-                rpcUrl: 'https://gateway-v2.dcentwallet.com/klaytn/testnet',
+                rpcUrl: GatewayUrl.Gateway + '/klaytn/testnet',
                 chainId: '0x' + (1001).toString(16),
             };
         case 'evmsongbird':
             return {
-                rpcUrl: 'https://songbird-api.flare.network/ext/C/rpc',
+                rpcUrl: GatewayUrl.Gateway + '/songbird/api-portal/mainnet',
                 chainId: '0x' + (19).toString(16),
             };
         case 'evmpolygon':
             return {
-                rpcUrl: 'https://polygon-rpc.com',
+                rpcUrl: GatewayUrl.Gateway + '/matic/alchemy/mainnet',
                 chainId: '0x' + (137).toString(16),
             };
         case 'evmpolygon-testnet':
             return {
-                rpcUrl: 'https://gateway-v2.dcentwallet.com/matic/testnet',
+                rpcUrl: GatewayUrl.Gateway + '/matic/testnet',
                 chainId: '0x' + (80001).toString(16),
             };
         case 'evmanttime-testnet':
             return {
-                rpcUrl: 'https://testnet-rpc.timenetwork.io',
+                rpcUrl: GatewayUrl.Gateway + '/anttime/testnet ',
                 chainId: '0x' + (2731).toString(16),
             };
         default:
             throw new Error(`There is No network info about provided network : ${network}`);
     }
+};
+export const getNetworkByChainId = (chainId) => {
+    if (!isValidChainId(chainId)) {
+        throw new Error(`Invalid chain ID: ${chainId}`);
+    }
+    const chainIdMappings = {
+        '0x1': 'ethereum',
+        '0x5': 'evmeth-goerli',
+        [`0x${(19).toString(16)}`]: 'evmsongbird',
+        [`0x${(137).toString(16)}`]: 'evmpolygon',
+        [`0x${(1001).toString(16)}`]: 'klaytn-testnet',
+        [`0x${(8217).toString(16)}`]: 'klaytn',
+        [`0x${(80001).toString(16)}`]: 'evmpolygon-testnet',
+        [`0x${(2731).toString(16)}`]: 'evmanttime-testnet',
+    };
+    return chainIdMappings[chainId];
 };
 //# sourceMappingURL=info.js.map

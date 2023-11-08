@@ -16,7 +16,7 @@ import {
   View,
   LogBox,
 } from 'react-native'
-import Wepin from '@wepin/react-native-sdk'
+import Wepin, { BaseProvider, getNetworkInfoByName } from '@wepin/react-native-sdk'
 // import Wepin from './src/wepinReactNativeSDK';
 import { getApiKey, ItestMode } from './src/config/apiKey'
 import { getBundleId } from 'react-native-device-info'
@@ -36,11 +36,13 @@ function App(): JSX.Element {
   const testMode: ItestMode = getBundleId().split('.').slice(-1)[0] as ItestMode //'dev'; // 'stage' // 'prod'
   const [result, setResult] = useState<any>()
   const wepin = Wepin.getInstance()
-  const provider = providerTest.getInstance(wepin)
+  const providerTestInstance = providerTest.getInstance(wepin)
   const web3TestInstance = web3Test.getInstance(wepin)
   const [accounts, setAccounts] = useState<{ address: string; network: string; }[] | undefined>()
-  const [selectedAccount, setSelectedAccount] = useState('')
+  const [selectedAccount, setSelectedAccount] = useState<string | undefined>()
   const [suspectedNetwork, setSuspectedNetwork] = useState<any>()
+  //let provider: BaseProvider | undefined = undefined
+  const [provider, setProvider] = useState<BaseProvider>()
 
   useEffect(() => {
     LogBox.ignoreLogs([
@@ -52,12 +54,37 @@ function App(): JSX.Element {
       // 'Animated: `useNativeDriver` was not specified. This is a required option and must be explicitly set to `true` or `false`'
     ]);
   })
-  console.log('App', accounts)
+  const setNetwork = async (network: any) => {
+    console.log('switchNetwork current network: ', suspectedNetwork)
+    console.log('switchNetwork switch network: ', network)
+    if (network) {
+      if (suspectedNetwork != network || !provider) {
+        console.log('provider: ', provider)
+        if (provider) {
+          console.log('switchNetwork start ')
+          const res = await switchNetwork(network)
+          providerTestInstance.setConfig(network, provider!, setResult, setSelectedAccount)
+          web3TestInstance.setConfig(network, provider!, setResult, setSelectedAddress)
+          console.log('res: ', res)
+          if (!res) {
+            return
+          }
+        } else {
+          const resProvider = wepin.getProvider({ network })
+          setProvider(resProvider)
+          providerTestInstance.setConfig(network, resProvider!, setResult, setSelectedAccount)
+          web3TestInstance.setConfig(network, resProvider!, setResult, setSelectedAddress)
+        }
+        console.log('provider: ', provider)
+      }
+    }
+
+  }
   const AvailableNetworks = useMemo<any>(() => {
 
     let id = 0
     console.log('accounts', accounts)
-    if (accounts) {
+    if (accounts && accounts.length) {
       // let array = [];
       // const array = accounts?.map((account) => {
       //   return {
@@ -87,6 +114,14 @@ function App(): JSX.Element {
         }
       })
       console.log('filterArray', filterArray)
+      //맨앞에 network로 세팅
+      setSuspectedNetwork(filterArray[0].value);
+      console.log('setNetwork', setNetwork)
+      console.log('switchNetwork', switchNetwork)
+      console.log('initWepinKor', initWepinKor)
+      console.log('wepin', wepin)
+
+      setNetwork(filterArray[0].value)
       return filterArray
       // return [{
       //   id: 1,
@@ -197,11 +232,19 @@ function App(): JSX.Element {
     }
   }
 
+  const initState = () => {
+    setSelectedAddress(undefined)
+    setSuspectedNetwork(undefined)
+    setAccounts([])
+    setProvider(undefined)
+    setSelectedAccount(undefined)
+  }
   const logoutWepin = async () => {
     console.log('logoutWepin')
     try {
       setResult('processing.....')
       await wepin.logout()
+      initState()
       setResult('logoutWepin: success')
     } catch (e) {
       console.error(e)
@@ -429,8 +472,7 @@ function App(): JSX.Element {
       setResult('processing.....')
       // ToDo
       await wepin.finalize()
-      setAccounts([])
-      setSuspectedNetwork(undefined);
+      initState()
       setResult('finalizeWepin success')
     } catch (e) {
       console.error(e)
@@ -505,35 +547,38 @@ function App(): JSX.Element {
     console.log('data: ', data)
     setModalVisible(false)
     // setTimeout(() => {
-    provider.saveDataAndCall(data, providerMethod!)
+    providerTestInstance.saveDataAndCall(data, providerMethod!)
     // }, 100)
 
     // setModalVisible(false)
   }
+
+  const switchNetwork = async (switchNetwork: any) => {
+    try {
+      console.log('switchNetwork current network: ', suspectedNetwork)
+      console.log('switchNetwork switch network: ', switchNetwork)
+      const { chainId, rpcUrl } = getNetworkInfoByName(switchNetwork)
+      console.log('rpcUrl: ', rpcUrl)
+      const providerResult = await provider?.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId }],
+      })
+      // provider = wepin.getProvider({ network: switchNetwork })
+      setProvider(wepin.getProvider({ network: switchNetwork }))
+      setResult(JSON.stringify(providerResult))
+      return true
+    } catch (e: any) {
+      console.log('error', e)
+      if (e?.message) {
+        setResult(`error-${e.message}`)
+      } else {
+        setResult('unknown error')
+      }
+      return false
+    }
+  }
   const providerTestItemListView = (
     <>
-      {
-        AvailableNetworks && AvailableNetworks?.length !== 0 ?
-          <>
-            {/* <Text onPress={(val: any) => { setSuspectedNetwork(AvailableNetworks[0]?.value); provider.setConfig(AvailableNetworks[0]?.value, setResult, setSelectedAccount) }} style={{ fontSize: 15, marginTop: 10, textAlign: 'center', color: 'blue' }}>
-              Click Here
-            </Text> */}
-            <SelectList
-              setSelected={(key: any) => {
-                console.log('key', key)
-                const findeNetwork = AvailableNetworks.find((data: any) => {
-                  return data.key === key
-                })
-                setSuspectedNetwork(findeNetwork?.value);
-                provider.setConfig(findeNetwork?.value, setResult, setSelectedAccount)
-              }}
-              placeholder='Select Network'
-              searchPlaceholder='Search Network'
-              data={AvailableNetworks!}
-              save='key'
-            />
-          </> : ''
-      }
       <ScrollView
         style={{
           marginTop: 5,
@@ -544,23 +589,23 @@ function App(): JSX.Element {
         }}>
 
         <View style={styles.button}>
-          <Button title={`${prefix}_blockNumber`} onPress={() => provider.getBlockNumber()} />
+          <Button title={`${prefix}_blockNumber`} onPress={() => providerTestInstance.getBlockNumber()} />
         </View>
         <View style={styles.button}>
-          <Button title={`${prefix}_accounts`} onPress={() => provider.getAccountsForProvider()} />
+          <Button title={`${prefix}_accounts`} onPress={() => providerTestInstance.getAccountsForProvider()} />
         </View>
         <View style={styles.button}>
-          <Button title={`${prefix}_requestAccounts`} onPress={() => provider.requestAccounts()} />
+          <Button title={`${prefix}_requestAccounts`} onPress={() => providerTestInstance.requestAccounts()} />
         </View>
         <View style={styles.button}>
-          <Button title={`${prefix}_getBalance`} onPress={() => provider.getBalance()} />
+          <Button title={`${prefix}_getBalance`} onPress={() => providerTestInstance.getBalance()} />
         </View>
 
         <View style={styles.button}>
-          <Button title={`${prefix}_gasPrice`} onPress={() => provider.getGasPrice()} />
+          <Button title={`${prefix}_gasPrice`} onPress={() => providerTestInstance.getGasPrice()} />
         </View>
         <View style={styles.button}>
-          <Button title={`${prefix}_estimateGas`} onPress={() => provider.getEstimatedGas()} />
+          <Button title={`${prefix}_estimateGas`} onPress={() => providerTestInstance.getEstimatedGas()} />
         </View>
         {
           selectedAccount ?
@@ -581,18 +626,18 @@ function App(): JSX.Element {
                 <Button title={`personal_sign`} onPress={() => { setProviderMethod('personalSign'); setModalVisible(true) }} />
               </View>
               <View style={styles.button}>
-                <Button title={`${prefix}_signTypedData_v1`} onPress={() => provider.signTypedDataV1()} />
+                <Button title={`${prefix}_signTypedData_v1`} onPress={() => providerTestInstance.signTypedDataV1()} />
               </View>
               <View style={styles.button}>
-                <Button title={`${prefix}_signTypedData_v3`} onPress={() => provider.signTypedDataV3()} />
+                <Button title={`${prefix}_signTypedData_v3`} onPress={() => providerTestInstance.signTypedDataV3()} />
               </View>
               <View style={styles.button}>
-                <Button title={`${prefix}_signTypedData_v4`} onPress={() => provider.signTypedDataV4()} />
+                <Button title={`${prefix}_signTypedData_v4`} onPress={() => providerTestInstance.signTypedDataV4()} />
               </View>
               <CustomModal
                 visible={modalVisible}
-                gas={{ price: provider.gasPrice, limit: provider.estimateGas }}
-                address={provider.selectedAccount}
+                gas={{ price: providerTestInstance.gasPrice, limit: providerTestInstance.estimateGas }}
+                address={providerTestInstance.selectedAccount}
                 onClose={() => setModalVisible(false)}
                 onSave={handleSave} />
 
@@ -630,7 +675,7 @@ function App(): JSX.Element {
   );
 
   const [web3modalVisible, setWeb3ModalVisible] = useState(false)
-  const [selectedAddress, setSelectedAddress] = useState<string>('')
+  const [selectedAddress, setSelectedAddress] = useState<string | undefined>()
   const [web3rMethod, setWeb3Method] = useState<string>()
   const handleWeb3Save = (data: any) => {
     console.log('data: ', data)
@@ -642,27 +687,6 @@ function App(): JSX.Element {
   }
   const web3TestItemListView = (
     <>
-      {
-        AvailableNetworks && AvailableNetworks?.length !== 0 ?
-          <>
-            {/* <Text onPress={(val: any) => { setSuspectedNetwork(AvailableNetworks[0]?.value); web3TestInstance.setConfig(AvailableNetworks[0]?.value, setResult, setSelectedAccount) }} style={{ fontSize: 15, marginTop: 10, textAlign: 'center', color: 'blue' }}>
-              Click Here
-            </Text> */}
-            <SelectList
-              setSelected={(key: any) => {
-                const findeNetwork = AvailableNetworks.find((data: any) => {
-                  return data.key === key
-                })
-                setSuspectedNetwork(findeNetwork?.value);
-                web3TestInstance.setConfig(findeNetwork?.value, setResult, setSelectedAddress)
-              }}
-              placeholder='Select Network'
-              searchPlaceholder='Search Network'
-              data={AvailableNetworks!}
-              save='key'
-            />
-          </> : ''
-      }
       <ScrollView
         style={{
           marginTop: 5,
@@ -767,6 +791,28 @@ function App(): JSX.Element {
           {selectedAccount ? <Text style={{ fontSize: 11, textAlign: 'center', color: 'blue' }}>
             Address: {selectedAccount}
           </Text> : ''}
+          {
+            AvailableNetworks && AvailableNetworks?.length !== 0 ?
+              <>
+                {/* <Text onPress={(val: any) => { setSuspectedNetwork(AvailableNetworks[0]?.value); provider.setConfig(AvailableNetworks[0]?.value, setResult, setSelectedAccount) }} style={{ fontSize: 15, marginTop: 10, textAlign: 'center', color: 'blue' }}>
+              Click Here
+            </Text> */}
+                <SelectList
+                  setSelected={async (key: any) => {
+                    console.log('key', key)
+                    const findeNetwork = AvailableNetworks.find((data: any) => {
+                      return data.key === key
+                    })
+                    setSuspectedNetwork(findeNetwork?.value);
+                    await setNetwork(findeNetwork?.value)
+                  }}
+                  placeholder='Switch Network'
+                  searchPlaceholder='Search Network'
+                  data={AvailableNetworks!}
+                  save='key'
+                />
+              </> : ''
+          }
         </View>
       </SafeAreaView>
       <TabView

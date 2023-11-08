@@ -1,20 +1,30 @@
 import { ethErrors } from 'eth-rpc-errors';
 import LOG from '../../utils/log';
+import { closeWidgetAndClearWebview } from '../../utils/commmonWidget';
 export const makeRequestID = () => new Date().getTime();
 export const requestFactory = ({ wepin, network, req, res, next, end, command, parameter, }) => {
     var _a, _b, _c, _d;
     const id = makeRequestID();
     wepin.once(id.toString(), (message) => {
         if (message.body.data === 'User Cancel') {
-            wepin.closeWidget()
-                .then(() => end(ethErrors.provider.userRejectedRequest()))
-                .catch((e) => end(e));
+            closeAndEnd(ethErrors.provider.userRejectedRequest());
         }
         res.result = message.body.data === 'User Cancel' ? '' : message.body.data;
-        wepin.closeWidget()
-            .then(() => end())
-            .catch((e) => end(e));
+        if (message.body.command === 'wallet_switchEthereumChain') {
+            const lowerCasedNetworkStr = res.result.network.toLowerCase();
+            res.result.wepin = wepin;
+        }
+        closeAndEnd();
     });
+    const closeAndEnd = (param) => {
+        try {
+            closeWidgetAndClearWebview(wepin, wepin.Widget);
+            end(param);
+        }
+        catch (e) {
+            end(e);
+        }
+    };
     const request = {
         header: {
             request_from: 'react-native',

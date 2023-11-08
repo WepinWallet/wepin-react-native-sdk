@@ -1,10 +1,10 @@
 import { BaseProvider } from '../BaseProvider';
-import { createWepinMiddleware } from '../middlewares/klay-json-rpc-wepin';
+import { createWepinKlayMiddleware } from '../middlewares/klay-json-rpc-wepin';
 import { createFetchMiddlewareEther } from '../json-rpc/eth-json-rpc';
 import { getNetworkInfoByName } from '../utils/info';
 export default class InpageProvider extends BaseProvider {
     constructor({ network, wepin, }) {
-        const wepinMiddleware = createWepinMiddleware({ wepin, network });
+        const wepinMiddleware = createWepinKlayMiddleware({ wepin, network });
         const { rpcUrl, chainId } = getNetworkInfoByName(network);
         const klaytnRPCMiddleware = createFetchMiddlewareEther({
             rpcUrl,

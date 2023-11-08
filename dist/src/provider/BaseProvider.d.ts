@@ -27,6 +27,8 @@ export declare abstract class BaseProvider extends EventEmitter implements Provi
         networkVersion?: string;
     }): void;
     protected _rpcRequest(payload: UnvalidatedJsonRpcRequest | UnvalidatedJsonRpcRequest[], callback: (...args: any[]) => void): void;
+    private setRpcEngine;
+    private changeChain;
     protected _handleConnect(chainId: string): void;
     protected _handleDisconnect(isRecoverable: boolean, errorMessage?: string): void;
     protected _handleChainChanged({ chainId, }?: {

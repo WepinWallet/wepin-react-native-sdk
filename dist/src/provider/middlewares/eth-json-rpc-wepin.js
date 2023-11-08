@@ -4,7 +4,8 @@ import { signTransaction } from '../methods/signTransaction';
 import { sendTransaction } from '../methods/sendTransaction';
 import { signTypedData } from '../methods/signTypedData';
 import { sign } from '../methods/sign';
-export const createWepinMiddleware = ({ wepin, network, }) => {
+import { switchEthereumChain } from '../methods/switchEthererumCahin';
+export const createWepinEtherMiddleware = ({ wepin, network, }) => {
     return createScaffoldMiddleware({
         eth_requestAccounts: requestAccounts({ wepin, network }),
         eth_accounts: requestAccounts({ wepin, network }),
@@ -15,6 +16,7 @@ export const createWepinMiddleware = ({ wepin, network, }) => {
         eth_signTypedData_v4: signTypedData({ wepin, network, version: 'V4' }),
         eth_sign: sign({ wepin, network, isPersonal: false }),
         personal_sign: sign({ wepin, network, isPersonal: true }),
+        wallet_switchEthereumChain: switchEthereumChain({ wepin, network }),
     });
 };
 //# sourceMappingURL=eth-json-rpc-wepin.js.map

@@ -35,7 +35,7 @@ export declare class Wepin extends EventEmitter {
     isInitialized(): boolean;
     finalize(): Promise<void>;
     openWidget(): Promise<void>;
-    setWidgetWebview(webview: WebView): void;
+    setWidgetWebview(webview: WebView | undefined): void;
     private _open;
     private _resize;
     closeWidget(): Promise<void>;

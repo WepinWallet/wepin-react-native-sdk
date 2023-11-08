@@ -16,6 +16,7 @@ import Utils from '../utils/utils';
 import LOG from '../utils/log';
 import URLParser from 'url';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
+import { closeWidgetAndClearWebview } from '../utils/commmonWidget';
 const styles = StyleSheet.create({
     webviewContainer: {
         flex: 1,
@@ -49,7 +50,7 @@ class WepinWebview extends Component {
         });
         this._close = () => __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
-            if (!this.state.visible) {
+            if (!this.props.visible) {
                 return;
             }
             if (Platform.OS === 'android' && ((_a = this.webRef) === null || _a === void 0 ? void 0 : _a.clearHistory)) {
@@ -57,12 +58,16 @@ class WepinWebview extends Component {
             }
             const config = Object.assign(Object.assign({}, this.props.config), { url: '' });
             yield new Promise(resolve => this.setState(prevState => (Object.assign(Object.assign({}, prevState), { config, visible: false })), resolve));
+            const wepin = this.props.config.wepin;
+            closeWidgetAndClearWebview(wepin, this);
         });
         this._handleSetRef = (_ref) => {
             LOG.debug('_handleSetRef', this.props);
-            const wepin = this.props.config.wepin;
-            this.webRef = _ref;
-            wepin.setWidgetWebview(this);
+            if (this.props.visible) {
+                const wepin = this.props.config.wepin;
+                this.webRef = _ref;
+                wepin.setWidgetWebview(this);
+            }
         };
         this.response = (message) => {
             var _a;
@@ -177,7 +182,10 @@ class WepinWebview extends Component {
         }
         const { appInfo, url } = this.props.config;
         return (<View style={appInfo.attributes.type === 'show' ? styles.webviewContainer : { height: 0 }}>
-                <NativeWebView ref={this._handleSetRef} source={{ uri: url }} style={appInfo.attributes.type === 'show' ? styles.webview : { height: 0 }} javaScriptEnabled={true} domStorageEnabled={true} thirdPartyCookiesEnabled={true} cacheEnabled={true} androidLayerType={'hardware'} onError={({ nativeEvent }) => LOG.error('Webview error: ', nativeEvent)} onLoad={this.handleWebViewLoaded} onMessage={this.EL} onOpenWindow={(eventData) => {
+                <NativeWebView ref={this._handleSetRef} source={{ uri: url }} style={appInfo.attributes.type === 'show' ? styles.webview : { height: 0 }} javaScriptEnabled={true} domStorageEnabled={true} thirdPartyCookiesEnabled={true} cacheEnabled={true} androidLayerType={'hardware'} onError={({ nativeEvent }) => {
+                LOG.error('Webview error: ', nativeEvent);
+                this._close();
+            }} onLoad={this.handleWebViewLoaded} onMessage={this.EL} onOpenWindow={(eventData) => {
                 var _a;
                 const inAppUrl = (_a = eventData === null || eventData === void 0 ? void 0 : eventData.nativeEvent) === null || _a === void 0 ? void 0 : _a.targetUrl;
                 LOG.debug('onOpenWindow Url : ', inAppUrl);
