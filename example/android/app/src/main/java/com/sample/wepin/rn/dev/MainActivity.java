@@ -1,4 +1,4 @@
-package com.sample.wepin.rn.dev;
+package com.wepin.rn.sample;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

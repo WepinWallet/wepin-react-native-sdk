@@ -499,7 +499,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.sample.wepin.rn.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = io.wepin.rn.sample;
 				PRODUCT_NAME = wepinRNSample;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -526,7 +526,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.sample.wepin.rn.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = io.wepin.rn.sample;
 				PRODUCT_NAME = wepinRNSample;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";

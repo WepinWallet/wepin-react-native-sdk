@@ -1,4 +1,4 @@
-package com.sample.wepin.rn.dev;
+package com.wepin.rn.sample;
 
 import android.app.Application;
 import com.facebook.react.PackageList;
