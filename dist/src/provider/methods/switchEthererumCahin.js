@@ -5,10 +5,12 @@ import { getNetworkByChainId } from '../utils/info';
 export const switchEthereumChain = ({ wepin, network }) => (req, res, next, end) => {
     if (!wepin._isInitialized) {
         end(ethErrors.provider.unauthorized());
+        return;
     }
     const testingParam = Array.isArray(req.params) ? req.params[0] : req.params;
     if (!(testingParam === null || testingParam === void 0 ? void 0 : testingParam.chainId) || !(testingParam === null || testingParam === void 0 ? void 0 : testingParam.chainId.startsWith('0x'))) {
         end(ethErrors.rpc.invalidParams());
+        return;
     }
     if (!isValidChainId(testingParam.chainId)) {
         return end(ethErrors.rpc.invalidParams());

@@ -3,9 +3,11 @@ import { ethErrors } from 'eth-rpc-errors';
 export const sign = ({ wepin, network, isPersonal, }) => (req, res, next, end) => {
     if (!wepin._isInitialized) {
         end(ethErrors.provider.unauthorized());
+        return;
     }
     if (req.params.length !== 2) {
         end(ethErrors.rpc.invalidParams());
+        return;
     }
     const parameter = {
         account: {

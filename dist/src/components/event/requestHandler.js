@@ -89,6 +89,15 @@ export const WebviewRequestHandler = (message, widget) => {
                 data: '',
             };
             break;
+        case 'set_user_email':
+            response.body = {
+                command: 'set_user_email',
+                state: 'SUCCESS',
+                data: {
+                    email: widget.props.config.specifiedEmail,
+                },
+            };
+            break;
         default:
             throw new Error(`Command ${message.body.command} is not supported.`);
     }

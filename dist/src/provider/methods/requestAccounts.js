@@ -4,6 +4,7 @@ export const requestAccounts = ({ wepin, network }) => (req, res, next, end) => 
     var _a, _b;
     if (!wepin._isInitialized) {
         end(ethErrors.provider.unauthorized());
+        return;
     }
     const parameter = {
         network,

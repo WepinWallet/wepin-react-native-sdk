@@ -10,6 +10,7 @@ export type IConfigWebview = {
         platform: string;
         version?: string;
     };
+    specifiedEmail?: string;
     wepin: Wepin;
 };
 export type DialogManagerProps = {

@@ -199,6 +199,7 @@ export class Wepin extends EventEmitter {
                                 attributes: { type: 'hide', defaultCurrency: (_b = this.wepinAppAttributes) === null || _b === void 0 ? void 0 : _b.defaultCurrency, defaultLanguage: (_c = this.wepinAppAttributes) === null || _c === void 0 ? void 0 : _c.defaultLanguage },
                                 platform: '',
                             },
+                            specifiedEmail: options === null || options === void 0 ? void 0 : options.specifiedEmail,
                             wepin: this,
                         }
                     });
@@ -213,6 +214,7 @@ export class Wepin extends EventEmitter {
                                 attributes: { type: 'show', defaultCurrency: (_d = this.wepinAppAttributes) === null || _d === void 0 ? void 0 : _d.defaultCurrency, defaultLanguage: (_e = this.wepinAppAttributes) === null || _e === void 0 ? void 0 : _e.defaultLanguage },
                                 platform: '',
                             },
+                            specifiedEmail: options === null || options === void 0 ? void 0 : options.specifiedEmail,
                             wepin: this,
                         }
                     });

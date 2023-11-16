@@ -12,6 +12,7 @@ import { ethErrors } from 'eth-rpc-errors';
 import base64 from 'react-native-base64';
 import { URL } from 'react-native-url-polyfill';
 import axios from 'axios';
+import LOG from '../../utils/log';
 const btoa = base64.encode;
 const RETRIABLE_ERRORS = [
     'Gateway timeout',
@@ -29,29 +30,30 @@ export function createFetchMiddlewareEther({ rpcUrl, originHttpHeaderKey, }) {
         const maxAttempts = 5;
         const retryInterval = 1000;
         let isRetriable = true;
-        for (let attempt = 0; attempt < maxAttempts; attempt++) {
-            try {
-                const fetchRes = yield axios(fetchParams);
-                checkForHttpErrors(fetchRes);
-                const rawBody = fetchRes.data;
-                const result = parseResponse(fetchRes, rawBody);
-                res.result = result;
+        try {
+            const fetchRes = yield axios(fetchParams);
+            checkForHttpErrors(fetchRes);
+            const rawBody = fetchRes.data;
+            const result = parseResponse(fetchRes, rawBody);
+            res.result = result;
+            return;
+        }
+        catch (err) {
+            LOG.debug('fetch error:, ', err);
+            res.error = err;
+            _next();
+            return;
+            const errMsg = err === null || err === void 0 ? void 0 : err.toString();
+            LOG.debug('fetch errMsg:, ', errMsg);
+            isRetriable = RETRIABLE_ERRORS.some((phrase) => {
+                const errRes = errMsg === null || errMsg === void 0 ? void 0 : errMsg.includes(phrase);
+                return errRes;
+            });
+            LOG.debug('fetch isRetriable:, ', isRetriable);
+            if (!isRetriable) {
+                res.error = err;
+                _next();
                 return;
-            }
-            catch (err) {
-                console.log('fetch error:, ', err);
-                const errMsg = err.toString();
-                isRetriable = RETRIABLE_ERRORS.some((phrase) => {
-                    const errRes = errMsg.includes(phrase);
-                    return errRes;
-                });
-                if (!isRetriable) {
-                    _next(err);
-                    return;
-                }
-            }
-            if (isRetriable) {
-                yield timeout(retryInterval);
             }
         }
     }));

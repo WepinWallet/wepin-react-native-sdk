@@ -93,6 +93,10 @@ class WepinWebview extends Component {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                if (url.includes('/signup/email/authentication') || url.includes('/reset/email/authentication')) {
+                    Linking.openURL(url);
+                    return;
+                }
                 const isAvailable = yield InAppBrowser.isAvailable();
                 if (isAvailable) {
                     const deeplink = Utils.getDeeplink();

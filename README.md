@@ -1,5 +1,15 @@
 # wepin-react-native-sdk
 
+<div>
+  <!-- NPM Version -->
+  <a href="https://www.npmjs.org/package/@wepin/react-native-sdk">
+    <img src="http://img.shields.io/npm/v/@wepin/react-native-sdk.svg"
+    alt="NPM version" />
+  </a>
+</div>
+
+<br />
+
 Wepin React-Native SDK for Android OS and iOS
 
 ## ⏩ Get App ID and Key
@@ -547,17 +557,17 @@ The providers supported by Wepin are as follows.
 
 #### Support Networks
 
-| Chain ID | Network Name              | Network Variable   |
-| -------- | ------------------------- | ------------------ |
-| 1        | Ethereum Mainnet          | ethereum           |
-| 5        | Ethereum Goerli Testnet   | evmeth-goerli      |
-| 19       | Songbird Canary Network   | evmsongbird        |
-| 137      | Polygon Mainnet           | evmpolygon         |
-| 80001    | Polygon Mumbai            | evmpolygon-testnet |
-|          | ~~Anttime~~(Coming soon) | ~~evmanttime~~    |
-| 2731     | Elizabeth Testnet(Anttime Testnet)           | evmanttime-testnet |
-| 8217     | Klaytn                    | klaytn             |
-| 1001     | Klaytn Testnet            | klaytn-testnet     |
+| Chain ID | Network Name                       | Network Variable   |
+| -------- | ---------------------------------- | ------------------ |
+| 1        | Ethereum Mainnet                   | ethereum           |
+| 5        | Ethereum Goerli Testnet            | evmeth-goerli      |
+| 19       | Songbird Canary Network            | evmsongbird        |
+| 137      | Polygon Mainnet                    | evmpolygon         |
+| 80001    | Polygon Mumbai                     | evmpolygon-testnet |
+|          | ~~Anttime~~(Coming soon)          | ~~evmanttime~~    |
+| 2731     | Elizabeth Testnet(Anttime Testnet) | evmanttime-testnet |
+| 8217     | Klaytn                             | klaytn             |
+| 1001     | Klaytn Testnet                     | klaytn-testnet     |
 
 ### getProvider
 

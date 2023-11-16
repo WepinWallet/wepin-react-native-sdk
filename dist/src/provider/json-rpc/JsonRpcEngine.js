@@ -7,6 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import LOG from '../../utils/log';
 import EventEmitter from '../../utils/safeEventEmitter';
 import { errorCodes, EthereumRpcError } from 'eth-rpc-errors';
 export class WepinJsonRpcEngine extends EventEmitter {
@@ -156,6 +157,7 @@ export class WepinJsonRpcEngine extends EventEmitter {
                 resolve([error, true]);
             };
             const next = (returnHandler) => {
+                LOG.debug('next', res);
                 if (res.error) {
                     end(res.error);
                 }
