@@ -26,7 +26,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>io.sample.wepin.rn.dev</string>
+			<string>io.wepin.rn.sample</string>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>

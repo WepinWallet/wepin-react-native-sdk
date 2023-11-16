@@ -24,7 +24,7 @@
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.DEFAULT" />
             <category android:name="android.intent.category.BROWSABLE" />
-            <data android:scheme="com.sample.wepin.rn.dev.wepin" />
+            <data android:scheme="com.wepin.rn.sample.wepin" />
         </intent-filter>
       </activity>
     </application>

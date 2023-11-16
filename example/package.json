@@ -1,6 +1,6 @@
 {
   "name": "wepinRNSample",
-  "version": "0.0.10",
+  "version": "0.0.12",
   "private": true,
   "scripts": {
     "preinstall": "rm -rf ../sdk/node_modules",
@@ -15,7 +15,7 @@
   "dependencies": {
     "@ethersproject/shims": "^5.7.0",
     "@tradle/react-native-http": "^2.0.1",
-    "@wepin/react-native-sdk": "0.0.10-alpha",
+    "@wepin/react-native-sdk": "0.0.12-alpha",
     "@wepin/types": "^0.0.8",
     "assert": "^1.5.1",
     "asyncstorage-down": "^4.2.0",
@@ -37,7 +37,6 @@
     "react-native-modal": "^13.0.1",
     "react-native-pager-view": "^6.2.1",
     "react-native-randombytes": "^3.6.1",
-    "react-native-safe-area-context": "^4.5.2",
     "react-native-tab-view": "^3.5.2",
     "react-native-webview": "^13.3.0",
     "readable-stream": "^1.0.33",

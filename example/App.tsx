@@ -18,8 +18,7 @@ import {
 } from 'react-native'
 import Wepin, { BaseProvider, getNetworkInfoByName } from '@wepin/react-native-sdk'
 // import Wepin from './src/wepinReactNativeSDK';
-import { getApiKey, ItestMode } from './src/config/apiKey'
-import { getBundleId } from 'react-native-device-info'
+import { getApiKeyList, ItestMode } from './src/config/apiKey'
 import { AttributesType, IAccount } from '@wepin/types'
 import { Text } from 'react-native'
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
@@ -33,7 +32,7 @@ import { SelectList } from 'react-native-dropdown-select-list'
 const deviceHeight = Dimensions.get('window').height
 
 function App(): JSX.Element {
-  const testMode: ItestMode = getBundleId().split('.').slice(-1)[0] as ItestMode //'dev'; // 'stage' // 'prod'
+
   const [result, setResult] = useState<any>()
   const wepin = Wepin.getInstance()
   const providerTestInstance = providerTest.getInstance(wepin)
@@ -43,6 +42,10 @@ function App(): JSX.Element {
   const [suspectedNetwork, setSuspectedNetwork] = useState<any>()
   //let provider: BaseProvider | undefined = undefined
   const [provider, setProvider] = useState<BaseProvider>()
+
+  /////////api key변경하기 위한....
+  const apiKeyList = getApiKeyList()
+  const [apiKey, setApiKey] = useState<string>(apiKeyList.apiKeyList[0])//= getBundleId().split('.').slice(-1)[0] as ItestMode //'dev'; // 'stage' // 'prod'
 
   useEffect(() => {
     LogBox.ignoreLogs([
@@ -81,9 +84,6 @@ function App(): JSX.Element {
 
   }
   const AvailableNetworks = useMemo<any>(() => {
-
-    let id = 0
-    console.log('accounts', accounts)
     if (accounts && accounts.length) {
       // let array = [];
       // const array = accounts?.map((account) => {
@@ -116,11 +116,6 @@ function App(): JSX.Element {
       console.log('filterArray', filterArray)
       //맨앞에 network로 세팅
       setSuspectedNetwork(filterArray[0].value);
-      console.log('setNetwork', setNetwork)
-      console.log('switchNetwork', switchNetwork)
-      console.log('initWepinKor', initWepinKor)
-      console.log('wepin', wepin)
-
       setNetwork(filterArray[0].value)
       return filterArray
       // return [{
@@ -149,40 +144,16 @@ function App(): JSX.Element {
     }
   }, [suspectedNetwork])
 
-  const initWepinKor = async (type: AttributesType) => {
+  const initWepin = async (type: AttributesType, lang: 'ko' | 'en', currency: 'krw' | 'USD') => {
     try {
-      console.log('getApiKey(testMode): ', getApiKey(testMode))
+      console.log('api key: ', apiKey)
       setResult('processing.....')
-      //verify email전송 테스트 app key로 변경시
-      // await wepin.init('', getApiKey(testMode, true), {
-      await wepin.init('', getApiKey(testMode), {
+
+      await wepin.init('', apiKey, {
         type,
-        defaultCurrency: 'krw',
-        defaultLanguage: 'ko',
+        defaultCurrency: currency,
+        defaultLanguage: lang,
       })
-
-      const isInitialized = wepin.isInitialized()
-      // if (type !== 'show') {
-      setResult('wepin isInitialized: ' + isInitialized)
-      // }
-
-    } catch (e) {
-      console.error(e)
-      setResult('already wepin initialized')
-    }
-  }
-
-  const initWepinEng = async (type: AttributesType) => {
-    try {
-      setResult('processing.....')
-      //verify email전송 테스트 app key로 변경시
-      // await wepin.init('', getApiKey(testMode, true), {
-      await wepin.init('', getApiKey(testMode), {
-        type,
-        defaultCurrency: 'USD',
-        defaultLanguage: 'en',
-      })
-
       const isInitialized = wepin.isInitialized()
       // if (type !== 'show') {
       setResult('wepin isInitialized: ' + isInitialized)
@@ -220,12 +191,34 @@ function App(): JSX.Element {
     }
   }
 
-  const loginWepin = async () => {
+  const loginWepin = async (option?: { setEmail: boolean }) => {
     console.log('loginWepin')
+    const loginEmail = async (val: any) => {
+      try {
+        setResult('processing.....')
+        const res = await wepin.login()//(val.email)
+        setResult('loginWepin: ' + JSON.stringify(res))
+      } catch (e: any) {
+        console.error(e)
+        setResult('loginWepin fail: ' + e.message)
+      }
+    }
+
     try {
       setResult('processing.....')
-      const res = await wepin.login()
-      setResult('loginWepin: ' + JSON.stringify(res))
+      if (option?.setEmail) {
+        openDialog({
+          title: 'Wepin Login',
+          inputs: [
+            {
+              text: 'email'
+            }]
+        }, loginEmail)
+      } else {
+        const res = await wepin.login()
+        setResult('loginWepin: ' + JSON.stringify(res))
+      }
+
     } catch (e) {
       console.error(e)
       setResult('loginWepin: fail')
@@ -292,6 +285,9 @@ function App(): JSX.Element {
             </View>)}
             {options.selectList ?
               <SelectList
+                boxStyles={styles.selectBoxStyles}
+                inputStyles={styles.selectBoxtextStyles}
+                dropdownTextStyles={styles.selectBoxtextStyles}
                 setSelected={(key: any) => {
                   res['account'] = options.selectList?.list[Number(key)]
                 }}
@@ -491,16 +487,16 @@ function App(): JSX.Element {
         // borderWidth: 1
       }}>
       <View style={styles.button}>
-        <Button title="Initialize(kor)-hide" onPress={() => initWepinKor('hide')} />
+        <Button title="Initialize(kor)-hide" onPress={() => initWepin('hide', 'ko', 'krw')} />
       </View>
       <View style={styles.button}>
-        <Button title="Initialize(kor)-show" onPress={() => initWepinKor('show')} />
+        <Button title="Initialize(kor)-show" onPress={() => initWepin('show', 'ko', 'krw')} />
       </View>
       <View style={styles.button}>
-        <Button title="Initialize(eng)-hide" onPress={() => initWepinEng('hide')} />
+        <Button title="Initialize(eng)-hide" onPress={() => initWepin('hide', 'en', 'USD')} />
       </View>
       <View style={styles.button}>
-        <Button title="Initialize(eng)-show" onPress={() => initWepinEng('show')} />
+        <Button title="Initialize(eng)-show" onPress={() => initWepin('show', 'en', 'USD')} />
       </View>
       <View style={styles.button}>
         <Button title="Is_initialized" onPress={() => isInit()} />
@@ -511,6 +507,9 @@ function App(): JSX.Element {
       <View style={styles.button}>
         <Button title="login" onPress={() => loginWepin()} />
       </View>
+      {/* <View style={styles.button}>
+        <Button title="login(set email)" onPress={() => loginWepin({ setEmail: true })} />
+      </View> */}
       <View style={styles.button}>
         <Button title="logout" onPress={() => logoutWepin()} />
       </View>
@@ -785,6 +784,29 @@ function App(): JSX.Element {
           <Text style={{ fontSize: 25, marginTop: 30, textAlign: 'center', color: 'black' }}>
             Wepin SDK Test
           </Text>
+          {
+
+          }
+          <SelectList
+            boxStyles={styles.selectBoxStyles}
+            inputStyles={styles.selectBoxtextStyles}
+            dropdownTextStyles={styles.selectBoxtextStyles}
+            setSelected={async (key: any) => {
+              console.log('key', key)
+              const res = key === '0'
+              const selApikey = apiKeyList.apiKeyList[Number(key)]
+
+              if (apiKey !== selApikey) {
+                setApiKey(selApikey)
+                await finalizeWepin()
+              }
+            }}
+            placeholder='Switch API key'
+            searchPlaceholder='Search API key'
+            data={apiKeyList.dropdownKeyList}
+            save='key'
+          />
+
           {suspectedNetwork ? <Text style={{ fontSize: 11, marginTop: 5, textAlign: 'center', color: 'blue' }}>
             SelectNetwork: {suspectedNetwork}
           </Text> : ''}
@@ -798,6 +820,9 @@ function App(): JSX.Element {
               Click Here
             </Text> */}
                 <SelectList
+                  boxStyles={styles.selectBoxStyles}
+                  inputStyles={styles.selectBoxtextStyles}
+                  dropdownTextStyles={styles.selectBoxtextStyles}
                   setSelected={async (key: any) => {
                     console.log('key', key)
                     const findeNetwork = AvailableNetworks.find((data: any) => {
@@ -887,6 +912,15 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 10,
   },
+  selectBoxStyles: {
+    marginHorizontal: 20,
+    marginVertical: 5
+  },
+  selectBoxtextStyles: {
+    fontSize: 11,
+    textAlign: 'center',
+    color: 'black'
+  }
 })
 
 export default App

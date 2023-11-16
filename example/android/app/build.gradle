@@ -93,9 +93,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.sample.wepin.rn.dev"
+    namespace "com.wepin.rn.sample"
     defaultConfig {
-        applicationId "com.sample.wepin.rn.dev"
+        applicationId "com.wepin.rn.sample"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
