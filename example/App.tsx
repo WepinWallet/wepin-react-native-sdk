@@ -792,8 +792,6 @@ function App(): JSX.Element {
             inputStyles={styles.selectBoxtextStyles}
             dropdownTextStyles={styles.selectBoxtextStyles}
             setSelected={async (key: any) => {
-              console.log('key', key)
-              const res = key === '0'
               const selApikey = apiKeyList.apiKeyList[Number(key)]
 
               if (apiKey !== selApikey) {
@@ -824,7 +822,6 @@ function App(): JSX.Element {
                   inputStyles={styles.selectBoxtextStyles}
                   dropdownTextStyles={styles.selectBoxtextStyles}
                   setSelected={async (key: any) => {
-                    console.log('key', key)
                     const findeNetwork = AvailableNetworks.find((data: any) => {
                       return data.key === key
                     })
@@ -905,6 +902,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     padding: 5,
+    color: 'black'
   },
   buttonContainer: {
     flexDirection: 'row',

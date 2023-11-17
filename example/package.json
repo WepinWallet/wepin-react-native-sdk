@@ -3,7 +3,7 @@
   "version": "0.0.12",
   "private": true,
   "scripts": {
-    "preinstall": "rm -rf ../sdk/node_modules",
+    "preinstall": "rm -rf ../node_modules",
     "postinstall": "rn-nodeify --install fs,crypto,https,http,stream,path,zlib,assert --hack",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
