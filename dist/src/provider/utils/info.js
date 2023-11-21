@@ -37,9 +37,9 @@ export const getNetworkInfoByName = (network) => {
                 rpcUrl: GatewayUrl.Gateway + '/matic/testnet',
                 chainId: '0x' + (80001).toString(16),
             };
-        case 'evmanttime-testnet':
+        case 'evmtimenetwork-testnet':
             return {
-                rpcUrl: GatewayUrl.Gateway + '/anttime/testnet ',
+                rpcUrl: GatewayUrl.Gateway + '/timenetwork/testnet ',
                 chainId: '0x' + (2731).toString(16),
             };
         default:
@@ -58,7 +58,7 @@ export const getNetworkByChainId = (chainId) => {
         [`0x${(1001).toString(16)}`]: 'klaytn-testnet',
         [`0x${(8217).toString(16)}`]: 'klaytn',
         [`0x${(80001).toString(16)}`]: 'evmpolygon-testnet',
-        [`0x${(2731).toString(16)}`]: 'evmanttime-testnet',
+        [`0x${(2731).toString(16)}`]: 'evmtimenetwork-testnet',
     };
     return chainIdMappings[chainId];
 };
