@@ -15,6 +15,7 @@ import {
   TextInput,
   View,
   LogBox,
+  KeyboardTypeOptions,
 } from 'react-native'
 import Wepin, { BaseProvider, getNetworkInfoByName } from '@wepin/react-native-sdk'
 // import Wepin from './src/wepinReactNativeSDK';
@@ -196,7 +197,7 @@ function App(): JSX.Element {
     const loginEmail = async (val: any) => {
       try {
         setResult('processing.....')
-        const res = await wepin.login()//(val.email)
+        const res = await wepin.login(val.email)
         setResult('loginWepin: ' + JSON.stringify(res))
       } catch (e: any) {
         console.error(e)
@@ -250,6 +251,7 @@ function App(): JSX.Element {
     inputs?: Array<{
       text: string,
       secure?: boolean,
+      type?: KeyboardTypeOptions,
     }>,
     selectList?: { list: Array<IAccount> }
   }, callback: (param: any) => {}) => {
@@ -262,6 +264,15 @@ function App(): JSX.Element {
     console.log('abc', DialogManager.currentDialog)
 
     let res: any = {}
+    const getKeyboardType = (text: string) => {
+      if (text.includes('email')) {
+        return 'email-address'
+      } else if (text === 'pin') {
+        return 'number-pad'
+      } else {
+        return 'default'
+      }
+    }
     DialogManager.show({
       title: options.title,
       titleAlign: 'center',
@@ -277,6 +288,8 @@ function App(): JSX.Element {
               </Text>
               <TextInput
                 style={styles.textlInput}
+                keyboardType={obj.type ?? getKeyboardType(obj.text)}
+                // textContentType='emailAddress'
                 // placeholder={obj.defaultValue}
                 autoCapitalize='none'
                 secureTextEntry={obj.secure}
@@ -507,9 +520,9 @@ function App(): JSX.Element {
       <View style={styles.button}>
         <Button title="login" onPress={() => loginWepin()} />
       </View>
-      {/* <View style={styles.button}>
+      <View style={styles.button}>
         <Button title="login(set email)" onPress={() => loginWepin({ setEmail: true })} />
-      </View> */}
+      </View>
       <View style={styles.button}>
         <Button title="logout" onPress={() => logoutWepin()} />
       </View>
@@ -792,6 +805,7 @@ function App(): JSX.Element {
             inputStyles={styles.selectBoxtextStyles}
             dropdownTextStyles={styles.selectBoxtextStyles}
             setSelected={async (key: any) => {
+              console.log('key', key)
               const selApikey = apiKeyList.apiKeyList[Number(key)]
 
               if (apiKey !== selApikey) {
@@ -822,6 +836,7 @@ function App(): JSX.Element {
                   inputStyles={styles.selectBoxtextStyles}
                   dropdownTextStyles={styles.selectBoxtextStyles}
                   setSelected={async (key: any) => {
+                    console.log('key', key)
                     const findeNetwork = AvailableNetworks.find((data: any) => {
                       return data.key === key
                     })

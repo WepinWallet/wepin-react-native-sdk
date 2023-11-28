@@ -432,6 +432,7 @@ wepin.loginWithEmailAndPassword(email, password)
 #### Exception message
 
 - [Admin Error Message](#admin-error-message)
+  - `require/wepin-register` : If this error occurs, you have to perform the `wepin.register(pin)` method.
 
 #### Example
 
@@ -458,6 +459,7 @@ wepin.register(pin)
 - `Promise` \<boolean>
 
   - Returns true if the registeration is successful.
+  - After register success, the `wepin.login(email, password)` method have to be performed again.
 
 #### Exception message
 
@@ -466,7 +468,7 @@ wepin.register(pin)
 #### Example
 
 ```javascript
-const result = await wepin.register('test@test.com', 'abcd1234@')
+const result = await wepin.register('123456')
 ```
 
 ### getBalance(Support from version `0.0.9-alpha`)
