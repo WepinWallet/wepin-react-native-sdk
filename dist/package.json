@@ -1,6 +1,6 @@
 {
     "name": "@wepin/react-native-sdk",
-    "version": "0.0.13-alpha",
+    "version": "0.0.14-alpha",
     "description": "Wepin Widget React Native SDK for Android/iOS",
     "main": "./dist/src/index.js",
     "types": "./dist/src/index.d.ts",
@@ -27,7 +27,7 @@
     ],
     "license": "MIT",
     "dependencies": {
-        "@wepin/types": "^0.0.8",
+        "@wepin/types": "^0.0.9",
         "axios": "^1.5.1",
         "eth-rpc-errors": "^4.0.3",
         "eventemitter3": "^5.0.1",

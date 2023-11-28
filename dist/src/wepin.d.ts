@@ -46,7 +46,7 @@ export declare class Wepin extends EventEmitter {
     }[] | undefined>;
     setUserInfo(userInfo: IWepinUser): void;
     getStatus(): WepinLifeCycle;
-    login(): Promise<IWepinUser>;
+    login(email?: string): Promise<IWepinUser>;
     logout(): Promise<void>;
     getProvider({ network }: {
         network: SupportedChains;

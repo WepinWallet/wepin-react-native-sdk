@@ -32,6 +32,7 @@ import DialogManager from './components/dialog';
 import { RootSiblingParent } from 'react-native-root-siblings';
 import { getNetworkByChainId } from './provider/utils/info';
 import { closeWidgetAndClearWebview } from './utils/commmonWidget';
+import { emailRegExp } from './const/regExp';
 export class Wepin extends EventEmitter {
     static getInstance() {
         if (!this._instance) {
@@ -341,10 +342,15 @@ export class Wepin extends EventEmitter {
     getStatus() {
         return this._wepinLifeCycle;
     }
-    login() {
+    login(email) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this._isInitialized) {
                 throw new Error('Wepin.login: wepin sdk widget has to be initialized');
+            }
+            if (email) {
+                if (!emailRegExp.test(email)) {
+                    throw new Error('The email does not match the correct format');
+                }
             }
             this._wepinLifeCycle = 'before_login';
             return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
@@ -358,7 +364,7 @@ export class Wepin extends EventEmitter {
                             resolve(userInfo);
                         }));
                         yield this._close();
-                        yield this._open({ type: 'show' });
+                        yield this._open({ type: 'show', specifiedEmail: email });
                     }
                     else {
                         yield this._close();
@@ -366,7 +372,7 @@ export class Wepin extends EventEmitter {
                         resolve(userInfo);
                     }
                 }));
-                yield this._open({ type: 'hide', url: '/wepin-sdk-login/login' });
+                yield this._open({ type: 'hide', url: '/wepin-sdk-login/login', specifiedEmail: email });
             }));
         });
     }
@@ -418,7 +424,7 @@ export class Wepin extends EventEmitter {
             case 'evmsongbird':
             case 'evmpolygon':
             case 'evmpolygon-testnet':
-            case 'evmtimenetwork-testnet':
+            case 'evmtime-elizabeth':
                 return EthProvider.generate({ network: lowerCasedNetworkStr, wepin });
             case 'klaytn':
             case 'klaytn-testnet':

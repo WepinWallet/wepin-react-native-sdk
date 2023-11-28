@@ -50,7 +50,7 @@ yarn add react-native-inappbrowser-reborn
 yarn add react-native-webview
 
 # for ios
-cd ios 
+cd ios
 pod install
 ```
 
@@ -58,7 +58,7 @@ pod install
 
 To enable the web3 provider functionality in the React Native environment, you need to install and configure the rn-nodeify module.
 
-* Install the `rn-nodeify` module in your devDependencies.
+- Install the `rn-nodeify` module in your devDependencies.
 
   ```bash
   npm install --save-dev rn-nodeify
@@ -69,7 +69,8 @@ To enable the web3 provider functionality in the React Native environment, you n
   ```bash
   yarn add --dev rn-nodeify
   ```
-* Add the following `rn-nodeify` command to your project's `package.json` file as a `postinstall` script:
+
+- Add the following `rn-nodeify` command to your project's `package.json` file as a `postinstall` script:
 
   ```json
   "scripts": {
@@ -78,7 +79,8 @@ To enable the web3 provider functionality in the React Native environment, you n
   	...
   }
   ```
-* After running the `postinstall` script, import the generated `shim.js` file in the root file of your application as follows:
+
+- After running the `postinstall` script, import the generated `shim.js` file in the root file of your application as follows:
 
   ```javascript
   import './shim'
@@ -94,7 +96,7 @@ Add the below line in your app's `AndroidMainfest.xml` file
 
 ```xml
 <activity
-	android:name=".MainActivity" 
+	android:name=".MainActivity"
 	....
 >
 	....
@@ -145,7 +147,7 @@ import Wepin from '@wepin/react-native-sdk
 const wepin = Wepin.getInstance()
 ```
 
-Add a  `<Wepin.WidgetView>` component within the main compenent and nest its content inside of it:
+Add a `<Wepin.WidgetView>` component within the main compenent and nest its content inside of it:
 
 ```typescript
 function App(): JSX.Element {
@@ -242,8 +244,8 @@ The `getAccounts()` method returns user accounts. If user is not logged in, Wepi
 
 #### Parameters
 
-- `networks` \<Array> *optional*
-  - `network` \<string> *optional*
+- `networks` \<Array> _optional_
+  - `network` \<string> _optional_
 
 #### Example
 
@@ -262,11 +264,11 @@ const accounts = await wepin.getAccounts(['Ethereum'])
   - If networks aren't passed, it returns a `Promise` object resolved with array of `account` of all networks.
   - Example
     ```javascript
-    [
-        {
-    	    address: "0x0000001111112222223333334444445555556666",
-    	    network: "Ethereum"
-        },
+    ;[
+      {
+        address: '0x0000001111112222223333334444445555556666',
+        network: 'Ethereum',
+      },
     ]
     ```
 - `Promise` \<void>
@@ -304,10 +306,17 @@ await wepin.login()
 
 The `login()` method returns information of the logged-in user. If a user is not logged in, Wepin widget will show login page.
 
+#### Parameters(Support from version `0.0.14-alpha`)
+
+- `email` \<string> _optional_
+  - The `email` parameter allows users to log in using the specified email address, providing access to the login service.
+
 #### Example
 
 ```javascript
 var userInfo = await wepin.login()
+// Use specified Email
+var userInfo = await wepin.login('wepin@wepin.io')
 ```
 
 #### Return value
@@ -321,6 +330,7 @@ var userInfo = await wepin.login()
       - `userId` \<string>
       - `email` \<string>
       - `provider` \<'google'|'apple'|'email'>
+
   - Example
 
     ```js
@@ -405,6 +415,7 @@ wepin.loginWithEmailAndPassword(email, password)
       - `userId` \<string>
       - `email` \<string>
       - `provider` \<'email'>
+
   - Example
 
     ```js
@@ -479,11 +490,12 @@ wepin.getBalance(account)
 
     - `symbol` \<string> - symbol of account
     - `balance` \<string> - balance of account
-    - `tokens`  \<Array<`ITokenBalance`>> - token balance information for account
-      - `name` \<string> -  token name
+    - `tokens` \<Array<`ITokenBalance`>> - token balance information for account
+      - `name` \<string> - token name
       - `contract` \<string> - token contract address
-      - `symbol` \<string> -  token symbol
+      - `symbol` \<string> - token symbol
       - `balance` \<string> - token balance
+
   - Example
 
     ```js
@@ -515,32 +527,32 @@ const result = wepin.signUpWithEmailAndPassword('test@test.com', 'abcd1234@')
 
 The error message types of the admin method are as follows.
 
-| Error Message           | Description                                                                                                |
-| ----------------------- | ---------------------------------------------------------------------------------------------------------- |
-| invalid/email-format    | invalid email format                                                                                       |
-| invalid/password-format | invalid password format (A minimum of 8 characters consisting of letters and numbers. )                   |
-| invalid/pin-format      | invalid PIN format (6-8 digit number) (*Do not use the same number more than four times when registering) |
-| invalid/firebase-token  | invalid firebase token                                                                                     |
-| invalid/wepin-api-key   | invalid wepin api key                                                                                      |
-| invalid/account         | invalid account                                                                                            |
-| invalid/email-domain    | invalid email domain                                                                                       |
-| auth/existed-email      | existed email                                                                                              |
-| auth/too-many-requests  | too mandy firebase requests                                                                                |
-| auth/wrong-password     | wrong password                                                                                             |
-| auth/expired-token      | expired login session                                                                                      |
-| auth/unknown/${string}  | unknown auth error                                                                                         |
-| fail/send-email         | failed to sent validation email                                                                           |
-| fail/reset-password     | failed to set password                                                                                     |
-| fail/email-verified     | failed to verify email                                                                                     |
-| fail/wepin-login        | login wepin failed                                                                                         |
-| fail/wepin-register     | failed to register with wepin                                                                              |
-| fail/get-balance        | failed to get balance                                                                                      |
-| fail/check-email        | failed to check email                                                                                      |
-| require/email-verified  | email verification required                                                                                |
-| require/signup          | wepin sign-up required                                                                                     |
-| require/wepin-register  | wepin registration required                                                                                |
-| require/login           | wepin login required                                                                                       |
-| unknown/${string}       | unknown error                                                                                              |
+| Error Message           | Description                                                                                                 |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------- |
+| invalid/email-format    | invalid email format                                                                                        |
+| invalid/password-format | invalid password format (A minimum of 8 characters consisting of letters, numbers and special characters. ) |
+| invalid/pin-format      | invalid PIN format (6-8 digit number) (\*Do not use the same number more than four times when registering)  |
+| invalid/firebase-token  | invalid firebase token                                                                                      |
+| invalid/wepin-api-key   | invalid wepin api key                                                                                       |
+| invalid/account         | invalid account                                                                                             |
+| invalid/email-domain    | invalid email domain                                                                                        |
+| auth/existed-email      | existed email                                                                                               |
+| auth/too-many-requests  | too mandy firebase requests                                                                                 |
+| auth/wrong-password     | wrong password                                                                                              |
+| auth/expired-token      | expired login session                                                                                       |
+| auth/unknown/${string}  | unknown auth error                                                                                          |
+| fail/send-email         | failed to sent validation email                                                                             |
+| fail/reset-password     | failed to set password                                                                                      |
+| fail/email-verified     | failed to verify email                                                                                      |
+| fail/wepin-login        | login wepin failed                                                                                          |
+| fail/wepin-register     | failed to register with wepin                                                                               |
+| fail/get-balance        | failed to get balance                                                                                       |
+| fail/check-email        | failed to check email                                                                                       |
+| require/email-verified  | email verification required                                                                                 |
+| require/signup          | wepin sign-up required                                                                                      |
+| require/wepin-register  | wepin registration required                                                                                 |
+| require/login           | wepin login required                                                                                        |
+| unknown/${string}       | unknown error                                                                                               |
 
 ## ⏩ Provider(Support from version `0.0.7-alpha`)
 
@@ -557,17 +569,17 @@ The providers supported by Wepin are as follows.
 
 #### Support Networks
 
-| Chain ID | Network Name                 | Network Variable       |
-| -------- | ---------------------------- | ---------------------- |
-| 1        | Ethereum Mainnet             | ethereum               |
-| 5        | Ethereum Goerli Testnet      | evmeth-goerli          |
-| 19       | Songbird Canary Network      | evmsongbird            |
-| 137      | Polygon Mainnet              | evmpolygon             |
-| 80001    | Polygon Mumbai               | evmpolygon-testnet     |
-|          | ~~TimeNetwork~~(Coming soon) | ~~evmtimenetwork~~     |
-| 2731     | TimeNetwork Testnet          | evmtimenetwork-testnet |
-| 8217     | Klaytn                       | klaytn                 |
-| 1001     | Klaytn Testnet               | klaytn-testnet         |
+| Chain ID | Network Name            | Network Variable   |
+| -------- | ----------------------- | ------------------ |
+| 1        | Ethereum Mainnet        | ethereum           |
+| 5        | Ethereum Goerli Testnet | evmeth-goerli      |
+| 19       | Songbird Canary Network | evmsongbird        |
+| 137      | Polygon Mainnet         | evmpolygon         |
+| 80001    | Polygon Mumbai          | evmpolygon-testnet |
+|          | ~~Time~~(Coming soon)   | ~~evmtime~~        |
+| 2731     | Time Testnet            | evmtime-elizabeth  |
+| 8217     | Klaytn                  | klaytn             |
+| 1001     | Klaytn Testnet          | klaytn-testnet     |
 
 ### getProvider
 
@@ -593,21 +605,22 @@ const provider = wepin.getProvider({ network: 'ethereum' })
 
 ### initializeWeb3
 
-* `web3.js`
+- `web3.js`
 
   ```javascript
   import Web3 from 'web3'
   const provider = wepin.getProvider({ network: 'ethereum' })
   const web3 = new Web3(provider)
   ```
-* `ethers.js` (Document: [ethers.js for React native](https://docs.ethers.org/v5/cookbook/react-native/))
+
+- `ethers.js` (Document: [ethers.js for React native](https://docs.ethers.org/v5/cookbook/react-native/))
 
   ```javascript
-  import "react-native-get-random-values"
+  import 'react-native-get-random-values'
   // Import the the ethers shims (**BEFORE** ethers)
-  import "@ethersproject/shims"
+  import '@ethersproject/shims'
   // Import the ethers library
-  import { ethers } from "ethers"
+  import { ethers } from 'ethers'
 
   const provider = wepin.getProvider({ network: 'ethereum' })
   const web3 = new ethers.providers.Web3Provider(provider)
@@ -630,6 +643,7 @@ const provider = wepin.getProvider({ network: 'ethereum' })
   const signer = web3.getSigner()
   const address = await signer.getAddress()
   ```
+
 - **Get Balance**
   You can check the account balance using the account information.
 
@@ -638,6 +652,7 @@ const provider = wepin.getProvider({ network: 'ethereum' })
     ```javascript
     const balance = await web3.eth.getBalance(accounts[0])
     ```
+
   - `ethers.js`
 
     ```javascript
@@ -657,28 +672,30 @@ const provider = wepin.getProvider({ network: 'ethereum' })
     ```javascript
     const accounts = await web3.eth.getAccounts()
     const tx = {
-        from: accounts[0],
-        gasPrice: "2000000000",
-        gas: "21000",
-        to: '0x11f4d0A3c1......13F7E19D048276DAe',
-        value: "10000000000000000",
+      from: accounts[0],
+      gasPrice: '2000000000',
+      gas: '21000',
+      to: '0x11f4d0A3c1......13F7E19D048276DAe',
+      value: '10000000000000000',
     }
     const response = await web3.eth.sendTransaction(tx)
     ```
+
   - `ethers.js`
 
     ```javascript
     const signer = web3.getSigner()
     const address = await signer.getAddress()
     const tx = {
-        from: address,
-        gasPrice: "2000000000",
-       gasLimit: "21000",
-        to: '0x11f4d0A3c1......13F7E19D048276DAe',
-        value: "10000000000000000",
+      from: address,
+      gasPrice: '2000000000',
+      gasLimit: '21000',
+      to: '0x11f4d0A3c1......13F7E19D048276DAe',
+      value: '10000000000000000',
     }
     const response = await signer.sendTransaction(tx)
     ```
+
 - **Contract Call**
   A contract call can be performed.
 
@@ -686,17 +703,18 @@ const provider = wepin.getProvider({ network: 'ethereum' })
 
     ```javascript
     const callObject = {
-    	to: '0x11f4d0A3c12e86B4b5F39B213F7E19D048276DAe', //contract address
-    	data: '0xc6888fa10000000000000000000000000000000000000000000000000000000000000003'
+      to: '0x11f4d0A3c12e86B4b5F39B213F7E19D048276DAe', //contract address
+      data: '0xc6888fa10000000000000000000000000000000000000000000000000000000000000003',
     }
     const response = await web3.eth.call(callObject)
     ```
+
   - `ethers.js`
 
     ```javascript
     const callObject = {
-    	to: '0x11f4d0A3c12e86B4b5F39B213F7E19D048276DAe', //contract address
-    	data: '0xc6888fa10000000000000000000000000000000000000000000000000000000000000003'
+      to: '0x11f4d0A3c12e86B4b5F39B213F7E19D048276DAe', //contract address
+      data: '0xc6888fa10000000000000000000000000000000000000000000000000000000000000003',
     }
     const response = await web3.call(callObject)
     ```
