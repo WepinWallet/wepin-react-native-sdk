@@ -36,6 +36,7 @@ yarn add @wepin/react-native-sdk
 npm install react-native-device-info
 npm install react-native-inappbrowser-reborn
 npm install react-native-webview
+npm install react-native-encrypted-storage
 
 # for ios
 cd ios
@@ -48,6 +49,7 @@ or
 yarn add react-native-device-info
 yarn add react-native-inappbrowser-reborn
 yarn add react-native-webview
+yarn add react-native-encrypted-storage
 
 # for ios
 cd ios

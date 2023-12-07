@@ -1,6 +1,7 @@
 import { Platform } from 'react-native';
 import LOG from '../../utils/log';
 import { closeWidgetAndClearWebview } from '../../utils/commmonWidget';
+import Utils from '../../utils/utils';
 export const WebviewRequestHandler = (message, widget) => {
     var _a, _b, _c, _d;
     const response = {
@@ -13,8 +14,7 @@ export const WebviewRequestHandler = (message, widget) => {
     const wepin = widget.props.config.wepin;
     switch (message.body.command) {
         case 'ready_to_widget':
-            LOG.debug('web request: message.bod ', message.body);
-            LOG.debug('init?', wepin.wepinAppKey);
+            LOG.debug('ready_to_widget');
             response.body = {
                 command: 'ready_to_widget',
                 state: 'SUCCESS',
@@ -50,7 +50,6 @@ export const WebviewRequestHandler = (message, widget) => {
             };
             break;
         case 'close_wepin_widget':
-            LOG.debug('close??');
             LOG.debug('close_widget...., wepin', widget.props.config);
             closeWidgetAndClearWebview(wepin, widget);
             break;
@@ -73,7 +72,7 @@ export const WebviewRequestHandler = (message, widget) => {
             break;
         case 'set_user_info':
             LOG.debug('set_user_info ', message.body);
-            wepin.setUserInfo(message.body.parameter);
+            wepin.setUserInfo(message.body.parameter, true);
             response.body = {
                 command: 'set_user_info',
                 state: 'SUCCESS',
@@ -98,12 +97,37 @@ export const WebviewRequestHandler = (message, widget) => {
                 },
             };
             break;
+        case 'set_local_storage':
+            LOG.debug('set_local_storage');
+            Utils.setLocalStorage(wepin.wepinAppId, message.body.parameter.data).then(() => {
+                response.body = {
+                    command: 'set_local_storage',
+                    state: 'SUCCESS',
+                    data: ''
+                };
+                if (widget.props.visible) {
+                    widget.response(response);
+                }
+            }).catch(e => {
+                response.body = {
+                    command: 'set_local_storage',
+                    state: 'ERROR',
+                    data: ''
+                };
+                if (widget.props.visible) {
+                    widget.response(response);
+                }
+            });
+            wepin.setUserInfo(message.body.parameter.data['user_login_info']);
+            wepin.setWepinToken(message.body.parameter.data['wepin:connectUser']);
+            break;
         default:
             throw new Error(`Command ${message.body.command} is not supported.`);
     }
-    LOG.debug('widget.state: ', widget.state);
-    LOG.debug('widget.props: ', widget.props);
     if (widget.props.visible) {
+        if (message.body.command === 'set_local_storage') {
+            return;
+        }
         widget.response(response);
     }
     function windowCloseObserver() {

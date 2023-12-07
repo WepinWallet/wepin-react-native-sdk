@@ -3,7 +3,9 @@ import { Platform } from 'react-native'
 export type ItestMode = 'dev' | 'stage' | 'prod'
 
 export const getApiKey = (mode: ItestMode, emailVerify?: boolean) => {
-  return 'test_app_key'
+  return 'ak_dev_Ch5a8a2ylJ1lz0Bb5aGqlxAGoGJ7nMUuHWOVDb8Z6yy' //android
+  //return 'ak_dev_MbzUuudmq9jlFzfkLhSatMVTVcZJWlb0PIWRruQNL9n' //ios
+  //return 'test_app_key'
 }
 
 export const getApiKeyList = () => {

@@ -37,7 +37,6 @@ const styles = StyleSheet.create({
 });
 class WepinWebview extends Component {
     constructor(props) {
-        LOG.debug('-----------props', props);
         super(props);
         this._open = (config) => __awaiter(this, void 0, void 0, function* () {
             if (this.state.visible) {
@@ -62,7 +61,6 @@ class WepinWebview extends Component {
             closeWidgetAndClearWebview(wepin, this);
         });
         this._handleSetRef = (_ref) => {
-            LOG.debug('_handleSetRef', this.props);
             if (this.props.visible) {
                 const wepin = this.props.config.wepin;
                 this.webRef = _ref;

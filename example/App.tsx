@@ -489,6 +489,44 @@ function App(): JSX.Element {
     }
   }
 
+  const adminWepin = async () => {
+    await initWepin('hide', 'ko', 'krw')
+    const email = 'itest6@naver.com'
+    const password = 'abc1111!'
+    try {
+      let res = await wepin.signUpWithEmailAndPassword(email, password)
+      if (res) {
+        console.log('signup success')
+      }
+    } catch (e: any) {
+      console.error('signUpWithEmailAndPassword error', e.message)
+    }
+    try {
+
+      let resLogin = await wepin.loginWithEmailAndPassword(email, password)
+      if (resLogin?.status === 'success') {
+        console.log('login success')
+      } else {
+        console.log('login fail')
+      }
+    } catch (e: any) {
+      console.error('adminWepin error', e.message)
+      if (e.message === 'required/wepin-register') {
+        console.error(e.message)
+        wepin.register('123456').then((resReg) => {
+          if (resReg) {
+            console.log('register success')
+          } else {
+            console.log('register fail')
+          }
+        }).catch(async (e) => {
+          console.log('register error' + e)
+        })
+      }
+      setResult('adminWepin exception' + e.message)
+    }
+
+  }
   const testItemListView = (
 
     <ScrollView
@@ -499,6 +537,9 @@ function App(): JSX.Element {
         // borderColor: 'blue',
         // borderWidth: 1
       }}>
+      <View style={styles.button}>
+        <Button title="Admin_All" onPress={() => adminWepin()} />
+      </View>
       <View style={styles.button}>
         <Button title="Initialize(kor)-hide" onPress={() => initWepin('hide', 'ko', 'krw')} />
       </View>

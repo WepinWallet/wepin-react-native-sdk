@@ -32,6 +32,7 @@ export declare class Wepin extends EventEmitter {
     get modeByAppKey(): modeByAppKey;
     toJSON(): string;
     init(appId: string, appKey: string, attributes?: IAttributes): Promise<Wepin>;
+    private isLogedIn;
     isInitialized(): boolean;
     finalize(): Promise<void>;
     openWidget(): Promise<void>;
@@ -44,7 +45,11 @@ export declare class Wepin extends EventEmitter {
         address: string;
         network: string;
     }[] | undefined>;
-    setUserInfo(userInfo: IWepinUser): void;
+    setUserInfo(userInfo: IWepinUser, withEmit?: boolean): void;
+    setWepinToken(tokens: {
+        refreshToken: string;
+        accessToken: string;
+    }): void;
     getStatus(): WepinLifeCycle;
     login(email?: string): Promise<IWepinUser>;
     logout(): Promise<void>;

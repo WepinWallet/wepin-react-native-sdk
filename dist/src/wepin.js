@@ -18,7 +18,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _Wepin_adminLoginResult, _Wepin_detailAccount;
+var _Wepin_adminLoginResult, _Wepin_detailAccount, _Wepin_tokens;
 import { WEPIN_DEFAULT_LANG, WEPIN_DEFAULT_CURRENCY } from './const/config';
 import LOG from './utils/log';
 import Utils from './utils/utils';
@@ -44,6 +44,7 @@ export class Wepin extends EventEmitter {
         super();
         _Wepin_adminLoginResult.set(this, void 0);
         _Wepin_detailAccount.set(this, void 0);
+        _Wepin_tokens.set(this, void 0);
         this._isInitialized = false;
         this.version = PackageJson.version;
         console.log(`WepinJavaScript SDK v${this.version} Initialized`);
@@ -88,14 +89,17 @@ export class Wepin extends EventEmitter {
     setModeByAppKey(appKey) {
         if (appKey.slice(0, 8) === 'ak_live_') {
             this._modeByAppKey = 'production';
+            LOG.debug = () => { };
             return;
         }
         else if (appKey.slice(0, 8) === 'ak_test_') {
             this._modeByAppKey = 'test';
+            LOG.debug = console.log.bind(window.console, '[SDK][debug]');
             return;
         }
         else if (appKey.slice(0, 7) === 'ak_dev_') {
             this._modeByAppKey = 'development';
+            LOG.debug = console.log.bind(window.console, '[SDK][debug]');
             return;
         }
         else {
@@ -118,7 +122,6 @@ export class Wepin extends EventEmitter {
     }) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            LOG.debug('Wepin init starts with Key', appKey);
             if (this._isInitialized) {
                 throw new Error('Wepin is already initialized!');
             }
@@ -139,7 +142,13 @@ export class Wepin extends EventEmitter {
                 this.once('widgetOpened', () => __awaiter(this, void 0, void 0, function* () {
                     var _a;
                     if (this._isInitialized) {
-                        this._wepinLifeCycle = 'initialized';
+                        const isLogin = yield this.isLogedIn();
+                        if (isLogin) {
+                            this._wepinLifeCycle = 'login';
+                        }
+                        else {
+                            this._wepinLifeCycle = 'initialized';
+                        }
                     }
                     else {
                         this._wepinLifeCycle = 'not_initialized';
@@ -150,6 +159,19 @@ export class Wepin extends EventEmitter {
                     resolve(this);
                 }));
             });
+        });
+    }
+    isLogedIn() {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            const storage = yield Utils.getLocalStorage(this.wepinAppId);
+            const wepinRefreshToken = (_a = storage['wepin:connectUser']) === null || _a === void 0 ? void 0 : _a.refreshToken;
+            const isExpired = Utils.isExpired(wepinRefreshToken);
+            if (!isExpired && this._userInfo && this._userInfo.status === 'success') {
+                __classPrivateFieldSet(this, _Wepin_tokens, storage['wepin:connectUser'], "f");
+                return true;
+            }
+            return false;
         });
     }
     isInitialized() {
@@ -167,8 +189,12 @@ export class Wepin extends EventEmitter {
         });
     }
     openWidget() {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            if (this._wepinLifeCycle !== 'login') {
+            if (this.getStatus() !== 'login') {
+                if ((_a = this.queue) === null || _a === void 0 ? void 0 : _a.length) {
+                    this._initQueue();
+                }
                 throw new Error('Wepin.openWidget: You can open it only if you are logged in to the wepin.');
             }
             yield this._open();
@@ -223,7 +249,6 @@ export class Wepin extends EventEmitter {
                 return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
                     this.once('onRenderCompleteWebview', () => __awaiter(this, void 0, void 0, function* () {
                         LOG.debug('onRenderCompleteWebview');
-                        LOG.debug('openWidget this._widget', this._widget);
                         resolve();
                     }));
                 }));
@@ -260,7 +285,6 @@ export class Wepin extends EventEmitter {
                     return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
                         this.once('onRenderCompleteWebview', () => __awaiter(this, void 0, void 0, function* () {
                             LOG.debug('onRenderCompleteWebview');
-                            LOG.debug('openWidget this._widget', this._widget);
                             resolve();
                         }));
                     }));
@@ -277,7 +301,7 @@ export class Wepin extends EventEmitter {
             if (!this._isInitialized) {
                 throw new Error('Wepin.closeWidget: wepin sdk widget has to be initialized');
             }
-            LOG.debug('closeWidget', this._widget);
+            LOG.debug('closeWidget');
             if (this._widget) {
                 yield this._close();
             }
@@ -288,7 +312,7 @@ export class Wepin extends EventEmitter {
     }
     _close() {
         return __awaiter(this, void 0, void 0, function* () {
-            LOG.debug('close this._widget', this._widget);
+            LOG.debug('close this._widget');
             LOG.debug('CustomDialogManager', CustomDialogManager.currentDialog);
             closeWidgetAndClearWebview(this, this._widget);
         });
@@ -299,7 +323,7 @@ export class Wepin extends EventEmitter {
                 LOG.debug('wepin sdk widget has to be initialized');
                 return [];
             }
-            if (this._wepinLifeCycle !== 'login') {
+            if (this.getStatus() !== 'login') {
                 throw new Error(`Wepin.getAccounts: lifecycle of wepin sdk is not 'login'`);
             }
             if (!this.accountInfo) {
@@ -326,7 +350,7 @@ export class Wepin extends EventEmitter {
             }
         });
     }
-    setUserInfo(userInfo) {
+    setUserInfo(userInfo, withEmit) {
         LOG.debug('setUserInfo: ', userInfo);
         this._userInfo = userInfo;
         if (userInfo && userInfo.status === 'success') {
@@ -337,9 +361,21 @@ export class Wepin extends EventEmitter {
                 this._wepinLifeCycle = 'initialized';
             }
         }
-        this.emit('onUserInfoSet', userInfo);
+        if (withEmit) {
+            this.emit('onUserInfoSet', userInfo);
+        }
+    }
+    setWepinToken(tokens) {
+        __classPrivateFieldSet(this, _Wepin_tokens, tokens, "f");
     }
     getStatus() {
+        var _a;
+        if (this._wepinLifeCycle === 'login') {
+            const wepinRefreshToken = (_a = __classPrivateFieldGet(this, _Wepin_tokens, "f")) === null || _a === void 0 ? void 0 : _a.refreshToken;
+            if (!wepinRefreshToken || Utils.isExpired(wepinRefreshToken)) {
+                this._wepinLifeCycle = 'initialized';
+            }
+        }
         return this._wepinLifeCycle;
     }
     login(email) {
@@ -378,7 +414,7 @@ export class Wepin extends EventEmitter {
     }
     logout() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this._isInitialized && this._wepinLifeCycle !== 'login') {
+            if (!this._isInitialized && this.getStatus() !== 'login') {
                 throw new Error('Wepin.logout: wepin sdk widget has to be initialized and logined');
             }
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
@@ -524,11 +560,12 @@ export class Wepin extends EventEmitter {
                         }
                         else {
                             __classPrivateFieldSet(this, _Wepin_adminLoginResult, { loginStatus, token }, "f");
+                            LOG.debug('login response adminLoginRequest: ', __classPrivateFieldGet(this, _Wepin_adminLoginResult, "f"));
                             if (loginStatus === 'registerRequired') {
                                 __classPrivateFieldGet(this, _Wepin_adminLoginResult, "f").pinRequired = data.body.data.pinRequired;
                             }
                             this._wepinLifeCycle = 'login_before_register';
-                            LOG.debug('this._wepinLifeCycle', data.body.data);
+                            LOG.debug('this._wepinLifeCycle', this._wepinLifeCycle);
                             reject(new Error('required/wepin-register'));
                         }
                     }
@@ -551,16 +588,17 @@ export class Wepin extends EventEmitter {
             if (!this._isInitialized) {
                 throw new Error('Wepin.register: wepin sdk widget has to be initialized');
             }
-            if (this._wepinLifeCycle !== 'login_before_register') {
+            if (this.getStatus() !== 'login_before_register') {
                 throw new Error(`Wepin.register: lifecycle of wepin sdk is not 'login_before_register'`);
             }
             if (Utils.checkSameNumber(pin, 4, ((_a = __classPrivateFieldGet(this, _Wepin_adminLoginResult, "f")) === null || _a === void 0 ? void 0 : _a.loginStatus) === 'registerRequired')) {
                 throw new Error('invalid/pin-format');
             }
+            LOG.debug('register request adminLoginRequest: ', __classPrivateFieldGet(this, _Wepin_adminLoginResult, "f"));
             const id = new Date().getTime();
             const adminRegisterRequest = () => {
                 var _a, _b, _c, _d;
-                LOG.debug('wait adminLoginRequest');
+                LOG.debug('wait adminRegisterRequest');
                 (_a = this.Widget) === null || _a === void 0 ? void 0 : _a.request({
                     header: {
                         request_from: 'react-native',
@@ -608,7 +646,7 @@ export class Wepin extends EventEmitter {
             if (!this._isInitialized) {
                 throw new Error('Wepin.getBalance: wepin sdk widget has to be initialized');
             }
-            if (this._wepinLifeCycle !== 'login') {
+            if (this.getStatus() !== 'login') {
                 throw new Error(`Wepin.getBalance: lifecycle of wepin sdk is not 'login'`);
             }
             if (!Array.isArray(__classPrivateFieldGet(this, _Wepin_detailAccount, "f")) || __classPrivateFieldGet(this, _Wepin_detailAccount, "f").length === 0) {
@@ -660,6 +698,6 @@ export class Wepin extends EventEmitter {
         });
     }
 }
-_Wepin_adminLoginResult = new WeakMap(), _Wepin_detailAccount = new WeakMap();
+_Wepin_adminLoginResult = new WeakMap(), _Wepin_detailAccount = new WeakMap(), _Wepin_tokens = new WeakMap();
 Wepin.WidgetView = RootSiblingParent;
 //# sourceMappingURL=wepin.js.map

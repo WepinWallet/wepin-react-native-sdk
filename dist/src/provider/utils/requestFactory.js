@@ -37,7 +37,6 @@ export const requestFactory = ({ wepin, network, req, res, next, end, command, p
         },
     };
     (_a = wepin.queue) === null || _a === void 0 ? void 0 : _a.push(request);
-    LOG.debug('wepin.Widget: ', wepin.Widget);
     LOG.debug('wepin.Widget?.props.visible: ', (_b = wepin.Widget) === null || _b === void 0 ? void 0 : _b.props.visible);
     if (!((_c = wepin.Widget) === null || _c === void 0 ? void 0 : _c.props.visible)) {
         try {
