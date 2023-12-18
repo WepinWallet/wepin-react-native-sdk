@@ -27,7 +27,7 @@ import { providerTest } from './src/providerTest'
 import { web3Test } from './src/web3Test'
 import CustomModal from './src/components/CustomModal'
 import DialogManager, { DialogContent } from 'react-native-dialog-component'
-import { SelectList } from 'react-native-dropdown-select-list'
+import { SelectList, MultipleSelectList } from 'react-native-dropdown-select-list'
 
 
 const deviceHeight = Dimensions.get('window').height
@@ -47,6 +47,14 @@ function App(): JSX.Element {
   /////////api key변경하기 위한....
   const apiKeyList = getApiKeyList()
   const [apiKey, setApiKey] = useState<string>(apiKeyList.apiKeyList[0])//= getBundleId().split('.').slice(-1)[0] as ItestMode //'dev'; // 'stage' // 'prod'
+
+  //// login provider list
+  const availableLoginProviderList = [
+    { key: 1, value: 'google' },
+    { key: 2, value: 'apple' },
+    { key: 3, value: 'naver' },
+    { key: 4, value: 'discord' }]
+  const [loginProviders, setLoginProviders] = React.useState([])
 
   useEffect(() => {
     LogBox.ignoreLogs([
@@ -154,6 +162,7 @@ function App(): JSX.Element {
         type,
         defaultCurrency: currency,
         defaultLanguage: lang,
+        loginProviders: loginProviders.length ? loginProviders : undefined,
       })
       const isInitialized = wepin.isInitialized()
       // if (type !== 'show') {
@@ -838,13 +847,11 @@ function App(): JSX.Element {
           <Text style={{ fontSize: 25, marginTop: 30, textAlign: 'center', color: 'black' }}>
             Wepin SDK Test
           </Text>
-          {
-
-          }
           <SelectList
             boxStyles={styles.selectBoxStyles}
             inputStyles={styles.selectBoxtextStyles}
             dropdownTextStyles={styles.selectBoxtextStyles}
+            dropdownStyles={styles.selectBoxStyles}
             setSelected={async (key: any) => {
               console.log('key', key)
               const selApikey = apiKeyList.apiKeyList[Number(key)]
@@ -858,6 +865,22 @@ function App(): JSX.Element {
             searchPlaceholder='Search API key'
             data={apiKeyList.dropdownKeyList}
             save='key'
+          />
+          <MultipleSelectList
+            // setSelected={(val: any) => { console.log(val, data111); data111 = val }}
+            setSelected={setLoginProviders}
+            data={availableLoginProviderList}
+            save='value'
+            // onSelect={() => { console.log(loginProviders); setLoginProviders(data111) }}
+            label='LoginProviders'
+            placeholder='Login provider list'
+            // boxStyles={{ marginBottom: 10 }}
+            boxStyles={styles.selectBoxStyles}
+            dropdownStyles={styles.selectBoxStyles}
+            inputStyles={styles.selectBoxtextStyles}
+            dropdownTextStyles={styles.selectBoxtextStyles}
+            labelStyles={styles.selectBoxtextStyles}
+
           />
 
           {suspectedNetwork ? <Text style={{ fontSize: 11, marginTop: 5, textAlign: 'center', color: 'blue' }}>
@@ -967,6 +990,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   selectBoxStyles: {
+    // width: '50%',
+    width: 300,
+    // width: '50%',
     marginHorizontal: 20,
     marginVertical: 5
   },

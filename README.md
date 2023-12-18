@@ -71,7 +71,6 @@ To enable the web3 provider functionality in the React Native environment, you n
   ```bash
   yarn add --dev rn-nodeify
   ```
-
 - Add the following `rn-nodeify` command to your project's `package.json` file as a `postinstall` script:
 
   ```json
@@ -81,7 +80,6 @@ To enable the web3 provider functionality in the React Native environment, you n
   	...
   }
   ```
-
 - After running the `postinstall` script, import the generated `shim.js` file in the root file of your application as follows:
 
   ```javascript
@@ -183,6 +181,8 @@ await wepin.init(appId, appSdkKey[, attributes])
     - defaultLanguage: The language to be displayed on the widget (default: 'ko')
       - Currently, only 'ko' and 'en' are supported.
     - defaultCurrency: The currency to be displayed on the widget (default: 'KRW')
+    - loginProviders: An array of login providers to configure the widget. (If not provided, all available login providers will be displayed on the widget.)
+      -  The `loginProviders` parameter accepts values defined in the `LoginProviders` of `@wepin/types `, starting from version `v0.0.10`.
 
 #### Example
 
@@ -191,6 +191,7 @@ await wepin.init('APPID', 'APPKEY', {
   type: 'hide',
   defaultLanguage: 'en',
   defaultCurrency: 'USD',
+  loginProviders: ['google', 'apple'],
 })
 ```
 
@@ -332,7 +333,6 @@ var userInfo = await wepin.login('wepin@wepin.io')
       - `userId` \<string>
       - `email` \<string>
       - `provider` \<'google'|'apple'|'email'>
-
   - Example
 
     ```js
@@ -417,7 +417,6 @@ wepin.loginWithEmailAndPassword(email, password)
       - `userId` \<string>
       - `email` \<string>
       - `provider` \<'email'>
-
   - Example
 
     ```js
@@ -499,7 +498,6 @@ wepin.getBalance(account)
       - `contract` \<string> - token contract address
       - `symbol` \<string> - token symbol
       - `balance` \<string> - token balance
-
   - Example
 
     ```js
@@ -531,32 +529,32 @@ const result = wepin.signUpWithEmailAndPassword('test@test.com', 'abcd1234@')
 
 The error message types of the admin method are as follows.
 
-| Error Message           | Description                                                                                                 |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------- |
-| invalid/email-format    | invalid email format                                                                                        |
+| Error Message           | Description                                                                                                   |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------- |
+| invalid/email-format    | invalid email format                                                                                          |
 | invalid/password-format | invalid password format (A minimum of 8 characters consisting of letters, numbers and special characters. ) |
-| invalid/pin-format      | invalid PIN format (6-8 digit number) (\*Do not use the same number more than four times when registering)  |
-| invalid/firebase-token  | invalid firebase token                                                                                      |
-| invalid/wepin-api-key   | invalid wepin api key                                                                                       |
-| invalid/account         | invalid account                                                                                             |
-| invalid/email-domain    | invalid email domain                                                                                        |
-| auth/existed-email      | existed email                                                                                               |
-| auth/too-many-requests  | too mandy firebase requests                                                                                 |
-| auth/wrong-password     | wrong password                                                                                              |
-| auth/expired-token      | expired login session                                                                                       |
-| auth/unknown/${string}  | unknown auth error                                                                                          |
-| fail/send-email         | failed to sent validation email                                                                             |
-| fail/reset-password     | failed to set password                                                                                      |
-| fail/email-verified     | failed to verify email                                                                                      |
-| fail/wepin-login        | login wepin failed                                                                                          |
-| fail/wepin-register     | failed to register with wepin                                                                               |
-| fail/get-balance        | failed to get balance                                                                                       |
-| fail/check-email        | failed to check email                                                                                       |
-| require/email-verified  | email verification required                                                                                 |
-| require/signup          | wepin sign-up required                                                                                      |
-| require/wepin-register  | wepin registration required                                                                                 |
-| require/login           | wepin login required                                                                                        |
-| unknown/${string}       | unknown error                                                                                               |
+| invalid/pin-format      | invalid PIN format (6-8 digit number) (\*Do not use the same number more than four times when registering)   |
+| invalid/firebase-token  | invalid firebase token                                                                                        |
+| invalid/wepin-api-key   | invalid wepin api key                                                                                         |
+| invalid/account         | invalid account                                                                                               |
+| invalid/email-domain    | invalid email domain                                                                                          |
+| auth/existed-email      | existed email                                                                                                 |
+| auth/too-many-requests  | too mandy firebase requests                                                                                   |
+| auth/wrong-password     | wrong password                                                                                                |
+| auth/expired-token      | expired login session                                                                                         |
+| auth/unknown/${string}  | unknown auth error                                                                                            |
+| fail/send-email         | failed to sent validation email                                                                              |
+| fail/reset-password     | failed to set password                                                                                        |
+| fail/email-verified     | failed to verify email                                                                                        |
+| fail/wepin-login        | login wepin failed                                                                                            |
+| fail/wepin-register     | failed to register with wepin                                                                                 |
+| fail/get-balance        | failed to get balance                                                                                         |
+| fail/check-email        | failed to check email                                                                                         |
+| require/email-verified  | email verification required                                                                                   |
+| require/signup          | wepin sign-up required                                                                                        |
+| require/wepin-register  | wepin registration required                                                                                   |
+| require/login           | wepin login required                                                                                          |
+| unknown/${string}       | unknown error                                                                                                 |
 
 ## ⏩ Provider(Support from version `0.0.7-alpha`)
 
@@ -580,8 +578,8 @@ The providers supported by Wepin are as follows.
 | 19       | Songbird Canary Network | evmsongbird        |
 | 137      | Polygon Mainnet         | evmpolygon         |
 | 80001    | Polygon Mumbai          | evmpolygon-testnet |
-|          | ~~Time~~(Coming soon)   | ~~evmtime~~        |
-| 2731     | Time Testnet            | evmtime-elizabeth  |
+|          | ~~Time~~(Coming soon)  | ~~evmtime~~       |
+| 2731     | Time Testnet           | evmtime-elizabeth  |
 | 8217     | Klaytn                  | klaytn             |
 | 1001     | Klaytn Testnet          | klaytn-testnet     |
 
@@ -616,7 +614,6 @@ const provider = wepin.getProvider({ network: 'ethereum' })
   const provider = wepin.getProvider({ network: 'ethereum' })
   const web3 = new Web3(provider)
   ```
-
 - `ethers.js` (Document: [ethers.js for React native](https://docs.ethers.org/v5/cookbook/react-native/))
 
   ```javascript
@@ -647,7 +644,6 @@ const provider = wepin.getProvider({ network: 'ethereum' })
   const signer = web3.getSigner()
   const address = await signer.getAddress()
   ```
-
 - **Get Balance**
   You can check the account balance using the account information.
 
@@ -656,7 +652,6 @@ const provider = wepin.getProvider({ network: 'ethereum' })
     ```javascript
     const balance = await web3.eth.getBalance(accounts[0])
     ```
-
   - `ethers.js`
 
     ```javascript
@@ -684,7 +679,6 @@ const provider = wepin.getProvider({ network: 'ethereum' })
     }
     const response = await web3.eth.sendTransaction(tx)
     ```
-
   - `ethers.js`
 
     ```javascript
@@ -699,7 +693,6 @@ const provider = wepin.getProvider({ network: 'ethereum' })
     }
     const response = await signer.sendTransaction(tx)
     ```
-
 - **Contract Call**
   A contract call can be performed.
 
@@ -712,7 +705,6 @@ const provider = wepin.getProvider({ network: 'ethereum' })
     }
     const response = await web3.eth.call(callObject)
     ```
-
   - `ethers.js`
 
     ```javascript

@@ -1275,10 +1275,10 @@
     "@typescript-eslint/types" "6.7.0"
     eslint-visitor-keys "^3.4.1"
 
-"@wepin/types@^0.0.9":
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/@wepin/types/-/types-0.0.9.tgz#d14da2eaf135e88487b6529ab6911f442424037b"
-  integrity sha512-orgtzGuggZXSIf/TFbPTUkas1h4Jv/olDShSarXHgaSfmjgT4mkrVjACwyFtJriXbAr5aUwc1MRC1RIEhmpuOw==
+"@wepin/types@^0.0.10":
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/@wepin/types/-/types-0.0.10.tgz#a32d92fff091e346611f271e2e0ad91b00ba43a7"
+  integrity sha512-1T+/u9T1VVZSJQu6JtgzK6kYcY8a1NJDIx02LnQy/oGOxLnZ1Pb0msz9iWpZmfb7KQxJ1yZkaNcHiZVK/jHM6Q==
 
 "@yarnpkg/lockfile@^1.0.0":
   version "1.1.0"

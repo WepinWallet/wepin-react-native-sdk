@@ -138,25 +138,35 @@ export class Wepin extends EventEmitter {
             else {
                 yield this._open({ isInit: true });
             }
-            return new Promise(resolve => {
+            return new Promise((resolve, reject) => {
                 this.once('widgetOpened', () => __awaiter(this, void 0, void 0, function* () {
-                    var _a;
-                    if (this._isInitialized) {
-                        const isLogin = yield this.isLogedIn();
-                        if (isLogin) {
-                            this._wepinLifeCycle = 'login';
+                    var _a, _b;
+                    try {
+                        if (this._isInitialized) {
+                            const isLogin = yield this.isLogedIn();
+                            if (isLogin) {
+                                this._wepinLifeCycle = 'login';
+                            }
+                            else {
+                                this._wepinLifeCycle = 'initialized';
+                            }
                         }
                         else {
-                            this._wepinLifeCycle = 'initialized';
+                            this._wepinLifeCycle = 'not_initialized';
                         }
+                        if (((_a = this.wepinAppAttributes) === null || _a === void 0 ? void 0 : _a.type) !== 'show') {
+                            yield this._close();
+                        }
+                        resolve(this);
                     }
-                    else {
+                    catch (e) {
+                        console.error('init error:', e);
                         this._wepinLifeCycle = 'not_initialized';
+                        if (((_b = this.wepinAppAttributes) === null || _b === void 0 ? void 0 : _b.type) !== 'show') {
+                            yield this._close();
+                        }
+                        reject(e);
                     }
-                    if (((_a = this.wepinAppAttributes) === null || _a === void 0 ? void 0 : _a.type) !== 'show') {
-                        yield this._close();
-                    }
-                    resolve(this);
                 }));
             });
         });
@@ -165,12 +175,17 @@ export class Wepin extends EventEmitter {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const storage = yield Utils.getLocalStorage(this.wepinAppId);
-            const wepinRefreshToken = (_a = storage['wepin:connectUser']) === null || _a === void 0 ? void 0 : _a.refreshToken;
-            const isExpired = Utils.isExpired(wepinRefreshToken);
-            if (!isExpired && this._userInfo && this._userInfo.status === 'success') {
-                __classPrivateFieldSet(this, _Wepin_tokens, storage['wepin:connectUser'], "f");
-                return true;
+            LOG.debug('isLogedIn');
+            if (storage && storage['wepin:connectUser']) {
+                const wepinRefreshToken = (_a = storage['wepin:connectUser']) === null || _a === void 0 ? void 0 : _a.refreshToken;
+                const isExpired = Utils.isExpired(wepinRefreshToken);
+                if (!isExpired && this._userInfo && this._userInfo.status === 'success') {
+                    __classPrivateFieldSet(this, _Wepin_tokens, storage['wepin:connectUser'], "f");
+                    LOG.debug('isLogedIn: true');
+                    return true;
+                }
             }
+            LOG.debug('isLogedIn: false');
             return false;
         });
     }
