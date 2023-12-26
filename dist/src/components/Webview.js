@@ -69,8 +69,7 @@ class WepinWebview extends Component {
         };
         this.response = (message) => {
             var _a;
-            LOG.debug('this.webRef', this.webRef);
-            LOG.debug('message: ', message);
+            LOG.debug('response message command: ', message.body.command);
             (_a = this.webRef) === null || _a === void 0 ? void 0 : _a.postMessage(JSON.stringify(message));
         };
         this.request = (message) => {
@@ -107,7 +106,8 @@ class WepinWebview extends Component {
                         secondaryToolbarColor: 'black',
                         enableUrlBarHiding: true,
                         enableDefaultShare: true,
-                        forceCloseOnRedirection: true,
+                        forceCloseOnRedirection: false,
+                        showInRecents: true,
                         modalEnabled: true,
                     });
                     if (result.type === 'success' && result.url) {
@@ -134,13 +134,14 @@ class WepinWebview extends Component {
                                         },
                                     },
                                 });
+                                InAppBrowser.closeAuth();
                                 return;
                             }
                         }
                     }
                     else if (result.type === 'cancel' || result.type === 'dismiss') {
                         LOG.debug('close');
-                        if (url.includes('login')) {
+                        if (url.includes('login') || url.includes('before-oauth')) {
                             this.request({
                                 header: {
                                     request_from: 'react-native',

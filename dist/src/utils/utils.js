@@ -64,7 +64,7 @@ Utils.getLocalStorage = (appId) => __awaiter(void 0, void 0, void 0, function* (
     return data;
 });
 Utils.clearLocalStorage = (appId) => __awaiter(void 0, void 0, void 0, function* () {
-    yield EncryptedSotrage.removeItem(appId);
+    yield EncryptedSotrage.removeItem(COOKIENAME + appId);
 });
 Utils.isExpired = (token) => {
     var _b;

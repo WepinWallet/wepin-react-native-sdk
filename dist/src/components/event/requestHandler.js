@@ -28,7 +28,6 @@ export const WebviewRequestHandler = (message, widget) => {
                         : wepin.version
                 },
             };
-            wepin.emit('startAdminRequest');
             break;
         case 'initialized_widget':
             LOG.debug('initialized_widget result =>', (_a = message.body.parameter) === null || _a === void 0 ? void 0 : _a.result);
@@ -38,7 +37,6 @@ export const WebviewRequestHandler = (message, widget) => {
                 state: 'SUCCESS',
                 data: '',
             };
-            wepin.emit('widgetOpened');
             break;
         case 'set_accounts':
             LOG.debug('set_accounts result =>', message.body.parameter);
@@ -124,11 +122,17 @@ export const WebviewRequestHandler = (message, widget) => {
         default:
             throw new Error(`Command ${message.body.command} is not supported.`);
     }
-    if (widget.props.visible) {
+    if (widget.props.visible && response.body) {
         if (message.body.command === 'set_local_storage') {
             return;
         }
         widget.response(response);
+        if (message.body.command === 'ready_to_widget') {
+            setTimeout(() => { wepin.emit('startAdminRequest'); }, 100);
+        }
+        else if (message.body.command === 'initialized_widget') {
+            setTimeout(() => { wepin.emit('widgetOpened'); }, 100);
+        }
     }
     function windowCloseObserver() {
     }

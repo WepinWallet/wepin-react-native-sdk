@@ -1,6 +1,6 @@
 {
   "name": "wepinRNSample",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "private": true,
   "scripts": {
     "preinstall": "rm -rf ../node_modules",
@@ -15,8 +15,8 @@
   "dependencies": {
     "@ethersproject/shims": "^5.7.0",
     "@tradle/react-native-http": "^2.0.1",
-    "@wepin/react-native-sdk": "0.0.16-alpha",
-    "@wepin/types": "^0.0.10",
+    "@wepin/react-native-sdk": "0.0.17-alpha",
+    "@wepin/types": "^0.0.11",
     "assert": "^1.5.1",
     "asyncstorage-down": "^4.2.0",
     "browserify-zlib": "^0.1.4",

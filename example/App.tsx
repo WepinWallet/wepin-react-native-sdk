@@ -500,39 +500,57 @@ function App(): JSX.Element {
 
   const adminWepin = async () => {
     await initWepin('hide', 'ko', 'krw')
-    const email = 'itest6@naver.com'
+    const email = 'itestrn7@naver.com'
     const password = 'abc1111!'
+    let logRes = result
     try {
       let res = await wepin.signUpWithEmailAndPassword(email, password)
       if (res) {
+        logRes += ' signup Success'
+        setResult(logRes)
         console.log('signup success')
       }
     } catch (e: any) {
+      logRes += ' signup error: ' + e.message
+      setResult(logRes)
       console.error('signUpWithEmailAndPassword error', e.message)
     }
     try {
 
       let resLogin = await wepin.loginWithEmailAndPassword(email, password)
       if (resLogin?.status === 'success') {
+        logRes += ' login Success '
+        setResult(logRes)
         console.log('login success')
       } else {
+        logRes += ' login fail '
+        setResult(logRes)
         console.log('login fail')
       }
     } catch (e: any) {
       console.error('adminWepin error', e.message)
+      logRes += ' login Error: ' + e.message
+      setResult(logRes)
       if (e.message === 'required/wepin-register') {
         console.error(e.message)
         wepin.register('123456').then((resReg) => {
           if (resReg) {
             console.log('register success')
+            logRes += ' register Succes '
+            setResult(logRes)
           } else {
             console.log('register fail')
+            logRes += ' register fail '
+            setResult(logRes)
           }
         }).catch(async (e) => {
+          logRes += ' register fail Error: ' + e
+          setResult(logRes)
           console.log('register error' + e)
         })
       }
-      setResult('adminWepin exception' + e.message)
+      logRes += ' adminWepin exception' + e.message
+      setResult(logRes)
     }
 
   }

@@ -2532,8 +2532,10 @@
     "@typescript-eslint/types" "5.62.0"
     eslint-visitor-keys "^3.3.0"
 
-"@wepin/react-native-sdk@file:../sdk":
+"@wepin/react-native-sdk@0.0.16-alpha":
   version "0.0.16-alpha"
+  resolved "https://registry.yarnpkg.com/@wepin/react-native-sdk/-/react-native-sdk-0.0.16-alpha.tgz#ce42f924cecc0df1f90be910da2e094190ab4cfd"
+  integrity sha512-vYlwawiKYfIjc3XDrS1E7ZyCtJy8WN6+KtSK/YW9yM1YuFx7xNL7CcHIOWWIEl47+CF/gFOvN4OzBfkLFAqOJg==
   dependencies:
     "@wepin/types" "^0.0.10"
     axios "^1.5.1"
