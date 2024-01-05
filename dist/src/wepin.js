@@ -511,12 +511,11 @@ export class Wepin extends EventEmitter {
                     },
                 });
             };
-            this.addListener('startAdminRequest', adminSignupRequest);
+            this.once('startAdminRequest', adminSignupRequest);
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 this.once(id.toString(), (data) => __awaiter(this, void 0, void 0, function* () {
                     LOG.debug('response data: ', data.body.data);
                     yield this._close();
-                    this.removeListener('startAdminRequest', adminSignupRequest);
                     if (data.body.state === 'SUCCESS') {
                         resolve(true);
                     }
@@ -557,12 +556,11 @@ export class Wepin extends EventEmitter {
                     },
                 });
             };
-            this.addListener('startAdminRequest', adminLoginRequest);
+            this.once('startAdminRequest', adminLoginRequest);
             this._wepinLifeCycle = 'before_login';
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 this.once(id.toString(), (data) => __awaiter(this, void 0, void 0, function* () {
                     LOG.debug('response data: ', data.body.data);
-                    this.removeListener('startAdminRequest', adminLoginRequest);
                     yield this._close();
                     if (data.body.state === 'SUCCESS') {
                         const loginStatus = data.body.data.loginStatus;
@@ -631,11 +629,10 @@ export class Wepin extends EventEmitter {
                     },
                 });
             };
-            this.addListener('startAdminRequest', adminRegisterRequest);
+            this.once('startAdminRequest', adminRegisterRequest);
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 this.once(id.toString(), (data) => __awaiter(this, void 0, void 0, function* () {
                     LOG.debug('response data: ', data.body.data);
-                    this.removeListener('startAdminRequest', adminRegisterRequest);
                     yield this._close();
                     if (data.body.state === 'SUCCESS') {
                         __classPrivateFieldSet(this, _Wepin_adminLoginResult, undefined, "f");
@@ -689,11 +686,10 @@ export class Wepin extends EventEmitter {
                     },
                 });
             };
-            this.addListener('startAdminRequest', adminBalanceRequest);
+            this.once('startAdminRequest', adminBalanceRequest);
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 this.once(id.toString(), (data) => __awaiter(this, void 0, void 0, function* () {
                     LOG.debug('response data: ', data.body.data);
-                    this.removeListener('startAdminRequest', adminBalanceRequest);
                     yield this._close();
                     if (data.body.state === 'SUCCESS') {
                         const balance = data.body.data.balance;

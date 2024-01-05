@@ -41,7 +41,7 @@ class DialogManager {
         this.dialogs.push({ sibling: dialog, props });
     }
     destroy() {
-        LOG.debug('before destroy: ', this.dialogs);
+        LOG.debug('before destroy dialog ');
         const dialog = this.dialogs.pop();
         LOG.debug('after destroy: ', this.dialogs);
         return new Promise(((resolve) => {

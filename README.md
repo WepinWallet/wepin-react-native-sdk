@@ -182,7 +182,7 @@ await wepin.init(appId, appSdkKey[, attributes])
       - Currently, only 'ko' and 'en' are supported.
     - defaultCurrency: The currency to be displayed on the widget (default: 'KRW')
     - loginProviders: An array of login providers to configure the widget. (If not provided, all available login providers will be displayed on the widget.)
-      -  The `loginProviders` parameter accepts values defined in the `LoginProviders` of `@wepin/types `, starting from version `v0.0.10`.
+      - The `loginProviders` parameter accepts values defined in the `LoginProviders` of `@wepin/types `, starting from version `v0.0.1`.
 
 #### Example
 
