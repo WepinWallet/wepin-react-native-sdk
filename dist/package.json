@@ -1,6 +1,6 @@
 {
     "name": "@wepin/react-native-sdk",
-    "version": "0.0.18-alpha",
+    "version": "0.0.19-alpha",
     "description": "Wepin Widget React Native SDK for Android/iOS",
     "main": "./dist/src/index.js",
     "types": "./dist/src/index.d.ts",

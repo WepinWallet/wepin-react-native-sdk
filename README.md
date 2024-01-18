@@ -582,6 +582,7 @@ The providers supported by Wepin are as follows.
 | 2731     | Time Testnet           | evmtime-elizabeth  |
 | 8217     | Klaytn                  | klaytn             |
 | 1001     | Klaytn Testnet          | klaytn-testnet     |
+| 11155111 | Ethereum Sepolia        | evmeth sepolia     |
 
 ### getProvider
 

@@ -42,6 +42,11 @@ export const getNetworkInfoByName = (network) => {
                 rpcUrl: GatewayUrl.Gateway + '/timenetwork/testnet ',
                 chainId: '0x' + (2731).toString(16),
             };
+        case 'evmeth sepolia':
+            return {
+                rpcUrl: GatewayUrl.Gateway + '/sepolia/alchemy/testnet',
+                chainId: '0x' + (11155111).toString(16),
+            };
         default:
             throw new Error(`There is No network info about provided network : ${network}`);
     }
@@ -59,6 +64,7 @@ export const getNetworkByChainId = (chainId) => {
         [`0x${(8217).toString(16)}`]: 'klaytn',
         [`0x${(80001).toString(16)}`]: 'evmpolygon-testnet',
         [`0x${(2731).toString(16)}`]: 'evmtime-elizabeth',
+        [`0x${(11155111).toString(16)}`]: 'evmeth sepolia',
     };
     return chainIdMappings[chainId];
 };

@@ -476,6 +476,7 @@ export class Wepin extends EventEmitter {
             case 'evmpolygon':
             case 'evmpolygon-testnet':
             case 'evmtime-elizabeth':
+            case 'evmeth sepolia':
                 return EthProvider.generate({ network: lowerCasedNetworkStr, wepin });
             case 'klaytn':
             case 'klaytn-testnet':

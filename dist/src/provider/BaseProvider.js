@@ -161,6 +161,7 @@ export class BaseProvider extends EventEmitter {
             case 'evmpolygon':
             case 'evmpolygon-testnet':
             case 'evmtime-elizabeth':
+            case 'evmeth sepolia':
                 {
                     const wepinMiddleware = createWepinEtherMiddleware({ wepin, network });
                     this.setRpcEngine([wepinMiddleware, evmRPCMiddleware]);
