@@ -53,6 +53,8 @@ export declare class Wepin extends EventEmitter {
     getStatus(): WepinLifeCycle;
     login(email?: string): Promise<IWepinUser>;
     logout(): Promise<void>;
+    private registerWithWidget;
+    loginWithExternalToken(token: string, sign: string, withUI?: boolean): Promise<IWepinUser>;
     getProvider({ network }: {
         network: SupportedChains;
     }): any;
