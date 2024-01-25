@@ -28,7 +28,11 @@ import { web3Test } from './src/web3Test'
 import CustomModal from './src/components/CustomModal'
 import DialogManager, { DialogContent } from 'react-native-dialog-component'
 import { SelectList, MultipleSelectList } from 'react-native-dropdown-select-list'
-
+import { getSignForLogin } from '@wepin/login'
+import {
+  GoogleSignin,
+} from '@react-native-google-signin/google-signin';
+import { PRIVATE_KEY, GOOGLE_WEB_CLIENT_ID, GOOGLE_IOS_CLIENT_ID } from '@env'
 
 const deviceHeight = Dimensions.get('window').height
 
@@ -56,6 +60,15 @@ function App(): JSX.Element {
     { key: 4, value: 'discord' }]
   const [loginProviders, setLoginProviders] = React.useState([])
 
+  const privateKey = PRIVATE_KEY
+  const googleConfigureSignIn = () => {
+    GoogleSignin.configure({
+      webClientId: GOOGLE_WEB_CLIENT_ID,
+      iosClientId: GOOGLE_IOS_CLIENT_ID,
+      offlineAccess: true,
+    });
+  };
+
   useEffect(() => {
     LogBox.ignoreLogs([
       `The provided value 'ms-stream' is not a valid 'responseType'.`,
@@ -65,7 +78,22 @@ function App(): JSX.Element {
       'Warning: componentWillMount'
       // 'Animated: `useNativeDriver` was not specified. This is a required option and must be explicitly set to `true` or `false`'
     ]);
+    googleConfigureSignIn()
   })
+
+  const LogInWithGoogle = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      if (await GoogleSignin.isSignedIn()) await GoogleSignin.signOut()
+      const userInfo = await GoogleSignin.signIn();
+      console.log('userInfo: ', userInfo)
+      if (userInfo.idToken) await loginWithExternalToken(userInfo.idToken)
+    } catch (error: any) {
+      console.error(error)
+      setResult('loginWithExternalToken: fail')
+    }
+  }
+
   const setNetwork = async (network: any) => {
     console.log('switchNetwork current network: ', suspectedNetwork)
     console.log('switchNetwork switch network: ', network)
@@ -94,18 +122,6 @@ function App(): JSX.Element {
   }
   const AvailableNetworks = useMemo<any>(() => {
     if (accounts && accounts.length) {
-      // let array = [];
-      // const array = accounts?.map((account) => {
-      //   return {
-      //     id: (id++).toString(),
-      //     label: account.network.toLowerCase(),
-      //     // label: (<Text style={{ color: '#111111' }}>{account.network.toLowerCase()}</Text>),
-      //     value: account.network.toLowerCase(),
-      //     selected: false,
-      //     size: 15
-      //   }
-      // })
-
       const array = accounts?.map((account, idx) => {
         return {
           key: idx.toString(),
@@ -232,6 +248,20 @@ function App(): JSX.Element {
     } catch (e) {
       console.error(e)
       setResult('loginWepin: fail')
+    }
+  }
+
+  const loginWithExternalToken = async (token: string) => {
+    console.log('loginWithExternalToken')
+    try {
+      setResult('processing.....')
+      const sign = getSignForLogin(privateKey, 'eth')
+      const res = await wepin.loginWithExternalToken(token, sign!, true)
+      setResult('loginWithExternalToken: ' + JSON.stringify(res))
+
+    } catch (e) {
+      console.error(e)
+      setResult('loginWithExternalToken: fail')
     }
   }
 
@@ -590,6 +620,9 @@ function App(): JSX.Element {
       </View>
       <View style={styles.button}>
         <Button title="login(set email)" onPress={() => loginWepin({ setEmail: true })} />
+      </View>
+      <View style={styles.button}>
+        <Button title="loginWithExternalToken(Google)" onPress={() => LogInWithGoogle()} />
       </View>
       <View style={styles.button}>
         <Button title="logout" onPress={() => logoutWepin()} />
@@ -1018,7 +1051,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     textAlign: 'center',
     color: 'black'
-  }
+  },
 })
 
 export default App
