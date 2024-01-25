@@ -51,31 +51,24 @@ This is one way to run your app — you can also run it directly from within And
 Now that you have successfully run the app, let's modify it.
 
 1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the `<kbd>`R `</kbd>` key twice or select **"Reload"** from the **Developer Menu** (`<kbd>`Ctrl `</kbd>` + `<kbd>`M `</kbd>` (on Window and Linux) or `<kbd>`Cmd ⌘`</kbd>` + `<kbd>`M `</kbd>` (on macOS)) to see your changes!
+2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
 
-   For **iOS**: Hit `<kbd>`Cmd ⌘`</kbd>` + `<kbd>`R `</kbd>` in your iOS Simulator to reload the app and see your changes!
+   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
 
-## (optional)Step 4: Setting .env (for idToken login)
+## Congratulations! :tada:
 
-Create a `.env` file in the root folder and set the following values:
+You've successfully run and modified your React Native App. :partying_face:
 
-```js
-PRIVATE_KEY = 'PRIVATEKEY'
-GOOGLE_WEB_CLIENT_ID = 'GOOGLE_WEBCLIENTID'
-GOOGLE_IOS_CLIENT_ID = 'GOOGLE_IOSCLIENTID'
-```
+### Now what?
 
-- Set the `PRIVATE_KEY` value to the private key issued along with the appId and appKey after registering the app on wepin.
-- Set the values for `GOOGLE_WEB_CLIENT_ID` and `GOOGLE_IOS_CLIENT_ID` to the id values for the web platform and iOS platform for Google OAuth authentication. Retrieve these values from the OAuth 2.0 Client ID in the Google Cloud console ([OAuth Client ID creation link](https://support.google.com/cloud/answer/6158849#installedapplications&android&zippy=%2Cnative-applications%2Candroid) for reference).
+- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
+- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
 
-  ![1705543768628](image/README/1705543768628.png)
+# Troubleshooting
 
-- For iOS,
+If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
 
-  - Download the `GoogleService-Info.plist` file and move it to the /ios directory path.
-  - ![1705543928358](image/README/1705543928358.png)
-  - In the Info tab, click the + button under URL Types. Use the `Identifier` as the iOS bundle id used above, and set `URL Schemas` to the `REVERSED_CLIENT_ID` from the `GoogleService-Info.plist`.
-  - ![1705544139117](image/README/1705544139117.png)
+# Learn More
 
 To learn more about React Native, take a look at the following resources:
 
