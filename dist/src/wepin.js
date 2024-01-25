@@ -450,6 +450,100 @@ export class Wepin extends EventEmitter {
             }));
         });
     }
+    registerWithWidget({ loginStatus, pinRequired, token, sign, }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const id = Date.now();
+            const url = `/sdk/register?loginStatus=${loginStatus}&pinRequired=${pinRequired}&token=${token}&sign=${sign}&response_id=${id}`;
+            return new Promise((resolve, reject) => {
+                this.once(id.toString(), (data) => __awaiter(this, void 0, void 0, function* () {
+                    LOG.debug('response data: ', data.body.data);
+                    this._close();
+                    if (data.body.state === 'SUCCESS') {
+                        const loginStatus = data.body.data.loginStatus;
+                        if (loginStatus === 'complete') {
+                            const user = data.body.data.userInfo;
+                            this._wepinLifeCycle = 'login';
+                            resolve(user);
+                        }
+                        else {
+                            reject(new Error('fail/wepin-register'));
+                        }
+                    }
+                    else {
+                        if (data.body.data) {
+                            reject(new Error(data.body.data));
+                        }
+                        else {
+                            reject(new Error('unkonw/error'));
+                        }
+                    }
+                }));
+                if (loginStatus === 'registerRequired' && pinRequired === false)
+                    this._open({ url, type: 'hide' });
+                else
+                    this._open({ url });
+            });
+        });
+    }
+    loginWithExternalToken(token, sign, withUI) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this._isInitialized) {
+                throw new Error('Wepin.login: wepin sdk widget has to be initialized');
+            }
+            this._wepinLifeCycle = 'before_login';
+            LOG.debug('cookie: ', Utils.getLocalStorage(this.wepinAppId));
+            const id = Date.now();
+            const url = `/sdk/login?token=${token}&sign=${sign}&response_id=${id}`;
+            return new Promise((resolve, reject) => {
+                this.once(id.toString(), (data) => __awaiter(this, void 0, void 0, function* () {
+                    var _a;
+                    LOG.debug('response data: ', data.body.data);
+                    this._close();
+                    if (data.body.state === 'SUCCESS') {
+                        const loginStatus = data.body.data.loginStatus;
+                        const loginToken = data.body.data.token;
+                        if (loginStatus === 'complete') {
+                            const user = data.body.data.userInfo;
+                            this._wepinLifeCycle = 'login';
+                            resolve(user);
+                        }
+                        else {
+                            if (withUI) {
+                                this.registerWithWidget({
+                                    loginStatus,
+                                    pinRequired: (_a = data.body.data) === null || _a === void 0 ? void 0 : _a.pinRequired,
+                                    token,
+                                    sign,
+                                })
+                                    .then((user) => {
+                                    resolve(user);
+                                })
+                                    .catch((e) => {
+                                    reject(e);
+                                });
+                                return;
+                            }
+                            __classPrivateFieldSet(this, _Wepin_adminLoginResult, { loginStatus, token: loginToken }, "f");
+                            if (loginStatus === 'registerRequired') {
+                                __classPrivateFieldGet(this, _Wepin_adminLoginResult, "f").pinRequired = data.body.data.pinRequired;
+                            }
+                            this._wepinLifeCycle = 'login_before_register';
+                            reject(new Error('required/wepin-register'));
+                        }
+                    }
+                    else {
+                        if (data.body.data) {
+                            reject(new Error(data.body.data));
+                        }
+                        else {
+                            reject(new Error('unkonw/error'));
+                        }
+                    }
+                }));
+                this._open({ url, type: 'hide' });
+            });
+        });
+    }
     getProvider({ network }) {
         var _a, _b, _c, _d, _e;
         if (!this._isInitialized)

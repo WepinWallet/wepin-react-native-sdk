@@ -332,7 +332,7 @@ var userInfo = await wepin.login('wepin@wepin.io')
     - `userInfo` \<object> _optional_
       - `userId` \<string>
       - `email` \<string>
-      - `provider` \<'google'|'apple'|'email'>
+      - `provider` \<'google'|'apple'|'email'|'naver'|'discord'|'external_token'>
   - Example
 
     ```js
@@ -522,8 +522,65 @@ wepin.getBalance(account)
 #### Example
 
 ```javascript
-const result = wepin.signUpWithEmailAndPassword('test@test.com', 'abcd1234@')
+const result = wepin.getBalance({
+  address: '0x0000001111112222223333334444445555556666',
+  network: 'Ethereum',
+})
 ```
+
+### **loginWithExternalToken**(Support from **version** `0.0.19-alpha`)
+
+```javascript
+await wepin.loginWithExternalToken(token, sign, withUI?)
+```
+
+It logs in to the Wepin with external token(e.g., idToken). The **`loginWithExternalToken()`** method returns information of the logged-in user.
+
+If the user is not registered on Wepin, and the **`withUI`** value is set to true, the registration page will be displayed in the widget. However, if the **`withUI`** value is set to false or not defined, a **`require/wepin-register`** exception will be triggered.
+
+#### Parameters
+
+* `token` `<string>`
+  * External token value to be used for login (e.g., idToken).
+* `sign` `<string>`
+  * Signature value for the token provided as the first parameter. ([Signature Generation Methods](https://github.com/WepinWallet/wepin-widget-js-sdk/blob/main/doc/SignatureGenerationMethods.md))
+* `withUI` `<boolean>` *optional*
+  * Indicates whether to display the Wepin widget screen if registration is required.
+
+#### Example
+
+```js
+var userInfo = await wepin.loginWithExternalToken(idToken, sign)
+
+// Use register UI
+var userInfo = await wepin.loginWithExternalToken(idToken, sign, true)
+```
+
+#### Return value
+
+* `Promise` `<IWepinUser>`
+  * Type of `IWepinUser` is defined in [`@wepin/types`](https://github.com/WepinWallet/wepin-js-sdk-types) (Support from version `0.0.7`)
+    * `status` <'success'|'fail'>
+    * `userInfo` `<object>` *optional*
+      * `userId` `<string>`
+      * `email` `<string>`
+      * `provider` <'external_token'>
+  * Example
+    ```js
+    {
+    	status: 'success',
+    	userInfo: {
+    		userID: '123455',
+    		email: 'abc@test.com',
+    		provider: 'external_token'
+            }
+    }
+    ```
+
+#### Exception message
+
+* [Admin Error Message](https://github.com/IotrustGitHub/wepin-javascript-sdk/blob/7d08e51f2ef0d8d36b197b22f7d8d28c82d2e5f6/README.md#admin-error-message)
+  * `require/wepin-register` : If this error occurs, you have to perform the `wepin.register(pin)` method.
 
 ### Admin Error Message
 
