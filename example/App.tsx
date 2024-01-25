@@ -62,6 +62,7 @@ function App(): JSX.Element {
 
   const privateKey = PRIVATE_KEY
   const googleConfigureSignIn = () => {
+    if(GOOGLE_WEB_CLIENT_ID === undefined || GOOGLE_IOS_CLIENT_ID === undefined) return
     GoogleSignin.configure({
       webClientId: GOOGLE_WEB_CLIENT_ID,
       iosClientId: GOOGLE_IOS_CLIENT_ID,
