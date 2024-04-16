@@ -7,7 +7,8 @@
   * Added camera permission setting.
 * New Network Support: Ethereum Sepolia
 
-  * Added support for the Polygon Amoy testnet network with the following details:| Chain ID | Network Name | Network Variable |
+  * Added support for the Polygon Amoy testnet network with the following details:
+  * | Chain ID | Network Name | Network Variable |
     | -------- | ------------ | ---------------- |
     | 80002    | Polygon Amoy | evmpolygon-amoy  |
 
