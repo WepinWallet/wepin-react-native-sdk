@@ -1,14 +1,8 @@
-# wepin-react-native-sdk
+# @wepin/react-native-sdk
 
-<div>
-  <!-- NPM Version -->
-  <a href="https://www.npmjs.org/package/@wepin/react-native-sdk">
-    <img src="http://img.shields.io/npm/v/@wepin/react-native-sdk.svg"
-    alt="NPM version" />
-  </a>
-</div>
+[![mit licence](https://img.shields.io/dub/l/vibe-d.svg?style=for-the-badge)](https://github.com/WepinWallet/wepin-react-native-sdk/blob/main/LICENSE)  [![npm version](https://img.shields.io/npm/v/@wepin/react-native-sdk?style=for-the-badge)](https://www.npmjs.org/package/@wepin/react-native-sdk). [![npm downloads](https://img.shields.io/npm/dt/@wepin/react-native-sdk.svg?label=downloads&style=for-the-badge)](https://www.npmjs.org/package/@wepin/react-native-sdk)
 
-<br />
+[![platform - android](https://img.shields.io/badge/platform-Android-3ddc84.svg?logo=android&style=for-the-badge)](https://www.android.com/)  [![platform - ios](https://img.shields.io/badge/platform-iOS-000.svg?logo=apple&style=for-the-badge)](https://developer.apple.com/ios/)
 
 Wepin React-Native SDK for Android OS and iOS
 
@@ -37,6 +31,8 @@ npm install react-native-device-info
 npm install react-native-inappbrowser-reborn
 npm install react-native-webview
 npm install react-native-encrypted-storage
+npm install react-native-permissions
+npm install @react-native-clipboard/clipboard
 
 # for ios
 cd ios
@@ -50,6 +46,8 @@ yarn add react-native-device-info
 yarn add react-native-inappbrowser-reborn
 yarn add react-native-webview
 yarn add react-native-encrypted-storage
+yarn add react-native-permissions
+yarn add @react-native-clipboard/clipboard
 
 # for ios
 cd ios
@@ -88,7 +86,15 @@ To enable the web3 provider functionality in the React Native environment, you n
 
 ## ⏩ Config Deep Link
 
-Deep link scheme format: Your app package name or bundle id + '.wepin'
+Deep link scheme format: 'wepin.' + Your wepin app id
+
+> ‼️ Notice of Change: Deep Link Scheme Value (From SDK Version 0.0.20-alpha) ‼️
+> For developers using SDK version 0.0.20 and above, please note that the structure of the Deep Link Scheme value has been updated.
+>
+> * Before: `pakage name` or `bundle id` + '.wepin'
+> * After: 'wepin.' + `wepin appid`
+>
+> This change is essential for the proper functioning of the Wepin widget. Please ensure to apply the new scheme value for the correct operation of the Wepin widget.
 
 ### For Android
 
@@ -104,7 +110,7 @@ Add the below line in your app's `AndroidMainfest.xml` file
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.DEFAULT" />
             <category android:name="android.intent.category.BROWSABLE" />
-            <data android:scheme="PACKAGE_NAME.wepin" /> <!-- package name of your android app + '.wepin' -->
+            <data android:scheme="wepin.WEPIN_APP_ID" /> <!-- 'wepin.' + app id of your wepin app -->
         </intent-filter>
       </activity>
 ```
@@ -136,9 +142,84 @@ Add the URL scheme as below:
 5. Click the '+' buttons on URL Types
 6. Enter Identifier and URL Schemes
    - Idenetifier: bundle id of your project
-   - URL Schems: bundle id of your project + '.wepin'
+   - URL Schems: 'wepin.' + your Wepin app id
 
 ![image](./assets/ios-setup-image.png)
+
+## ⏩ Add Permssion (Version `0.0.20-alpha` and above)
+
+To use this SDK, camera access permission is required. The camera function is essential for recognizing addresses in QR code format. [Reference: [react-native-permission](https://github.com/zoontek/react-native-permissions)]
+
+### For Android
+
+Add the below line in your app's `AndroidMainfest.xml` file
+
+```xml
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+	<uses-permission android:name="android.permission.CAMERA" />
+	<!-- ... -->
+<mainfest>
+```
+
+### For iOS
+
+1. By default, no permissions are setuped. So first, require the `setup` script in your `Podfile`:
+
+```diff
+# with react-native >= 0.72
+- # Resolve react_native_pods.rb with node to allow for hoisting
+- require Pod::Executable.execute_command('node', ['-p',
+-   'require.resolve(
+-     "react-native/scripts/react_native_pods.rb",
+-     {paths: [process.argv[1]]},
+-   )', __dir__]).strip
++ def node_require(script)
++   # Resolve script with node to allow for hoisting
++   require Pod::Executable.execute_command('node', ['-p',
++     "require.resolve(
++       '#{script}',
++       {paths: [process.argv[1]]},
++     )", __dir__]).strip
++ end
++ node_require('react-native/scripts/react_native_pods.rb')
++ node_require('react-native-permissions/scripts/setup.rb')
+```
+
+```diff
+# with react-native < 0.72
+require_relative '../node_modules/react-native/scripts/react_native_pods'
+require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
++ require_relative '../node_modules/react-native-permissions/scripts/setup'
+```
+
+2. Then in the same file, add a `setup_permissions` call with the wanted permissions:
+
+```ruby
+# …
+platform :ios, min_ios_version_supported
+prepare_react_native_project!
+# ⬇️ uncomment wanted permissions
+setup_permissions([
+  'Camera',
+])
+# …
+```
+
+3. Then execute `pod install` _(📌  Note that it must be re-executed each time you update this config)_.
+4. Finally, update your `Info.plist` with the wanted permissions usage descriptions:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!-- 🚨 Keep only the permissions used in your app 🚨 -->
+  <key>NSCameraUsageDescription</key>
+  <string>YOUR TEXT</string>
+  <!-- … -->
+</dict>
+</plist>
+```
 
 ## ⏩ Import SDK
 
@@ -482,7 +563,7 @@ wepin.getBalance(account)
 
 #### Parameters
 
-- `account` \<`IAccount`> - User email
+- `account` \<`IAccount`> - Object specifying the account details.
   - Type of `IAccount` is defined in [`@wepin/types`](https://github.com/WepinWallet/wepin-js-sdk-types)
 
 #### Return value
@@ -582,6 +663,58 @@ var userInfo = await wepin.loginWithExternalToken(idToken, sign, true)
 * [Admin Error Message](https://github.com/IotrustGitHub/wepin-javascript-sdk/blob/7d08e51f2ef0d8d36b197b22f7d8d28c82d2e5f6/README.md#admin-error-message)
   * `require/wepin-register` : If this error occurs, you have to perform the `wepin.register(pin)` method.
 
+### **send**(Support from **version** `0.0.20-alpha`)
+
+```javascript
+await wepin.send(account, options?)
+```
+
+It returns the sent transaction id information. It can be only usable after widget login.
+
+#### Parameters
+
+- `account` \<`IAccount`> - Object specifying the account details.
+
+  - The structure and specifications for `IAccount` are available in the[`@wepin/types`](https://github.com/WepinWallet/wepin-js-sdk-types)package. It typically includes necessary account details such as the address and network.
+- `options` \<`ISendOptions`> - (__optional__) Additional transaction options.
+
+  - The `ISendOptions` type, detailed in the[`@wepin/types`](https://github.com/WepinWallet/wepin-js-sdk-types)from version `0.0.12` onwards, encompasses various transaction modifiers such as the amount to send and the recipient address.
+
+#### Example
+
+```js
+var userInfo = await wepin.loginWithExternalToken(idToken, sign)
+
+// Use register UI
+var userInfo = await wepin.loginWithExternalToken(idToken, sign, true)
+```
+
+#### Return value
+
+* `Promise` `<IWepinUser>`
+  * Type of `IWepinUser` is defined in [`@wepin/types`](https://github.com/WepinWallet/wepin-js-sdk-types) (Support from version `0.0.7`)
+    * `status` <'success'|'fail'>
+    * `userInfo` `<object>` *optional*
+      * `userId` `<string>`
+      * `email` `<string>`
+      * `provider` <'external_token'>
+  * Example
+    ```js
+    {
+    	status: 'success',
+    	userInfo: {
+    		userID: '123455',
+    		email: 'abc@test.com',
+    		provider: 'external_token'
+            }
+    }
+    ```
+
+#### Exception message
+
+* [Admin Error Message](https://github.com/IotrustGitHub/wepin-javascript-sdk/blob/7d08e51f2ef0d8d36b197b22f7d8d28c82d2e5f6/README.md#admin-error-message)
+  * `require/wepin-register` : If this error occurs, you have to perform the `wepin.register(pin)` method.
+
 ### Admin Error Message
 
 The error message types of the admin method are as follows.
@@ -595,6 +728,7 @@ The error message types of the admin method are as follows.
 | invalid/wepin-api-key   | invalid wepin api key                                                                                         |
 | invalid/account         | invalid account                                                                                               |
 | invalid/email-domain    | invalid email domain                                                                                          |
+| invalid/to-address      | invalid to address                                                                                            |
 | auth/existed-email      | existed email                                                                                                 |
 | auth/too-many-requests  | too mandy firebase requests                                                                                   |
 | auth/wrong-password     | wrong password                                                                                                |
@@ -607,6 +741,8 @@ The error message types of the admin method are as follows.
 | fail/wepin-register     | failed to register with wepin                                                                                 |
 | fail/get-balance        | failed to get balance                                                                                         |
 | fail/check-email        | failed to check email                                                                                         |
+| fail/requireFee         | Insufficient fee                                                                                              |
+| fail/requireNetworkFee  | Insufficient network fee(only token transaction request)                                                      |
 | require/email-verified  | email verification required                                                                                   |
 | require/signup          | wepin sign-up required                                                                                        |
 | require/wepin-register  | wepin registration required                                                                                   |
@@ -628,18 +764,19 @@ The providers supported by Wepin are as follows.
 
 #### Support Networks
 
-| Chain ID | Network Name            | Network Variable   |
-| -------- | ----------------------- | ------------------ |
-| 1        | Ethereum Mainnet        | ethereum           |
-| 5        | Ethereum Goerli Testnet | evmeth-goerli      |
-| 19       | Songbird Canary Network | evmsongbird        |
-| 137      | Polygon Mainnet         | evmpolygon         |
-| 80001    | Polygon Mumbai          | evmpolygon-testnet |
-|          | ~~Time~~(Coming soon)  | ~~evmtime~~       |
-| 2731     | Time Testnet           | evmtime-elizabeth  |
-| 8217     | Klaytn                  | klaytn             |
-| 1001     | Klaytn Testnet          | klaytn-testnet     |
-| 11155111 | Ethereum Sepolia        | evmeth sepolia     |
+| Chain ID    | Network Name            | Network Variable         |
+| ----------- | ----------------------- | ------------------------ |
+| 1           | Ethereum Mainnet        | ethereum                 |
+| 5           | Ethereum Goerli Testnet | evmeth-goerli            |
+| 19          | Songbird Canary Network | evmsongbird              |
+| 137         | Polygon Mainnet         | evmpolygon               |
+| ~~80001~~ | ~~Polygon Mumbai~~    | ~~evmpolygon-testnet~~ |
+|             | ~~Time~~(Coming soon)  | ~~evmtime~~             |
+| 2731        | Time Testnet           | evmtime-elizabeth        |
+| 8217        | Klaytn                  | klaytn                   |
+| 1001        | Klaytn Testnet          | klaytn-testnet           |
+| 11155111    | Ethereum Sepolia        | evmeth-sepolia           |
+| 80002       | Polygon Amoy            | evmpolygon-amoy          |
 
 ### getProvider
 

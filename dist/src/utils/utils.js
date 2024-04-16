@@ -13,6 +13,7 @@ import { getBundleId } from 'react-native-device-info';
 import EncryptedSotrage from 'react-native-encrypted-storage';
 import { COOKIENAME } from '../const/config';
 import jwtDecode from 'jwt-decode';
+import Clipboard from '@react-native-clipboard/clipboard';
 export default class Utils {
     static getUrls(modeByAppKey) {
         switch (modeByAppKey) {
@@ -75,4 +76,7 @@ Utils.isExpired = (token) => {
         return true;
     return false;
 };
+Utils.getClipboard = () => __awaiter(void 0, void 0, void 0, function* () {
+    return yield Clipboard.getString();
+});
 //# sourceMappingURL=utils.js.map

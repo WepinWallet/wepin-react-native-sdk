@@ -5,6 +5,7 @@ export type IConfigWebview = {
     url: string;
     appInfo: {
         appKey: string;
+        appId: string;
         attributes: IAttributes;
         domain: string;
         platform: string;

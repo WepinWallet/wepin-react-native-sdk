@@ -1,6 +1,7 @@
 export interface Account {
     address: string;
     network: string;
+    contract?: string;
 }
 export interface DetailAccount {
     accountId: string;

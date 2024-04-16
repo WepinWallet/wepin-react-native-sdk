@@ -7,6 +7,10 @@ import { SupportedChains } from './types/Provider';
 import { IAccountBalance } from './types/AccountBalance';
 import WebView from './components/Webview';
 import { RootSiblingParent } from 'react-native-root-siblings';
+export interface ISendOptions {
+    toAddress: string;
+    amount: string;
+}
 export declare class Wepin extends EventEmitter {
     #private;
     version: string;
@@ -31,6 +35,14 @@ export declare class Wepin extends EventEmitter {
     private setModeByAppKey;
     get modeByAppKey(): modeByAppKey;
     toJSON(): string;
+    setPermission(permission: {
+        camera: boolean;
+        clipboard: boolean;
+    }): void;
+    getPermission(): {
+        camera: boolean;
+        clipboard: boolean;
+    };
     init(appId: string, appKey: string, attributes?: IAttributes): Promise<Wepin>;
     private isLogedIn;
     isInitialized(): boolean;
@@ -62,4 +74,6 @@ export declare class Wepin extends EventEmitter {
     loginWithEmailAndPassword(email: string, password: string): Promise<IWepinUser>;
     register(pin: string): Promise<boolean>;
     getBalance(account: Account): Promise<IAccountBalance>;
+    getSDKRequest(): WepinRequestMessage | undefined;
+    send(account: Account, options?: ISendOptions): Promise<string>;
 }
