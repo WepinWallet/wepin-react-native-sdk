@@ -660,7 +660,7 @@ var userInfo = await wepin.loginWithExternalToken(idToken, sign, true)
 
 #### Exception message
 
-* [Admin Error Message](https://github.com/IotrustGitHub/wepin-javascript-sdk/blob/7d08e51f2ef0d8d36b197b22f7d8d28c82d2e5f6/README.md#admin-error-message)
+* [Admin Error Message](#admin-error-message)
   * `require/wepin-register` : If this error occurs, you have to perform the `wepin.register(pin)` method.
 
 ### **send**(Support from **version** `0.0.20-alpha`)
@@ -683,37 +683,37 @@ It returns the sent transaction id information. It can be only usable after widg
 #### Example
 
 ```js
-var userInfo = await wepin.loginWithExternalToken(idToken, sign)
+// without options
+const result = wepin.send({
+  address: '0x0000001111112222223333334444445555556666',
+  network: 'Ethereum',
+})
 
-// Use register UI
-var userInfo = await wepin.loginWithExternalToken(idToken, sign, true)
+// with options
+const result = wepin.send(
+  {
+    address: '0x0000001111112222223333334444445555556666',
+    network: 'Ethereum',
+  },
+  { amount: '0.1', toAddress: '0x777777888888999999000000111111222222333333' }
+)
 ```
 
 #### Return value
 
-* `Promise` `<IWepinUser>`
-  * Type of `IWepinUser` is defined in [`@wepin/types`](https://github.com/WepinWallet/wepin-js-sdk-types) (Support from version `0.0.7`)
-    * `status` <'success'|'fail'>
-    * `userInfo` `<object>` *optional*
-      * `userId` `<string>`
-      * `email` `<string>`
-      * `provider` <'external_token'>
-  * Example
+- `Promise` \<`string`>
+
+  - Returns tx id if the send transaction is successful.
+
+  - Example
+
     ```js
-    {
-    	status: 'success',
-    	userInfo: {
-    		userID: '123455',
-    		email: 'abc@test.com',
-    		provider: 'external_token'
-            }
-    }
+    '0x0000001111112222223333334444445555556666.............aaaaaabbbbbbccccccddddddeeeeeeffffff'
     ```
 
 #### Exception message
 
-* [Admin Error Message](https://github.com/IotrustGitHub/wepin-javascript-sdk/blob/7d08e51f2ef0d8d36b197b22f7d8d28c82d2e5f6/README.md#admin-error-message)
-  * `require/wepin-register` : If this error occurs, you have to perform the `wepin.register(pin)` method.
+* [Admin Error Message](#admin-error-message)
 
 ### Admin Error Message
 
