@@ -50,8 +50,8 @@ function App(): JSX.Element {
 
   /////////api key변경하기 위한....
   const apiKeyList = getApiKeyList()
-  const [apiKey, setApiKey] = useState<string>(apiKeyList.apiKeyList[0])//= getBundleId().split('.').slice(-1)[0] as ItestMode //'dev'; // 'stage' // 'prod'
-
+  const [apiKey, setApiKey] = useState<string>(apiKeyList.apiKeyList[0].apiKey)//= getBundleId().split('.').slice(-1)[0] as ItestMode //'dev'; // 'stage' // 'prod'
+  const [appId, setAppId] = useState<string>(apiKeyList.apiKeyList[0].appId)
   //// login provider list
   const availableLoginProviderList = [
     { key: 1, value: 'google' },
@@ -175,7 +175,7 @@ function App(): JSX.Element {
       console.log('api key: ', apiKey)
       setResult('processing.....')
 
-      await wepin.init('', apiKey, {
+      await wepin.init(appId, apiKey, {
         type,
         defaultCurrency: currency,
         defaultLanguage: lang,
@@ -470,6 +470,44 @@ function App(): JSX.Element {
     }
   }
 
+  const send = async () => {
+    console.log('send')
+    const sendFunc = async (val: any) => {
+      try {
+        setResult('processing.....')
+        if (accounts) {
+          const selAccount = val.account! //accounts[0]
+          const res = await wepin.send(selAccount, {toAddress: val.toAddress, amount: val.amount})
+          setResult(`send(${selAccount.network}):` + JSON.stringify(res))
+        } else {
+          setResult('accouts is empty')
+        }
+      } catch (e: any) {
+        console.error(e)
+        setResult('send fail: ' + e.message)
+      }
+    }
+    if (accounts) {
+      openDialog({
+        title: 'send data',
+        selectList: {
+          list: accounts!,
+        },
+        inputs: [
+          {
+            text: 'toAddress'
+          },
+          {
+            text: 'amount',
+            type: 'number-pad'
+          }
+        ]
+      }, sendFunc)
+    } else {
+      setResult('accouts is empty')
+    }
+  }
+
   const openWepinWidget = async () => {
     console.log('openWepinWidget')
     setResult('processing.....')
@@ -648,6 +686,9 @@ function App(): JSX.Element {
       </View>
       <View style={styles.button}>
         <Button title="Get_Balance" onPress={() => getBalance()} />
+      </View>
+      <View style={styles.button}>
+        <Button title="Send" onPress={() => send()} />
       </View>
       <View style={styles.button}>
         <Button title="Finalize_widget" onPress={() => finalizeWepin()} />
@@ -906,7 +947,7 @@ function App(): JSX.Element {
             dropdownStyles={styles.selectBoxStyles}
             setSelected={async (key: any) => {
               console.log('key', key)
-              const selApikey = apiKeyList.apiKeyList[Number(key)]
+              const selApikey = apiKeyList.apiKeyList[Number(key)].apiKey
 
               if (apiKey !== selApikey) {
                 setApiKey(selApikey)

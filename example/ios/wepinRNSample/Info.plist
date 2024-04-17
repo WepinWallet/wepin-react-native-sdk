@@ -26,7 +26,11 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>io.wepin.rn.sample</string>
+			<string>io.wepin.rn.sample1</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>wepin.wepin appID</string>
+			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
@@ -52,6 +56,10 @@
 	<array>
 		<string>armv7</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>Camera Permission for reading QR code</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Album Permission to save videos</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
