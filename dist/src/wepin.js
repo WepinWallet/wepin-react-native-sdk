@@ -18,7 +18,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _Wepin_adminLoginResult, _Wepin_detailAccount, _Wepin_tokens;
+var _Wepin_adminLoginResult, _Wepin_detailAccount, _Wepin_tokens, _Wepin_permission, _Wepin_wepinRequest;
 import { WEPIN_DEFAULT_LANG, WEPIN_DEFAULT_CURRENCY } from './const/config';
 import LOG from './utils/log';
 import Utils from './utils/utils';
@@ -33,6 +33,22 @@ import { RootSiblingParent } from 'react-native-root-siblings';
 import { getNetworkByChainId } from './provider/utils/info';
 import { closeWidgetAndClearWebview } from './utils/commmonWidget';
 import { emailRegExp } from './const/regExp';
+import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
+import { Platform } from 'react-native';
+const cameraPermissions = Platform.OS === "ios"
+    ? PERMISSIONS.IOS.CAMERA
+    : PERMISSIONS.ANDROID.CAMERA;
+const audioPermissions = Platform.OS === "ios" ? PERMISSIONS.IOS.MICROPHONE :
+    PERMISSIONS.ANDROID.RECORD_AUDIO;
+const requestPermission = (permissions) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield request(permissions);
+        return result === RESULTS.GRANTED;
+    }
+    catch (err) {
+        return false;
+    }
+});
 export class Wepin extends EventEmitter {
     static getInstance() {
         if (!this._instance) {
@@ -45,6 +61,8 @@ export class Wepin extends EventEmitter {
         _Wepin_adminLoginResult.set(this, void 0);
         _Wepin_detailAccount.set(this, void 0);
         _Wepin_tokens.set(this, void 0);
+        _Wepin_permission.set(this, { camera: false, clipboard: false });
+        _Wepin_wepinRequest.set(this, void 0);
         this._isInitialized = false;
         this.version = PackageJson.version;
         console.log(`WepinJavaScript SDK v${this.version} Initialized`);
@@ -115,6 +133,12 @@ export class Wepin extends EventEmitter {
     toJSON() {
         return '';
     }
+    setPermission(permission) {
+        __classPrivateFieldSet(this, _Wepin_permission, permission, "f");
+    }
+    getPermission() {
+        return __classPrivateFieldGet(this, _Wepin_permission, "f");
+    }
     init(appId, appKey, attributes = {
         type: 'hide',
         defaultLanguage: WEPIN_DEFAULT_LANG,
@@ -139,7 +163,7 @@ export class Wepin extends EventEmitter {
                 yield this._open({ isInit: true });
             }
             return new Promise((resolve, reject) => {
-                this.once('widgetOpened', () => __awaiter(this, void 0, void 0, function* () {
+                this.once('widgetOpened', (response) => __awaiter(this, void 0, void 0, function* () {
                     var _a, _b;
                     try {
                         if (this._isInitialized) {
@@ -157,7 +181,14 @@ export class Wepin extends EventEmitter {
                         if (((_a = this.wepinAppAttributes) === null || _a === void 0 ? void 0 : _a.type) !== 'show') {
                             yield this._close();
                         }
-                        resolve(this);
+                        if (response.error)
+                            reject(new Error(`${response.error.code}: ${response.error.message}`));
+                        else {
+                            if (!this._isInitialized)
+                                reject(new Error('unknown-error: init-failed. please check your app key or domain(package name or bundile id).'));
+                            else
+                                resolve(this);
+                        }
                     }
                     catch (e) {
                         console.error('init error:', e);
@@ -229,6 +260,8 @@ export class Wepin extends EventEmitter {
             if (options === null || options === void 0 ? void 0 : options.url) {
                 baseUrl += options.url;
             }
+            __classPrivateFieldGet(this, _Wepin_permission, "f").clipboard = true;
+            __classPrivateFieldGet(this, _Wepin_permission, "f").camera = yield requestPermission(cameraPermissions);
             try {
                 if ((options === null || options === void 0 ? void 0 : options.type) === 'hide' ||
                     (((_a = this.wepinAppAttributes) === null || _a === void 0 ? void 0 : _a.type) !== 'show' && (options === null || options === void 0 ? void 0 : options.isInit))) {
@@ -237,6 +270,7 @@ export class Wepin extends EventEmitter {
                             url: baseUrl,
                             appInfo: {
                                 appKey: this.wepinAppKey,
+                                appId: this.wepinAppId,
                                 domain: this.wepinDomain,
                                 attributes: { type: 'hide', defaultCurrency: (_b = this.wepinAppAttributes) === null || _b === void 0 ? void 0 : _b.defaultCurrency, defaultLanguage: (_c = this.wepinAppAttributes) === null || _c === void 0 ? void 0 : _c.defaultLanguage },
                                 platform: '',
@@ -252,6 +286,7 @@ export class Wepin extends EventEmitter {
                             url: baseUrl,
                             appInfo: {
                                 appKey: this.wepinAppKey,
+                                appId: this.wepinAppId,
                                 domain: this.wepinDomain,
                                 attributes: { type: 'show', defaultCurrency: (_d = this.wepinAppAttributes) === null || _d === void 0 ? void 0 : _d.defaultCurrency, defaultLanguage: (_e = this.wepinAppAttributes) === null || _e === void 0 ? void 0 : _e.defaultLanguage },
                                 platform: '',
@@ -289,6 +324,7 @@ export class Wepin extends EventEmitter {
                             url: baseUrl,
                             appInfo: {
                                 appKey: this.wepinAppKey,
+                                appId: this.wepinAppId,
                                 domain: this.wepinDomain,
                                 attributes: { type, defaultCurrency: (_b = this.wepinAppAttributes) === null || _b === void 0 ? void 0 : _b.defaultCurrency, defaultLanguage: (_c = this.wepinAppAttributes) === null || _c === void 0 ? void 0 : _c.defaultLanguage },
                                 platform: '',
@@ -568,9 +604,9 @@ export class Wepin extends EventEmitter {
             case 'evmeth-goerli':
             case 'evmsongbird':
             case 'evmpolygon':
-            case 'evmpolygon-testnet':
             case 'evmtime-elizabeth':
-            case 'evmeth sepolia':
+            case 'evmeth-sepolia':
+            case 'evmpolygon-amoy':
                 return EthProvider.generate({ network: lowerCasedNetworkStr, wepin });
             case 'klaytn':
             case 'klaytn-testnet':
@@ -803,7 +839,66 @@ export class Wepin extends EventEmitter {
             }));
         });
     }
+    getSDKRequest() {
+        return __classPrivateFieldGet(this, _Wepin_wepinRequest, "f");
+    }
+    send(account, options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this._isInitialized) {
+                throw new Error('Wepin.getBalance: wepin sdk widget has to be initialized');
+            }
+            if (this.getStatus() !== 'login') {
+                throw new Error(`Wepin.getBalance: lifecycle of wepin sdk is not 'login'`);
+            }
+            if (!account) {
+                throw new Error(`invalid/account`);
+            }
+            if (options && ((options === null || options === void 0 ? void 0 : options.toAddress) === undefined) !== ((options === null || options === void 0 ? void 0 : options.amount) === undefined)) {
+                throw new Error(`invalid/options`);
+            }
+            const id = new Date().getTime();
+            __classPrivateFieldSet(this, _Wepin_wepinRequest, {
+                header: {
+                    request_from: 'react-native',
+                    request_to: 'wepin_widget',
+                    id,
+                },
+                body: {
+                    command: 'send_transaction_without_provider',
+                    parameter: {
+                        account: {
+                            address: account.address,
+                            network: account.network,
+                            contract: account === null || account === void 0 ? void 0 : account.contract,
+                        },
+                        from: account.address,
+                        to: options === null || options === void 0 ? void 0 : options.toAddress,
+                        value: options === null || options === void 0 ? void 0 : options.amount,
+                    },
+                },
+            }, "f");
+            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+                this.once(id.toString(), (data) => __awaiter(this, void 0, void 0, function* () {
+                    LOG.debug('response data: ', data.body.data);
+                    yield this._close();
+                    if (data.body.state === 'SUCCESS') {
+                        const txid = data.body.data;
+                        resolve(txid);
+                    }
+                    else {
+                        if (data.body.data) {
+                            reject(new Error(data.body.data));
+                        }
+                        else {
+                            reject(new Error('unkonw/error'));
+                        }
+                    }
+                }));
+                yield this._open({ url: '/sdk/send' });
+            }));
+        });
+    }
 }
-_Wepin_adminLoginResult = new WeakMap(), _Wepin_detailAccount = new WeakMap(), _Wepin_tokens = new WeakMap();
+_Wepin_adminLoginResult = new WeakMap(), _Wepin_detailAccount = new WeakMap(), _Wepin_tokens = new WeakMap(), _Wepin_permission = new WeakMap(), _Wepin_wepinRequest = new WeakMap();
 Wepin.WidgetView = RootSiblingParent;
 //# sourceMappingURL=wepin.js.map

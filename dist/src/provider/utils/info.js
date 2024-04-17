@@ -32,20 +32,20 @@ export const getNetworkInfoByName = (network) => {
                 rpcUrl: GatewayUrl.Gateway + '/matic/alchemy/mainnet',
                 chainId: '0x' + (137).toString(16),
             };
-        case 'evmpolygon-testnet':
-            return {
-                rpcUrl: GatewayUrl.Gateway + '/matic/testnet',
-                chainId: '0x' + (80001).toString(16),
-            };
         case 'evmtime-elizabeth':
             return {
                 rpcUrl: GatewayUrl.Gateway + '/timenetwork/testnet ',
                 chainId: '0x' + (2731).toString(16),
             };
-        case 'evmeth sepolia':
+        case 'evmeth-sepolia':
             return {
                 rpcUrl: GatewayUrl.Gateway + '/sepolia/alchemy/testnet',
                 chainId: '0x' + (11155111).toString(16),
+            };
+        case 'evmpolygon-amoy':
+            return {
+                rpcUrl: GatewayUrl.Gateway + '/polygon/amoy',
+                chainId: '0x' + (80002).toString(16),
             };
         default:
             throw new Error(`There is No network info about provided network : ${network}`);
@@ -62,9 +62,9 @@ export const getNetworkByChainId = (chainId) => {
         [`0x${(137).toString(16)}`]: 'evmpolygon',
         [`0x${(1001).toString(16)}`]: 'klaytn-testnet',
         [`0x${(8217).toString(16)}`]: 'klaytn',
-        [`0x${(80001).toString(16)}`]: 'evmpolygon-testnet',
         [`0x${(2731).toString(16)}`]: 'evmtime-elizabeth',
-        [`0x${(11155111).toString(16)}`]: 'evmeth sepolia',
+        [`0x${(11155111).toString(16)}`]: 'evmeth-sepolia',
+        [`0x${(80002).toString(16)}`]: 'evmpolygon-amoy',
     };
     return chainIdMappings[chainId];
 };

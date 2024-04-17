@@ -3,7 +3,7 @@ import LOG from '../../utils/log';
 import { closeWidgetAndClearWebview } from '../../utils/commmonWidget';
 import Utils from '../../utils/utils';
 export const WebviewRequestHandler = (message, widget) => {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e, _f;
     const response = {
         header: {
             response_from: 'react-native',
@@ -15,17 +15,20 @@ export const WebviewRequestHandler = (message, widget) => {
     switch (message.body.command) {
         case 'ready_to_widget':
             LOG.debug('ready_to_widget');
+            LOG.debug('!!!!!!!!!!!!!!!!wepin.getPermission(): ', wepin.getPermission());
             response.body = {
                 command: 'ready_to_widget',
                 state: 'SUCCESS',
                 data: {
                     appKey: wepin.wepinAppKey,
+                    appId: wepin.wepinAppId,
                     domain: wepin.wepinDomain,
                     platform: Platform.OS === 'ios' ? 3 : 2,
                     attributes: wepin.wepinAppAttributes,
                     version: wepin.version.includes('-alpaha')
                         ? wepin.version.substring(0, wepin.version.indexOf('-'))
-                        : wepin.version
+                        : wepin.version,
+                    permission: wepin.getPermission(),
                 },
             };
             break;
@@ -119,6 +122,20 @@ export const WebviewRequestHandler = (message, widget) => {
             wepin.setUserInfo(message.body.parameter.data['user_login_info']);
             wepin.setWepinToken(message.body.parameter.data['wepin:connectUser']);
             break;
+        case 'get_sdk_request':
+            response.body = {
+                command: 'get_sdk_request',
+                state: 'SUCCESS',
+                data: (_e = wepin.getSDKRequest()) !== null && _e !== void 0 ? _e : 'No request'
+            };
+            break;
+        case 'get_clipboard':
+            response.body = {
+                command: 'get_clipboard',
+                state: 'SUCCESS',
+                data: ''
+            };
+            break;
         default:
             throw new Error(`Command ${message.body.command} is not supported.`);
     }
@@ -126,12 +143,23 @@ export const WebviewRequestHandler = (message, widget) => {
         if (message.body.command === 'set_local_storage') {
             return;
         }
+        if (message.body.command === 'get_clipboard') {
+            return Utils.getClipboard().then((data) => {
+                response.body = {
+                    command: 'get_clipboard',
+                    state: 'SUCCESS',
+                    data: data
+                };
+                widget.response(response);
+            });
+        }
         widget.response(response);
         if (message.body.command === 'ready_to_widget') {
             setTimeout(() => { wepin.emit('startAdminRequest'); }, 100);
         }
         else if (message.body.command === 'initialized_widget') {
-            setTimeout(() => { wepin.emit('widgetOpened'); }, 100);
+            const parmeter = (_f = message.body) === null || _f === void 0 ? void 0 : _f.parameter;
+            setTimeout(() => { wepin.emit('widgetOpened', parmeter); }, 100);
         }
     }
     function windowCloseObserver() {

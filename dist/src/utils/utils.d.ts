@@ -9,4 +9,5 @@ export default class Utils {
     static getLocalStorage: (appId: string) => Promise<any>;
     static clearLocalStorage: (appId: string) => Promise<void>;
     static isExpired: (token: string) => boolean;
+    static getClipboard: () => Promise<string>;
 }

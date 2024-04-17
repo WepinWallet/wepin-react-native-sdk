@@ -12,7 +12,6 @@ import { StyleSheet, Platform, View, Linking, Dimensions } from 'react-native';
 import { getEventListener } from './event/eventListener';
 import NativeWebView from 'react-native-webview';
 import InAppBrowser from 'react-native-inappbrowser-reborn';
-import Utils from '../utils/utils';
 import LOG from '../utils/log';
 import URLParser from 'url';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
@@ -96,7 +95,7 @@ class WepinWebview extends Component {
                 }
                 const isAvailable = yield InAppBrowser.isAvailable();
                 if (isAvailable) {
-                    const deeplink = Utils.getDeeplink();
+                    const deeplink = 'wepin.' + this.props.config.appInfo.appId + '://';
                     const result = yield InAppBrowser.openAuth(url, deeplink, {
                         dismissButtonStyle: 'cancel',
                         preferredBarTintColor: 'gray',
@@ -204,7 +203,7 @@ class WepinWebview extends Component {
                         }
                     }
                 }
-            }}/>
+            }} allowsInlineMediaPlayback={true} javaScriptEnabledAndroid={true} mediaPlaybackRequiresUserAction={false}/>
             </View>);
     }
 }
